@@ -139,9 +139,6 @@ function page(name, depth) {
   return { ...data, updated: data.updated ? asDate(data.updated, 10) : '', html: renderMarkdown(body, depth) };
 }
 const now = page('now', 1);
-const photos = exists('content/photos.yml')
-  ? ((loadYaml(read('content/photos.yml')) || {}).photos || []).filter((ph) => ph && ph.image).map((ph) => ({ ...ph, date: ph.date ? asDate(ph.date, 10) : '' }))
-  : [];
 const colophon = page('colophon', 1);
 
 // Build information shown in the footer and on the colophon.
@@ -172,7 +169,7 @@ fs.mkdirSync(out, { recursive: true });
 fs.cpSync(path.join(root, 'public'), out, { recursive: true });
 
 const pages = []; // [path, render()] so build time can include everything
-const ctx = (depth) => ({ site, projects, posts, history, now, colophon, photos, build, L: T.linker(depth, preview) });
+const ctx = (depth) => ({ site, projects, posts, history, now, colophon, build, L: T.linker(depth, preview) });
 
 pages.push(['index.html', () => T.homePage(ctx(0))]);
 pages.push(['projects/index.html', () => T.projectsIndexPage(ctx(1))]);
@@ -184,7 +181,6 @@ posts.forEach((post, i) =>
   pages.push([`blog/${post.slug}/index.html`, () => T.postPage({ ...ctx(2), post, prev: posts[i + 1], next: posts[i - 1] })])
 );
 pages.push(['now/index.html', () => T.nowPage(ctx(1))]);
-pages.push(['life/index.html', () => T.lifePage(ctx(1))]);
 pages.push(['resume/index.html', () => T.resumePage(ctx(1))]);
 pages.push(['colophon/index.html', () => T.colophonPage({ ...ctx(1), stats })]);
 pages.push(['404.html', () => T.notFoundPage(ctx(0))]);
@@ -244,7 +240,7 @@ ${p.tags.map((t) => `<category>${x(t)}</category>`).join('')}
 </rss>
 `
 );
-const urls = ['', 'projects/', 'blog/', 'life/', 'now/', 'resume/', 'colophon/', ...projects.map((p) => `projects/${p.slug}/`), ...posts.map((p) => `blog/${p.slug}/`)];
+const urls = ['', 'projects/', 'blog/', 'now/', 'resume/', 'colophon/', ...projects.map((p) => `projects/${p.slug}/`), ...posts.map((p) => `blog/${p.slug}/`)];
 write(
   'sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>

@@ -52,8 +52,7 @@ The site updates by itself about a minute later. Tag personal updates **Life**: 
 All of these are in the Pages CMS sidebar:
 
 - **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page.
-- **Photos:** upload photos with a caption, place and date. They appear in the album on the Life page.
-- **Now page:** what you're up to (also shown on the Life page). Change **Last updated** when you edit it.
+- **Now page:** what you're up to. Change **Last updated** when you edit it.
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.
 

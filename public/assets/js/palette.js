@@ -27,7 +27,6 @@
     ['g h', 'Homepage'],
     ['g p', 'Projects'],
     ['g b', 'Blog'],
-    ['g l', 'Life page'],
     ['g n', 'Now page'],
     ['g r', 'Resume'],
     ['t', 'Switch light and dark'],
@@ -44,7 +43,6 @@
     { title: 'Home', href: '', keywords: 'homepage start shop floor cart', hint: 'g h' },
     { title: 'Projects', href: 'projects/', keywords: 'work portfolio history built', hint: 'g p' },
     { title: 'Blog', href: 'blog/', keywords: 'posts writing life archive', hint: 'g b' },
-    { title: 'Life', href: 'life/', keywords: 'family friends photos weather singapore where', hint: 'g l' },
     { title: 'Now', href: 'now/', keywords: 'currently up to singapore where', hint: 'g n' },
     { title: 'Resume', href: 'resume/', keywords: 'cv experience skills hire', hint: 'g r' },
     { title: 'How this site works', href: 'colophon/', keywords: 'colophon build fonts privacy shortcuts source' },
@@ -306,7 +304,7 @@
   document.querySelectorAll('[data-palette-open]').forEach((b) => b.addEventListener('click', open));
 
   // ---------- Shortcuts ----------
-  const goMap = { h: '', p: 'projects/', b: 'blog/', l: 'life/', n: 'now/', r: 'resume/' };
+  const goMap = { h: '', p: 'projects/', b: 'blog/', n: 'now/', r: 'resume/' };
   let gAt = 0;
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === 'k') {
