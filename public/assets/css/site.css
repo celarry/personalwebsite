@@ -2524,6 +2524,126 @@ body:not(.page-home) .nav {
 }
 
 
+/* ---------- Off the clock ---------- */
+.offclock__h {
+  font-family: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 2em 0 0.8em;
+}
+/* Games as shelf-edge labels, in keeping with the shop floor. */
+.labels {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+@media (min-width: 900px) {
+  .labels--ranked {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .labels--casual {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 14px 16px 16px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--route);
+  border-radius: 4px 4px var(--r-sm) var(--r-sm);
+}
+.label--plain {
+  border-top-color: var(--rule);
+}
+.label__name {
+  font-weight: 700;
+  line-height: 1.25;
+}
+.label__kind {
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+.label__note {
+  margin-top: auto;
+  padding-top: 12px;
+  font-family: var(--display);
+  font-stretch: 115%;
+  font-weight: 760;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.label--plain .label__note {
+  font-size: 1rem;
+  color: var(--ink-2);
+}
+.offclock__row {
+  display: grid;
+  gap: 12px 40px;
+}
+@media (min-width: 760px) {
+  .offclock__row {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+.rig {
+  margin: 0;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+.rig div {
+  display: grid;
+  grid-template-columns: 7.5em 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.rig dt {
+  color: var(--ink-3);
+  font-size: 0.95rem;
+}
+.rig dd {
+  margin: 0;
+  font-weight: 600;
+}
+.reading {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--rule);
+}
+.reading li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.reading__title {
+  font-weight: 600;
+}
+.reading__kind {
+  font-size: 0.9rem;
+  color: var(--ink-3);
+}
+.offclock__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin-top: 1.6em;
+  font-weight: 600;
+}
+
 /* ---------- Shop floor extras: item tray and receipt ---------- */
 .hero__left {
   display: flex;

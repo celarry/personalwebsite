@@ -58,3 +58,50 @@ experience:
     dates: Graduating Oct 2026
     summary: ''
     points: []
+offclock:
+  intro: >-
+    When I'm not training models, I'm probably queueing ranked, at a local
+    bracket, or practising tenor sax. Board game nights with friends are a
+    regular thing too.
+  games:
+    - name: Overwatch
+      kind: Hero shooter
+      note: Peak Masters
+      group: ranked
+    - name: Valorant
+      kind: Tactical shooter
+      note: Peak Immortal 2
+      group: ranked
+    - name: Street Fighter 6
+      kind: Fighting game
+      note: Goes to locals
+      group: ranked
+    - name: Smash Bros. Ultimate
+      kind: Platform fighter
+      note: Goes to locals
+      group: ranked
+    - name: Deadlock
+      kind: Hero shooter, MOBA
+      note: ''
+      group: casual
+    - name: Slay the Spire 2
+      kind: Deckbuilder roguelike
+      note: Just for fun
+      group: casual
+    - name: Disco Elysium
+      kind: Detective RPG
+      note: ''
+      group: casual
+  sax:
+    - part: Horn
+      name: King Super 20, Series 3
+    - part: Mouthpiece
+      name: Theo Wanne Lakshmi
+    - part: Reed
+      name: Légère American Cut, 2.5
+  reading:
+    - title: One Piece
+      kind: Manga
+    - title: Root Rot
+      kind: Book
+  links: []

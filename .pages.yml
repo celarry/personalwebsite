@@ -239,6 +239,70 @@ content:
       - name: languages
         label: Languages (comma-separated)
         type: string
+      - name: offclock
+        label: Off the clock
+        description: The casual section on the homepage.
+        type: object
+        fields:
+          - name: intro
+            label: Intro
+            type: text
+          - name: games
+            label: Games
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: Game
+                type: string
+              - name: kind
+                label: Type of game
+                type: string
+              - name: note
+                label: Rank or note
+                description: For example "Peak Masters" or "Goes to locals". Optional.
+                type: string
+              - name: group
+                label: Row
+                type: select
+                default: casual
+                options:
+                  values: [ranked, casual]
+          - name: sax
+            label: Sax setup
+            type: object
+            list: true
+            fields:
+              - name: part
+                label: Part
+                type: string
+              - name: name
+                label: What I use
+                type: string
+          - name: reading
+            label: Currently reading
+            type: object
+            list: true
+            fields:
+              - name: title
+                label: Title
+                type: string
+              - name: kind
+                label: Type
+                description: For example Book or Manga.
+                type: string
+          - name: links
+            label: Links
+            description: Optional, for example your start.gg or tracker.gg profile.
+            type: object
+            list: true
+            fields:
+              - name: label
+                label: Label
+                type: string
+              - name: url
+                label: Address
+                type: string
       - name: skills
         label: Skills
         type: object
