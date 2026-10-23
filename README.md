@@ -53,7 +53,7 @@ All of these are in the Pages CMS sidebar:
 
 - **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page.
 - **Now page:** what you're up to. Change **Last updated** when you edit it.
-- **Off the clock** (in Profile): the casual section on the homepage. Games with an optional rank or note, the sax setup, what you're reading, and optional links such as a start.gg profile.
+- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Reading and so on).
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.
 
