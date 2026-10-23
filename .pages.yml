@@ -198,6 +198,14 @@ content:
       - name: location
         label: Location
         type: string
+      - name: next_city
+        label: Next city
+        description: Shown on the Life page with a journey from Location. Leave empty to hide. Works for Melbourne, Sydney, Perth, Singapore, Hong Kong, Shanghai, London, Los Angeles and New York.
+        type: string
+      - name: next_date
+        label: Moving date
+        description: Optional.
+        type: date
       - name: timezone
         label: Time zone
         description: Used for the "It's 6:30 pm for me in…" clock.
@@ -278,6 +286,32 @@ content:
             label: Bullet points
             type: string
             list: true
+
+  - name: photos
+    label: Photos
+    type: file
+    path: content/photos.yml
+    format: yaml
+    fields:
+      - name: photos
+        label: Photos
+        description: Shown in the album on the Life page, in this order. Newest first works well.
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: Photo
+            type: image
+            required: true
+          - name: caption
+            label: Caption
+            type: string
+          - name: place
+            label: Place
+            type: string
+          - name: date
+            label: Date
+            type: date
 
   - name: colophon
     label: How this site works
