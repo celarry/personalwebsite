@@ -71,8 +71,8 @@ content:
         type: string
         required: true
       - name: featured
-        label: Show on the homepage with its demo
-        description: Only works for projects that have an interactive demo.
+        label: Show its demo on the homepage
+        description: Every project is listed on the homepage. Featured ones open into their interactive demo. Only works for projects that have one.
         type: boolean
         default: false
       - name: order
@@ -111,6 +111,10 @@ content:
       - name: summary
         label: Summary
         type: text
+      - name: blurb
+        label: Short description (optional)
+        description: One line for lists. Leave empty to use the first sentence of the summary.
+        type: string
       - name: points
         label: Highlights
         type: string
@@ -186,21 +190,22 @@ content:
         required: true
       - name: headline
         label: Headline
-        description: The big sentence under your name.
+        description: The big sentence at the top of the homepage.
         type: string
       - name: intro
         label: Intro
+        description: The paragraph under the headline. You can add a link like [text](https://example.com) or **bold** words.
         type: text
       - name: now
         label: Now (one line)
-        description: Shown just below the top of the homepage. The Now page has the longer version.
+        description: Shown under the store on the homepage. The Now page has the longer version.
         type: string
       - name: location
         label: Location
         type: string
       - name: timezone
         label: Time zone
-        description: Used for the "It's 6:30 pm for me in…" clock.
+        description: Used for the clocks and the store's opening hours.
         type: select
         options:
           values:
@@ -250,6 +255,7 @@ content:
             type: string
           - name: text
             label: Text
+            description: You can add a link like [text](https://example.com).
             type: text
       - name: skills
         label: Skills

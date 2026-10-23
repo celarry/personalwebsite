@@ -12,23 +12,25 @@
   // Build a link to a site path ('' = home, 'blog/', '#about') from this page.
   const link = (p) => {
     let [base, hash] = p.split('#');
-    if (base === '' && hash !== undefined && onHome()) return '#' + hash;
+    if (base === '' && hash !== undefined && (onHome() || document.getElementById(hash) || (hasStore() && STORE_HASHES.includes(hash)))) return '#' + hash;
     if (preview && (base === '' || base.endsWith('/'))) base += 'index.html';
     let url = (root === './' ? '' : root) + base;
     if (!url) url = './';
     return hash !== undefined ? `${url}#${hash}` : url;
   };
-  const onHome = () => !!document.querySelector('[data-floor]');
+  const onHome = () => body.classList.contains('page-home');
+  const hasStore = () => !!(document.querySelector('[data-floor]') && window.floorDemo);
+  const STORE_HASHES = ['closed', 'open', 'shop', 'lunar', 'easter', 'midautumn', 'halloween', 'christmas'];
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
   const SHORTCUTS = [
     [isMac() ? '⌘ K' : 'Ctrl K', 'Open this palette'],
     ['/', 'Open this palette'],
-    ['g h', 'Homepage'],
-    ['g p', 'Projects'],
-    ['g b', 'Blog'],
-    ['g n', 'Now page'],
-    ['g r', 'Resume'],
+    ['1', 'Homepage'],
+    ['2', 'Projects'],
+    ['3', 'Blog'],
+    ['4', 'Now page'],
+    ['5', 'Resume'],
     ['t', 'Switch light and dark'],
     ['?', 'Show shortcuts'],
   ];
@@ -40,15 +42,16 @@
 
   // ---------- Items ----------
   const pages = [
-    { title: 'Home', href: '', keywords: 'homepage start shop floor cart', hint: 'g h' },
-    { title: 'Projects', href: 'projects/', keywords: 'work portfolio history built', hint: 'g p' },
-    { title: 'Blog', href: 'blog/', keywords: 'posts writing life archive', hint: 'g b' },
-    { title: 'Now', href: 'now/', keywords: 'currently up to singapore where', hint: 'g n' },
-    { title: 'Resume', href: 'resume/', keywords: 'cv experience skills hire', hint: 'g r' },
+    { title: 'Home', href: '', keywords: 'homepage start store shop cart', hint: '1' },
+    { title: 'Projects', href: 'projects/', keywords: 'work portfolio history built', hint: '2' },
+    { title: 'Blog', href: 'blog/', keywords: 'posts writing life archive', hint: '3' },
+    { title: 'Now', href: 'now/', keywords: 'currently up to singapore where', hint: '4' },
+    { title: 'Resume', href: 'resume/', keywords: 'cv experience skills hire', hint: '5' },
     { title: 'How this site works', href: 'colophon/', keywords: 'colophon build fonts privacy shortcuts source' },
     { title: 'About', href: '#about', keywords: 'bio skills languages' },
-    { title: 'Experience', href: '#work', keywords: 'jobs netgain unitop monash education' },
-    { title: 'Contact', href: '#contact', keywords: 'email get in touch hire' },
+    { title: 'Experience', href: '#experience', keywords: 'jobs work netgain unitop monash education' },
+    { title: 'Off the clock', href: '#offclock', keywords: 'games music saxophone reading hobbies casting valorant' },
+    { title: 'Contact', href: '#contact', keywords: 'email get in touch hire message text' },
   ].map((p) => ({ ...p, group: 'Go to' }));
 
   function localTime() {
@@ -110,16 +113,39 @@
     { title: 'Read a random post', keywords: 'blog surprise random', run: () => randomPost() },
     {
       title: 'Send the cart shopping',
-      keywords: 'cart a* astar pathfinding shop floor demo',
+      keywords: 'cart a* astar pathfinding store shop demo receipt',
       run: () => {
-        if (onHome() && window.floorDemo) {
+        if (hasStore()) {
           close();
-          window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-          setTimeout(() => window.floorDemo.shop(), 400);
+          const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+          document.querySelector('[data-floor]').scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+          setTimeout(() => window.floorDemo.shop(), smooth ? 450 : 0);
         } else location.href = link('#shop');
       },
     },
-    { title: 'Play with the Valorant predictor', keywords: 'valorant demo win probability model', href: '#project-valorant' },
+    ...[
+      ['astar', 'A*', 'a star astar heuristic'],
+      ['dijkstra', 'Dijkstra', 'dijkstra uniform cost'],
+      ['greedy', 'greedy search', 'greedy best first'],
+    ].map(([key, name, kw]) => ({
+      title: `Plan the cart's routes with ${name}`,
+      keywords: `${kw} algorithm search pathfinding cart store`,
+      when: hasStore,
+      run: () => {
+        close();
+        window.floorDemo.setAlgo(key);
+      },
+    })),
+    { title: 'Turn the store lights off', keywords: 'closed night store sleep dark hours', href: '#closed', hidden: true },
+    { title: 'Open the store', keywords: 'open day store hours lights', href: '#open', hidden: true },
+    ...[
+      ['lunar', 'Lunar New Year'],
+      ['easter', 'Easter'],
+      ['midautumn', 'Mid-Autumn Festival'],
+      ['halloween', 'Halloween'],
+      ['christmas', 'Christmas'],
+    ].map(([key, name]) => ({ title: `Decorate the store for ${name}`, keywords: `season festival decorations ${key} ${name}`, href: `#${key}`, hidden: true })),
+    { title: 'Play with the Valorant predictor', keywords: 'valorant demo win probability model', href: '#valorant-win-probability' },
     repo && { title: "View this site's source on GitHub", keywords: 'code repository source github', href: repo, external: true },
     { title: 'Follow with RSS', keywords: 'rss feed subscribe', href: 'feed.xml' },
     { title: 'Show keyboard shortcuts', keywords: 'keys keyboard help shortcuts', hint: '?', run: () => showShortcuts(), stay: true },
@@ -204,11 +230,12 @@
 
   function render() {
     const q = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const usable = actions.filter((a) => !a.when || a.when());
     if (!q.length) {
       const latest = indexItems.filter((i) => i.group === 'Blog posts').slice(0, 3).map((i) => ({ ...i, group: 'Latest posts' }));
-      results = [...pages.slice(0, 6), ...latest, ...actions.slice(0, 6)];
+      results = [...pages.slice(0, 6), ...latest, ...usable.filter((a) => !a.hidden).slice(0, 6)];
     } else {
-      results = [...pages, ...indexItems, ...actions]
+      results = [...pages, ...indexItems, ...usable]
         .map((item) => ({ item, s: score(item, q) }))
         .filter((r) => r.s >= 0)
         .sort((a, b) => b.s - a.s)
@@ -224,7 +251,7 @@
             const head = !q.length && item.group !== lastGroup ? `<li class="palette__group" role="presentation">${esc(item.group)}</li>` : '';
             lastGroup = item.group;
             const tag = q.length ? `<span class="palette__kind">${esc(item.group.replace(/s$/, '').replace('Go to', 'Page').replace('Blog post', 'Post').replace('Action', 'Command'))}</span>` : '';
-            const hint = item.hint ? `<span class="palette__hint">${/^[a-z?] ?[a-z]?$/.test(item.hint) ? kbd(item.hint) : esc(item.hint)}</span>` : '';
+            const hint = item.hint ? `<span class="palette__hint">${/^([a-z?] ?[a-z]?|[1-9])$/.test(item.hint) ? kbd(item.hint) : esc(item.hint)}</span>` : '';
             return `${head}<li role="option" id="palette-opt-${i}" class="palette__opt" data-i="${i}" aria-selected="${i === active}"><span class="palette__title">${esc(title)}</span>${tag}${hint}</li>`;
           })
           .join('')
@@ -253,8 +280,13 @@
     if (href.startsWith('#')) {
       const target = document.getElementById(href.slice(1));
       if (target) {
+        if (target.tagName === 'DETAILS') target.open = true;
         target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
         history.replaceState(null, '', href);
+        return;
+      }
+      if (hasStore()) {
+        location.hash = href;
         return;
       }
     }
@@ -305,6 +337,7 @@
 
   // ---------- Shortcuts ----------
   const goMap = { h: '', p: 'projects/', b: 'blog/', n: 'now/', r: 'resume/' };
+  const numberMap = { 1: '', 2: 'projects/', 3: 'blog/', 4: 'now/', 5: 'resume/' };
   let gAt = 0;
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === 'k') {
@@ -321,6 +354,10 @@
       return;
     }
     gAt = 0;
+    if (numberMap[e.key] !== undefined && !e.shiftKey) {
+      location.href = link(numberMap[e.key]);
+      return;
+    }
     if (e.key === '/') { e.preventDefault(); open(); }
     else if (e.key === '?') { e.preventDefault(); open(); showShortcuts(); }
     else if (e.key === 't' && window.siteTheme) window.siteTheme.toggle();

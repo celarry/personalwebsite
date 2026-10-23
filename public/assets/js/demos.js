@@ -1,4 +1,4 @@
-// Interactive project demos on the homepage.
+// Interactive project demos, diagrams and the rows that open in place.
 
 /* ---------- Valorant round win probability ---------- */
 (() => {
@@ -173,15 +173,39 @@
 })();
 
 /* ---------- "Send the cart shopping" ---------- */
-(() => {
-  const btn = document.querySelector('[data-shop]');
-  if (!btn) return;
+document.querySelectorAll('[data-shop]').forEach((btn) =>
   btn.addEventListener('click', () => {
-    const hero = document.querySelector('[data-floor]');
+    const store = document.querySelector('[data-floor]');
+    if (!store || !window.floorDemo) return;
     const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    hero.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
-    setTimeout(() => window.floorDemo && window.floorDemo.shop(), smooth ? 500 : 0);
-  });
+    store.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+    setTimeout(() => window.floorDemo.shop(), smooth ? 450 : 0);
+  })
+);
+
+/* ---------- Rows that open in place: linkable as /#project-name ---------- */
+(() => {
+  const rows = [...document.querySelectorAll('details[data-row]')];
+  if (!rows.length) return;
+  // Hashes the store uses for previews; leave those alone.
+  const storeKeys = ['closed', 'open', 'shop', 'lunar', 'midautumn', 'christmas', 'halloween', 'easter'];
+  const openFromHash = (scroll) => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const row = id && rows.find((r) => r.id === id);
+    if (!row) return;
+    row.open = true;
+    if (scroll) row.scrollIntoView({ block: 'start' });
+  };
+  rows.forEach((row) =>
+    row.addEventListener('toggle', () => {
+      const current = location.hash.slice(1).toLowerCase();
+      if (storeKeys.includes(current)) return;
+      if (row.open) history.replaceState(null, '', `#${row.id}`);
+      else if (current === row.id) history.replaceState(null, '', location.pathname + location.search);
+    })
+  );
+  window.addEventListener('hashchange', () => openFromHash(true));
+  openFromHash(true);
 })();
 
 /* ---------- Project diagrams: step through with clicks or arrow keys ---------- */

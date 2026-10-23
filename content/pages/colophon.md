@@ -1,6 +1,6 @@
 ---
 title: How this site works
-summary: The build, the fonts, the shop floor at the top of the homepage, and the shortcuts.
+summary: The build, the type, the little store on the homepage, and the shortcuts.
 ---
 ## The build
 
@@ -12,20 +12,24 @@ Every commit to the main branch triggers a GitHub Actions workflow that runs the
 
 I write posts and update projects in [Pages CMS](https://pagescms.org), a web editor that saves straight to the GitHub repository. Each save is a commit, so the site rebuilds itself about a minute later.
 
-## The shop floor
+## The store
 
-The header on the homepage is a grid of 22-pixel cells (18 on phones). When the page loads, a script measures every line of text and every button in the header and marks those cells as blocked, then places shelves in the space that's left.
+The store on the homepage is a grid of 22-pixel squares (18 on phones), with numbered aisles at the back, a fruit stand, and a checkout where the cart parks. The cart plans each trip with A-star: eight directions of movement, an octile-distance heuristic, and no cutting corners around shelves. Filled squares are the ones the search expanded, revealed in the order it expanded them. Outlined squares were still waiting in the open set when it reached the goal.
 
-The cart plans with A-star: eight directions of movement, an octile-distance heuristic, and no cutting corners around shelves. Filled squares are cells the search expanded. Outlined squares are cells still waiting in the open set when it found the goal. The shopper wanders on their own route, and if they step onto one of the next few cells of the cart's path, the cart plans again.
+The switch under the store changes the search. Dijkstra is A-star without the guess at the distance left, so it spreads out evenly in every direction. Greedy search uses nothing but the guess, so it checks very few squares but can take the long way round. Same floor, same trip, different numbers.
 
-If your device asks for reduced motion, nothing animates: the search and route are drawn once, and clicking moves the cart straight to its destination.
+A shopper wanders the aisles on their own route. If they step onto one of the next few squares of the cart's path, the cart plans again. Give the cart something from the list and it fetches it, takes it to the checkout and prints a receipt, including how far it walked.
+
+The store keeps Melbourne hours. Between 10 pm and 7 am the lights go down and the cart sleeps by the checkout until someone wakes it. It also decorates itself for Lunar New Year, Easter, Mid-Autumn and Christmas, and for the week before Halloween.
+
+If your device asks for reduced motion, nothing animates: each search and route is drawn once, and the cart moves straight to where it's going.
 
 ## Type and colour
 
-Headings are set in [Anybody](https://fonts.google.com/specimen/Anybody), stretched to its widest. Body text is [Atkinson Hyperlegible Next](https://www.brailleinstitute.org/freefont/), designed by the Braille Institute for legibility, and numbers in the demos use its mono companion. All three are self-hosted.
+Headings and long-form writing are set in [Newsreader](https://fonts.google.com/specimen/Newsreader), a serif made for reading on screens. Everything else is [Atkinson Hyperlegible Next](https://www.brailleinstitute.org/freefont/), designed by the Braille Institute for legibility, with one change: I redrew its slashed zero as a plain one, so dates don't read like code. The receipt uses its mono companion. All of them are self-hosted.
 
-The colours come from a shop floor: pale floor vinyl, navy ink and a blue for routes.
+The colours come from a shop floor: pale floor vinyl, navy ink and one blue for routes.
 
 ## Privacy
 
-No analytics, no cookies and no trackers. The only thing stored in your browser is your light or dark theme choice, if you change it.
+No analytics, no cookies and no trackers. The only thing stored in your browser is your light or dark theme choice, if you change it. The contact form doesn't send anything by itself: it writes the email, and your own email app sends it.

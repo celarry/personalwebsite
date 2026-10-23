@@ -34,19 +34,15 @@ const asDate = (v, len) => {
   return String(v ?? '').slice(0, len);
 };
 
-const textOf = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
-
-// Render Markdown for a page `depth` folders deep. Site-absolute links (/blog/...,
-// /uploads/...) become relative so the site works at any address.
-function renderMarkdown(md, depth) {
-  const L = T.linker(depth, preview);
-  let html = marked.parse(md || '', { gfm: true, breaks: false });
-  html = html.replace(/(src|href)="\/(?!\/)([^"]*)"/g, (_, a, rest) => `${a}="${L(rest)}"`);
-  html = html.replace(/<img /g, '<img loading="lazy" ');
-  // Tables can be wider than a phone screen; let them scroll on their own.
-  html = html.replace(/<table>/g, '<div class="table-scroll"><table>').replace(/<\/table>/g, '</table></div>');
-  return html;
-}
+const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+const decode = (s) =>
+  s.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) => {
+    const k = e.toLowerCase();
+    if (k.startsWith('#x')) return String.fromCodePoint(parseInt(k.slice(2), 16));
+    if (k.startsWith('#')) return String.fromCodePoint(parseInt(k.slice(1), 10));
+    return ENTITIES[k] ?? m;
+  });
+const textOf = (html) => decode(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 
 const slugify = (s) =>
   String(s)
@@ -54,18 +50,69 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
+// Site-absolute links (/blog/..., /uploads/...) become relative so the site works at any address.
+const relativeLinks = (html, depth) => {
+  const L = T.linker(depth, preview);
+  return html.replace(/(src|href)="\/(?!\/)([^"]*)"/g, (_, a, rest) => `${a}="${L(rest)}"`);
+};
+
+// Render Markdown for a page `depth` folders deep.
+function renderMarkdown(md, depth) {
+  let html = relativeLinks(marked.parse(md || '', { gfm: true, breaks: false }), depth);
+  html = html.replace(/<img /g, '<img loading="lazy" ');
+  // Tables can be wider than a phone screen; let them scroll on their own.
+  html = html.replace(/<table>/g, '<div class="table-scroll"><table>').replace(/<\/table>/g, '</table></div>');
+  // Headings get an id and a small link, so any section can be linked to.
+  const ids = new Set();
+  html = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_, n, inner) => {
+    let id = slugify(textOf(inner)) || 'section';
+    for (let k = 2; ids.has(id); k++) id = `${slugify(textOf(inner))}-${k}`;
+    ids.add(id);
+    return `<h${n} id="${id}">${inner}<a class="anchor" href="#${id}" aria-label="Link to this section">#</a></h${n}>`;
+  });
+  return html;
+}
+
+// One line of Markdown (links, bold, italics), for short fields like the intro.
+const inlineMarkdown = (md, depth) => relativeLinks(marked.parseInline(String(md || '').trim()), depth);
+
+// The first sentence of a summary, for lists. Skips abbreviations like "Bros." so a
+// title such as Super Smash Bros. Ultimate stays in one piece.
+function splitLead(text) {
+  const s = String(text || '').trim();
+  const re = /[.!?](?=\s+[A-Z0-9"“‘(])/g;
+  let m;
+  while ((m = re.exec(s))) {
+    const head = s.slice(0, m.index + 1);
+    if (/\b(?:Bros|Mr|Mrs|Ms|Dr|St|vs|etc|Inc|Ltd|No|approx|e\.g|i\.e)\.$/i.test(head)) continue;
+    return [head, s.slice(m.index + 1).trim()];
+  }
+  return [s, ''];
+}
+
 const mdFiles = (dir) =>
   exists(dir) ? fs.readdirSync(path.join(root, dir)).filter((f) => /\.(md|markdown)$/i.test(f)) : [];
 
 // ---------- content ----------
 const site = loadYaml(read('content/site.yml')) || {};
+site.introHtml = inlineMarkdown(site.intro, 0);
+site.intro = decode(site.introHtml.replace(/<[^>]+>/g, '')).trim(); // plain text, for the resume
+site.offclock = (Array.isArray(site.offclock) ? site.offclock : [])
+  .filter((r) => r && r.label && r.text)
+  .map((r) => ({ label: String(r.label), text: String(r.text), html: inlineMarkdown(r.text, 0) }));
 
 // Projects
 const projects = mdFiles('content/projects')
   .map((file) => {
     const { data, body } = frontMatter(read(`content/projects/${file}`));
     const slug = slugify(file.replace(/\.(md|markdown)$/i, ''));
+    const summary = String(data.summary || '').trim();
+    // Lists show a short lead; the rest of the summary appears when a row is opened.
+    const [first, rest] = splitLead(summary);
+    const blurb = String(data.blurb || '').trim();
     return {
+      lead: blurb || first,
+      more: blurb ? summary : rest,
       slug,
       title: String(data.title || slug),
       featured: data.featured === true || data.featured === 'true',
@@ -76,7 +123,7 @@ const projects = mdFiles('content/projects')
       status: String(data.status || ''),
       team: String(data.team || ''),
       stack: T.list(data.stack),
-      summary: String(data.summary || ''),
+      summary,
       points: (data.points || []).map(String).filter(Boolean),
       repo: String(data.repo || ''),
       live: String(data.live || ''),

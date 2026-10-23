@@ -46,6 +46,6 @@ Forty-eight hours, five people, and one shopping cart that drives itself to the 
 
 I built the navigation. The store layout became a grid, and A-star worked out the shortest route between grocery locations. Then came the harder problem: people. Using ideas from the Dynamic Window Approach and Velocity Obstacles, the cart could spot something in its path and reroute around it in real time.
 
-## Try it
+## The version on this site
 
-The cart at the top of the homepage runs a simplified version in your browser: eight-directional A-star with an octile-distance heuristic, no cutting corners around shelves, and a wandering shopper that makes the cart replan when they step onto its route. I wrote more about it in [Why there's a shopping cart on my homepage](/blog/why-theres-a-shopping-cart-on-my-homepage/).
+The store above, which is also on the homepage, runs a simplified version in your browser: eight-directional A-star with an octile-distance heuristic, no cutting corners around shelves, and a wandering shopper that makes the cart replan when they step onto its route. Switch it to Dijkstra or greedy search to see why A-star was the right call: Dijkstra checks far more squares for the same route, and greedy search checks fewer but sometimes takes the long way round. I wrote more about it in [Why there's a shopping cart on my homepage](/blog/why-theres-a-shopping-cart-on-my-homepage/).

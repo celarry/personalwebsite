@@ -9,8 +9,9 @@ status: Running
 team: ''
 stack: HTML, CSS, JavaScript, Node.js, GitHub Actions, Pages CMS
 summary: >-
-  The site you're on. No framework: a small Node build script, an A* shop floor
-  in the header, a command palette, and a blog I write in a web editor.
+  The site you're on. No framework: a small Node build script, a corner store
+  where a cart plans routes with A*, a command palette, and a blog I write in a
+  web editor.
 points: []
 repo: https://github.com/rockminelaw/personalwebsite
 live: ''
@@ -34,4 +35,4 @@ log:
 ---
 ## How it's built
 
-See the [colophon](/colophon/) for the details: fonts, the build, the A-star floor and keyboard shortcuts.
+See the [colophon](/colophon/) for the details: the build, the type, the store on the homepage and the keyboard shortcuts.

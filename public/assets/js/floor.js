@@ -1,15 +1,17 @@
-// The shop floor in the hero: a cart that plans routes with A* around the page text,
-// and reroutes when a wandering shopper steps into its path.
+// The store: a cart that plans routes with A* (or Dijkstra, or greedy best-first, if you
+// switch it), and reroutes when a wandering shopper steps into its path.
 (() => {
-  const hero = document.querySelector('[data-floor]');
-  if (!hero) return;
-  const canvas = hero.querySelector('canvas');
+  const store = document.querySelector('[data-floor]');
+  if (!store) return;
+  const floorEl = store.querySelector('.store__floor');
+  const canvas = floorEl.querySelector('canvas');
   const ctx = canvas.getContext('2d');
-  const out = {
-    searched: hero.querySelector('[data-searched]'),
-    route: hero.querySelector('[data-route]'),
-    reroutes: hero.querySelector('[data-reroutes]'),
-  };
+  const readoutEl = store.querySelector('[data-readout]');
+  const captionEl = store.querySelector('[data-caption]');
+  const trayEl = store.querySelector('[data-tray]');
+  const algoEl = store.querySelector('[data-algo]');
+  const receiptEl = store.querySelector('[data-receipt]');
+  const liveEl = store.querySelector('[data-floor-live]');
   const reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reduce = reduceMq.matches;
 
@@ -19,7 +21,7 @@
   const OPEN_HOUR = 7;
   const CLOSE_HOUR = 22;
 
-  // Seasonal shop floors. Dates are for the festival day itself; each shows for a window around it.
+  // Seasonal stock. Dates are for the festival day itself; each shows for a window around it.
   const SEASONS = {
     lunar: {
       days: { 2027: '02-06', 2028: '01-26', 2029: '02-13', 2030: '02-03', 2031: '01-23', 2032: '02-11' },
@@ -59,7 +61,7 @@
     },
   };
   const TRAY = ['bubble tea', 'dumplings', 'Tim Tams', 'durian', 'mangoes'];
-  // Prices in Australian dollars, for the receipt.
+  // Prices in Australian dollars, for the tickets and the receipt.
   const PRICES = {
     'bubble tea': 7.5, dumplings: 12, 'Tim Tams': 5.5, durian: 24, mangoes: 5, mandarins: 4.5, mooncakes: 9.8, pavlova: 14,
     milk: 3.1, eggs: 6.2, rice: 9, tofu: 3.5, bread: 4.5, apples: 4.9, coffee: 11, noodles: 4.8, 'bok choy': 3.2,
@@ -71,11 +73,20 @@
   };
   const GRUMBLES = ['…fine.', 'it’s late.', 'one trip.', 'mm.', 'five more minutes', 'really?'];
 
+  // The three searches differ only in how they rank the next square to look at:
+  // distance travelled (g), a guess at the distance left (h), or both.
+  const ALGOS = {
+    astar: { name: 'A*', wg: 1, wh: 1, note: 'It heads for the goal but still guarantees the shortest route.' },
+    dijkstra: { name: 'Dijkstra', wg: 1, wh: 0, note: 'It ignores where the goal is, so it spreads out in every direction.' },
+    greedy: { name: 'Greedy search', wg: 0, wh: 1, note: 'It rushes at the goal and checks very little, but the route can come out longer.' },
+  };
+  let algo = 'astar';
+
   const hash = () => location.hash.slice(1).toLowerCase();
   function localParts(d = new Date()) {
     const f = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' });
     const o = Object.fromEntries(f.formatToParts(d).map((p) => [p.type, p.value]));
-    return { y: Number(o.year), md: `${o.month}-${o.day}`, m: Number(o.month), d: Number(o.day), h: Number(o.hour) };
+    return { y: Number(o.year), m: Number(o.month), d: Number(o.day), h: Number(o.hour) };
   }
   function isClosed() {
     if (hash() === 'closed') return true;
@@ -112,8 +123,10 @@
 
   // Grid state
   let W = 0, H = 0, DPR = 1, CELL = 22, cols = 0, rows = 0, ox = 0, oy = 0;
-  let grid = new Uint8Array(0); // 0 free, 1 shelf, 2 text, 3 reserved
+  let grid = new Uint8Array(0); // 0 free, 1 shelf, 3 unreachable, 4 counter or display
   let shelves = [];
+  let fixtures = []; // the checkout counter and display tables
+  let aisles = []; // { x, n } aisle numbers along the back wall
   let staticLayer = null;
   let colors = {};
 
@@ -122,9 +135,9 @@
   const shopper = { x: 0, y: 0, cell: 0, path: [], pi: 0, pause: 0 };
   let items = [];
   let listIndex = 0;
-  let explored = { cells: [], t0: 0 };
+  let explored = { cells: [], frontier: [], t0: 0, reveal: 0 };
   let pin = null;
-  let stats = { searched: 0, route: 0, reroutes: 0 };
+  let stats = { searched: 0, route: 0, reroutes: 0, algo: 'astar' };
   let parkCell = -1;
   let bubble = null; // { text, until }
   let order = null; // the visitor's own shopping trip
@@ -137,12 +150,13 @@
   const cx = (i) => ox + colOf(i) * CELL + CELL / 2;
   const cy = (i) => oy + rowOf(i) * CELL + CELL / 2;
   const inb = (c, r) => c >= 0 && r >= 0 && c < cols && r < rows;
+  const LABEL_FONT = (px) => `600 ${px}px "Atkinson Hyperlegible Next", system-ui, sans-serif`;
 
   function readColors() {
     const s = getComputedStyle(document.documentElement);
     const v = (n) => s.getPropertyValue(n).trim();
-    colors = { paper: v('--paper'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), route: v('--route'), red: v('--atk'), gold: v('--festive'), pumpkin: v('--pumpkin') };
-    const [r, g, b] = hexToRgb(colors.paper);
+    colors = { paper: v('--paper'), panel: v('--panel'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), sunk: v('--sunk'), route: v('--route'), red: v('--atk'), gold: v('--festive'), pumpkin: v('--pumpkin') };
+    const [r, g, b] = hexToRgb(colors.panel);
     colors.dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 128;
   }
 
@@ -156,23 +170,7 @@
     return `rgba(${r},${g},${b},${a})`;
   };
 
-  // ---------- Building the floor ----------
-  function markRect(x, y, w, h, val, pad) {
-    const c0 = Math.floor((x - ox) / CELL) - pad;
-    const r0 = Math.floor((y - oy) / CELL) - pad;
-    const c1 = Math.floor((x + w - ox - 0.01) / CELL) + pad;
-    const r1 = Math.floor((y + h - oy - 0.01) / CELL) + pad;
-    for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) if (inb(c, r) && grid[idx(c, r)] === 0) grid[idx(c, r)] = val;
-  }
-
-  function obstacleRects(el) {
-    if (el.dataset.obstacle === 'box') return [el.getBoundingClientRect()];
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const rects = Array.from(range.getClientRects()).filter((r) => r.width > 1 && r.height > 1);
-    return rects.length ? rects : [el.getBoundingClientRect()];
-  }
-
+  // ---------- Building the store ----------
   function regionFree(c, r, w, h, margin) {
     for (let y = r - margin; y < r + h + margin; y++)
       for (let x = c - margin; x < c + w + margin; x++) {
@@ -182,35 +180,44 @@
     return true;
   }
 
-  function placeShelves() {
-    shelves = [];
-    const wide = W >= 760;
-    // Keep the left margin clear: shelves start at the text's left edge.
-    let minCol = cols;
-    for (let i = 0; i < grid.length; i++) if (grid[i] === 2) minCol = Math.min(minCol, colOf(i));
-    const startCol = wide && minCol < cols ? Math.max(2, minCol) : 2;
-    if (wide) {
-      const sw = 2;
-      const sh = Math.max(4, Math.min(8, Math.round(rows * 0.2)));
-      for (let r = 2; r + sh <= rows - 2; r += sh + 3) {
-        for (let c = startCol; c + sw <= cols - 2; c += sw + 5) {
-          if (regionFree(c, r, sw, sh, 1)) shelves.push({ c, r, w: sw, h: sh });
-        }
-      }
-    } else {
-      const sh = 1;
-      const sw = 5;
-      let row = 0;
-      for (let r = 2; r + sh <= rows - 2; r += sh + 3, row++) {
-        for (let c = 1 + (row % 2) * 3; c + sw <= cols - 1; c += sw + 3) {
-          if (regionFree(c, r, sw, sh, 1)) shelves.push({ c, r, w: sw, h: sh });
-        }
-      }
-    }
-    for (const s of shelves) for (let r = s.r; r < s.r + s.h; r++) for (let c = s.c; c < s.c + s.w; c++) grid[idx(c, r)] = 1;
+  function fill(rect, val) {
+    for (let r = rect.r; r < rect.r + rect.h; r++) for (let c = rect.c; c < rect.c + rect.w; c++) if (inb(c, r)) grid[idx(c, r)] = val;
   }
 
-  // Text boxes can wall off little pockets of floor. Block everything outside the largest
+  // Aisles at the back, the checkout and a display table at the front.
+  function layOut() {
+    shelves = [];
+    fixtures = [];
+    aisles = [];
+    if (cols >= 26) {
+      // Long shelves in pairs of aisles, split by a cross aisle.
+      const usable = rows - 4;
+      const topH = Math.max(3, Math.floor((usable - 2) / 2));
+      const botH = Math.max(3, usable - 2 - topH);
+      let n = 1;
+      for (let c = 3; c + 2 <= cols - 11; c += 6, n++) {
+        shelves.push({ c, r: 2, w: 2, h: topH });
+        shelves.push({ c, r: 2 + topH + 2, w: 2, h: botH });
+        aisles.push({ x: ox + (c + 1) * CELL, n });
+      }
+      fixtures.push({ kind: 'counter', c: cols - 4, r: rows - 7, w: 1, h: 4 });
+      fixtures.push({ kind: 'display', c: cols - 10, r: 3, w: 3, h: 2 });
+      parkCell = idx(cols - 6, rows - 5);
+    } else {
+      // Phones: short shelves across the floor, checkout at the bottom.
+      let row = 0;
+      for (let r = 2; r <= rows - 7; r += 3, row++) {
+        for (let c = 1 + (row % 2) * 3; c + 5 <= cols - 1; c += 8) shelves.push({ c, r, w: 5, h: 1 });
+      }
+      fixtures.push({ kind: 'counter', c: cols - 3, r: rows - 6, w: 1, h: 3 });
+      parkCell = idx(cols - 5, rows - 5);
+    }
+    shelves = shelves.filter((s) => s.r + s.h <= rows - 1 && s.c + s.w <= cols);
+    for (const s of shelves) fill(s, 1);
+    for (const f of fixtures) fill(f, 4);
+  }
+
+  // Shelves can wall off little pockets of floor. Block everything outside the largest
   // open area so the cart, shopper and items always share one connected floor.
   function keepLargestRegion() {
     const comp = new Int32Array(cols * rows).fill(-1);
@@ -235,7 +242,8 @@
   }
 
   function nearestFree(start, avoid) {
-    if (start >= 0 && grid[start] === 0 && !(avoid && avoid(start))) return start;
+    if (start < 0 || start >= grid.length) return -1;
+    if (grid[start] === 0 && !(avoid && avoid(start))) return start;
     const seen = new Uint8Array(cols * rows);
     const q = [start];
     seen[start] = 1;
@@ -274,17 +282,19 @@
   function spawnItem() {
     if (closed) return;
     const taken = new Set(items.map((it) => it.cell));
-    let cands = freeCells((i) => nextToShelf(i) && !taken.has(i) && dist(i, cart.cell) > 6 && items.every((it) => dist(i, it.cell) > 5));
-    if (!cands.length) cands = freeCells((i) => !taken.has(i) && dist(i, cart.cell) > 4);
+    // Not in the top row, where the aisle numbers are.
+    let cands = freeCells((i) => rowOf(i) > 1 && nextToShelf(i) && !taken.has(i) && dist(i, cart.cell) > 6 && items.every((it) => dist(i, it.cell) > 5));
+    if (!cands.length) cands = freeCells((i) => rowOf(i) > 1 && !taken.has(i) && dist(i, cart.cell) > 4);
     if (!cands.length) return;
     const name = SHOPPING_LIST[listIndex++ % SHOPPING_LIST.length];
     items.push({ cell: pick(cands), name });
   }
 
   function build() {
-    const rect = hero.getBoundingClientRect();
-    W = rect.width;
-    H = rect.height;
+    const rect = floorEl.getBoundingClientRect();
+    W = floorEl.clientWidth;
+    H = floorEl.clientHeight;
+    if (W < 40 || H < 40 || !rect.width) return false;
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);
@@ -295,23 +305,20 @@
     oy = (H - rows * CELL) / 2;
     grid = new Uint8Array(cols * rows);
 
-    hero.querySelectorAll('[data-obstacle]').forEach((el) => {
-      const isText = el.dataset.obstacle !== 'box';
-      for (const r of obstacleRects(el)) markRect(r.left - rect.left, r.top - rect.top, r.width, r.height, isText ? 2 : 3, isText ? 0 : 0);
-    });
-    placeShelves();
+    layOut();
     keepLargestRegion();
 
-    // Cart starts near the bottom right, the shopper somewhere else.
-    cart.cell = nearestFree(idx(Math.max(1, cols - 4), Math.max(1, rows - 4)));
+    // The cart lives by the checkout.
+    parkCell = nearestFree(parkCell);
+    cart.cell = parkCell;
     if (cart.cell < 0) return false;
-    parkCell = cart.cell;
     cart.x = cx(cart.cell);
     cart.y = cy(cart.cell);
     cart.path = [];
     cart.pi = 0;
+    cart.goal = -1;
     cart.mode = closed ? 'sleep' : 'shop';
-    cart.wait = 0.4;
+    cart.wait = 0.6;
     cart.item = null;
     cart.retry = -1;
     order = null;
@@ -322,11 +329,12 @@
     shopper.x = cx(shopper.cell);
     shopper.y = cy(shopper.cell);
     shopper.path = [];
+    shopper.pi = 0;
     shopper.pause = 0.5;
 
     items = [];
     for (let k = 0; k < 3; k++) spawnItem();
-    explored = { cells: [], t0: 0 };
+    explored = { cells: [], frontier: [], t0: 0, reveal: 0 };
     pin = null;
     renderStatic();
     return true;
@@ -340,34 +348,75 @@
     const g = staticLayer.getContext('2d');
     g.setTransform(DPR, 0, 0, DPR, 0, 0);
     g.clearRect(0, 0, W, H);
-    // Floor dots, skipped under text so the words stay clean.
-    g.fillStyle = colors.rule;
+    // Floor tiles: a dot at the centre of each free cell.
+    g.fillStyle = rgba(colors.ink3, colors.dark ? 0.32 : 0.26);
     for (let r = 0; r < rows; r++)
       for (let c = 0; c < cols; c++) {
-        const v = grid[idx(c, r)];
-        if (v === 2 || v === 3 || v === 1) continue;
+        if (grid[idx(c, r)] !== 0 && grid[idx(c, r)] !== 3) continue;
         g.beginPath();
-        g.arc(ox + c * CELL + CELL / 2, oy + r * CELL + CELL / 2, 1.1, 0, Math.PI * 2);
+        g.arc(ox + c * CELL + CELL / 2, oy + r * CELL + CELL / 2, 1, 0, Math.PI * 2);
         g.fill();
       }
-    // Shelves
+    // Shelves, with product facings.
     for (const s of shelves) {
       const x = ox + s.c * CELL + 2, y = oy + s.r * CELL + 2, w = s.w * CELL - 4, h = s.h * CELL - 4;
       g.fillStyle = colors.shelf;
       g.strokeStyle = colors.rule;
       g.lineWidth = 1;
-      roundRect(g, x, y, w, h, 4);
+      roundRect(g, x, y, w, h, 3);
       g.fill();
       g.stroke();
-      // Product facings along the shelf
-      g.strokeStyle = colors.rule;
       g.beginPath();
       if (s.h > s.w) {
+        g.moveTo(x + w / 2, y + 4);
+        g.lineTo(x + w / 2, y + h - 4);
         for (let yy = y + CELL * 0.75; yy < y + h - 4; yy += CELL * 0.75) { g.moveTo(x + 4, yy); g.lineTo(x + w - 4, yy); }
       } else {
         for (let xx = x + CELL * 0.75; xx < x + w - 4; xx += CELL * 0.75) { g.moveTo(xx, y + 4); g.lineTo(xx, y + h - 4); }
       }
       g.stroke();
+    }
+    // Aisle numbers along the back wall.
+    g.font = LABEL_FONT(CELL < 20 ? 10 : 11);
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillStyle = colors.ink3;
+    for (const a of aisles) g.fillText(String(a.n), a.x, oy + CELL);
+    // The checkout counter and the display table.
+    for (const f of fixtures) {
+      const x = ox + f.c * CELL + 2, y = oy + f.r * CELL + 2, w = f.w * CELL - 4, h = f.h * CELL - 4;
+      g.fillStyle = f.kind === 'counter' ? rgba(colors.ink, colors.dark ? 0.32 : 0.14) : colors.shelf;
+      g.strokeStyle = f.kind === 'counter' ? rgba(colors.ink, 0.35) : colors.rule;
+      g.lineWidth = 1;
+      roundRect(g, x, y, w, h, 3);
+      g.fill();
+      g.stroke();
+      if (f.kind === 'counter') {
+        // The belt, the till at the far end, and a label.
+        g.strokeStyle = rgba(colors.ink, 0.18);
+        g.beginPath();
+        for (let yy = y + 16; yy < y + h - 3; yy += 5) { g.moveTo(x + 3, yy); g.lineTo(x + w - 3, yy); }
+        g.stroke();
+        g.fillStyle = rgba(colors.ink, colors.dark ? 0.6 : 0.5);
+        roundRect(g, x + w / 2 - 5, y + 4, 10, 8, 2);
+        g.fill();
+        g.fillStyle = colors.ink3;
+        g.font = LABEL_FONT(CELL < 20 ? 10 : 11);
+        g.textAlign = 'center';
+        g.fillText('Checkout', Math.min(W - 30, x + w / 2), y - 9);
+      } else {
+        // A fruit stand: a few rows of produce.
+        const fruit = ['#e0913a', '#8fb453', '#d8574a', '#e8c547', '#8fb453', '#e0913a'];
+        const r = Math.min(4, CELL * 0.17);
+        let k = 0;
+        for (let yy = y + r + 4; yy <= y + h - r - 3; yy += r * 2 + 3)
+          for (let xx = x + r + 4; xx <= x + w - r - 3; xx += r * 2 + 3) {
+            g.fillStyle = rgba(fruit[k++ % fruit.length], colors.dark ? 0.75 : 0.85);
+            g.beginPath();
+            g.arc(xx, yy, r, 0, Math.PI * 2);
+            g.fill();
+          }
+      }
     }
     drawDecor(g);
   }
@@ -534,18 +583,22 @@
     g.closePath();
   }
 
-  // ---------- A* ----------
-  function astar(start, goal, dynBlocked) {
+  // ---------- Search ----------
+  // One function for all three: f = wg·g + wh·h. Greedy search never revisits a square
+  // once it has a parent, which is why its routes can wander.
+  function search(start, goal, dynBlocked, mode = 'astar') {
+    const { wg, wh } = ALGOS[mode];
+    const greedy = wg === 0;
     const N = cols * rows;
     const gScore = new Float32Array(N).fill(Infinity);
     const came = new Int32Array(N).fill(-1);
-    const closed = new Uint8Array(N);
+    const done = new Uint8Array(N);
     const heap = [];
     const order = [];
     const gc = colOf(goal), gr = rowOf(goal);
     const hfn = (i) => {
       const dx = Math.abs(colOf(i) - gc), dy = Math.abs(rowOf(i) - gr);
-      return (dx + dy + (SQRT2 - 2) * Math.min(dx, dy)) * 1.001;
+      return (dx + dy + (SQRT2 - 2) * Math.min(dx, dy)) * 1.001; // octile distance, ties broken towards the goal
     };
     const blocked = (i) => grid[i] !== 0 || (dynBlocked && i !== goal && i !== start && dynBlocked(i));
     const push = (i, f) => {
@@ -577,12 +630,12 @@
       return top;
     };
     gScore[start] = 0;
-    push(start, hfn(start));
+    push(start, wh * hfn(start));
     let found = start === goal;
     while (heap.length && !found) {
       const [, cur] = pop();
-      if (closed[cur]) continue;
-      closed[cur] = 1;
+      if (done[cur]) continue;
+      done[cur] = 1;
       order.push(cur);
       if (cur === goal) { found = true; break; }
       const c = colOf(cur), r = rowOf(cur);
@@ -590,19 +643,18 @@
         const nc = c + dx, nr = r + dy;
         if (!inb(nc, nr)) continue;
         const n = idx(nc, nr);
-        if (closed[n] || blocked(n)) continue;
+        if (done[n] || blocked(n)) continue;
         if (dx && dy && (blocked(idx(c + dx, r)) || blocked(idx(c, r + dy)))) continue; // no corner cutting
         const ng = gScore[cur] + cost;
-        if (ng < gScore[n]) {
-          gScore[n] = ng;
-          came[n] = cur;
-          push(n, ng + hfn(n));
-        }
+        if (greedy ? gScore[n] !== Infinity : ng >= gScore[n]) continue;
+        gScore[n] = ng;
+        came[n] = cur;
+        push(n, wg * ng + wh * hfn(n));
       }
     }
-    // Cells that were discovered but never expanded: the open set when the search stopped.
+    // Squares that were discovered but never expanded: the open set when the search stopped.
     const frontier = [];
-    for (let i = 0; i < N; i++) if (gScore[i] !== Infinity && !closed[i]) frontier.push(i);
+    for (let i = 0; i < N; i++) if (gScore[i] !== Infinity && !done[i]) frontier.push(i);
     if (!found) return { path: null, order, frontier };
     const path = [goal];
     let k = goal;
@@ -611,21 +663,29 @@
     return { path, order, frontier };
   }
 
+  const routeLength = (path) => {
+    let d = 0;
+    for (let k = 1; k < path.length; k++) d += colOf(path[k]) !== colOf(path[k - 1]) && rowOf(path[k]) !== rowOf(path[k - 1]) ? SQRT2 : 1;
+    return d;
+  };
+
   function shopperBlocks(i) {
     return Math.abs(colOf(i) - colOf(shopper.cell)) <= 1 && Math.abs(rowOf(i) - rowOf(shopper.cell)) <= 1;
   }
 
   function plan(goal, { reroute = false } = {}) {
     if (goal < 0) return false;
-    const res = astar(cart.cell, goal, shopperBlocks);
-    explored = { cells: res.order, frontier: res.frontier, t0: performance.now() };
+    const res = search(cart.cell, goal, shopperBlocks, algo);
+    const reveal = reduce ? 0 : Math.min(1100, 240 + res.order.length * 0.9);
+    explored = { cells: res.order, frontier: res.frontier, t0: performance.now(), reveal };
     stats.searched = res.order.length;
+    stats.algo = algo;
     if (order) order.searched += res.order.length;
     if (!res.path) {
       cart.path = [];
       updateReadout();
-      if (!astar(cart.cell, goal).path) {
-        // Walled in by shelves or text: drop this goal and move on.
+      if (!search(cart.cell, goal).path) {
+        // Walled in: drop this goal and move on.
         cart.retry = -1;
         if (cart.item && cart.item.cell === goal) {
           const lost = cart.item;
@@ -648,8 +708,8 @@
     cart.pi = 1;
     cart.goal = goal;
     // Let people watch the search before the cart moves.
-    cart.wait = reroute ? 0.15 : 0.55;
-    stats.route = res.path.length - 1;
+    cart.wait = reroute ? 0.12 + reveal / 2000 : 0.15 + reveal / 1000;
+    stats.route = routeLength(res.path);
     if (reroute) stats.reroutes++;
     updateReadout();
     if (reduce) {
@@ -663,7 +723,7 @@
 
   function nextItem() {
     const mine = items.filter((it) => it.mine);
-    if (!mine.length && order) return finishOrder();
+    if (!mine.length && order) return headToCheckout();
     if (!mine.length && closed) return goHome();
     if (!items.length) spawnItem();
     // Head for the closest item: the visitor's own picks first.
@@ -691,16 +751,29 @@
     if (!plan(parkCell) || reduce) cart.mode = 'sleep';
   }
 
+  // With the visitor's items on board, the cart goes back to the till to print a receipt.
+  function headToCheckout() {
+    cart.item = null;
+    pin = null;
+    if (cart.cell === parkCell || parkCell < 0) return finishOrder();
+    cart.mode = 'checkout';
+    if (!plan(parkCell) || reduce) finishOrder();
+  }
+
   function grumble() {
     if (!closed) return;
     const lines = (season && SEASONS[season].grumbles) || GRUMBLES;
     bubble = { text: lines[(Math.random() * lines.length) | 0], until: performance.now() + 2600 };
   }
 
+  const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
   function updateReadout() {
-    if (out.searched) out.searched.textContent = stats.searched;
-    if (out.route) out.route.textContent = stats.route;
-    if (out.reroutes) out.reroutes.textContent = stats.reroutes;
+    if (!readoutEl || !stats.searched) return;
+    const a = ALGOS[stats.algo];
+    // Each square is about half a metre, the same scale as the receipt.
+    const route = stats.route ? ` and found a route ${(stats.route * 0.5).toFixed(1)} metres long` : '';
+    const rr = stats.reroutes ? ` The shopper has made it reroute ${stats.reroutes === 1 ? 'once' : plural(stats.reroutes, 'time')}.` : '';
+    readoutEl.innerHTML = `<b>${a.name}</b> checked <b>${stats.searched}</b> squares${route}. ${a.note}${rr}`;
   }
 
   // ---------- Simulation ----------
@@ -725,10 +798,10 @@
     if (closed) return;
     if (shopper.pause > 0) { shopper.pause -= dt; return; }
     if (shopper.pi >= shopper.path.length) {
-      // Wander to a nearby aisle cell.
-      const cands = freeCells((i) => { const d = dist(i, shopper.cell); return d > 4 && d < 14 && !shopperBlocksCart(i); });
+      // Wander to a nearby aisle.
+      const cands = freeCells((i) => { const d = dist(i, shopper.cell); return d > 4 && d < 14 && i !== cart.cell; });
       if (!cands.length) { shopper.pause = 1; return; }
-      const res = astar(shopper.cell, pick(cands));
+      const res = search(shopper.cell, pick(cands));
       if (res.path) { shopper.path = res.path; shopper.pi = 1; } else shopper.pause = 0.6;
       return;
     }
@@ -740,7 +813,6 @@
     }
     if (moveAlong(shopper, 1.5, dt) === 'done') shopper.pause = 0.6 + Math.random() * 1.4;
   }
-  const shopperBlocksCart = (i) => i === cart.cell;
 
   function updateCart(dt) {
     if (cart.mode === 'sleep') return;
@@ -779,6 +851,11 @@
       cart.path = [];
       return;
     }
+    if (cart.mode === 'checkout') {
+      cart.path = [];
+      finishOrder();
+      return;
+    }
     if (cart.mode === 'pin') {
       cart.mode = 'idle';
       cart.wait = closed ? 1 : 1.6;
@@ -815,12 +892,11 @@
       hideReceipt();
     }
     live(`Added ${name}. The cart is on its way.`);
-    if (cart.mode === 'sleep' || cart.mode === 'home' || cart.mode === 'idle' || cart.mode === 'shop') {
+    if (['sleep', 'home', 'idle', 'shop', 'checkout'].includes(cart.mode)) {
       grumble();
       cart.path = [];
       cart.wait = closed ? 0.6 : 0.2;
-      if (cart.mode === 'sleep' || cart.mode === 'home') cart.mode = 'idle';
-      if (cart.mode === 'shop') cart.mode = 'idle';
+      cart.mode = 'idle';
     }
     if (reduce) runInstant();
   }
@@ -834,8 +910,8 @@
       else if (cart.item) { const lost = cart.item; items = items.filter((it) => it !== lost); order.skipped.push(lost.name); cart.item = null; }
     }
     if (order) {
-      travelled = order.got.length * CELL * 8; // rough distance; there was no movement to measure
-      finishOrder();
+      travelled = order.got.length * CELL * 8; // a rough distance; nothing moved to measure
+      headToCheckout();
     }
     draw(performance.now());
   }
@@ -844,14 +920,15 @@
     const o = order;
     order = null;
     if (o && o.got.length) printReceipt(o);
-    if (closed) goHome();
-    else if (!reduce) { cart.mode = 'shop'; cart.wait = 0.8; cart.path = []; }
+    if (closed) {
+      if (cart.cell === parkCell) { cart.mode = 'sleep'; cart.path = []; }
+      else goHome();
+    } else if (!reduce) { cart.mode = 'shop'; cart.wait = 1.2; cart.path = []; }
   }
 
-  const receiptEl = hero.querySelector('[data-receipt]');
-  const liveEl = hero.querySelector('[data-floor-live]');
   const live = (t) => { if (liveEl) liveEl.textContent = t; };
   const money = (n) => n.toFixed(2);
+  const escHtml = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   function hideReceipt() {
     if (receiptEl) receiptEl.hidden = true;
   }
@@ -865,12 +942,11 @@
     const when = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: TZ })
       .format(new Date())
       .replace(/\s?([ap])m$/i, ' $1m');
-    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-    const row = (a, b, cls = '') => `<p class="receipt__row ${cls}"><span>${esc(a)}</span><span>${esc(b)}</span></p>`;
+    const row = (a, b, cls = '') => `<p class="receipt__row ${cls}"><span>${escHtml(a)}</span><span>${escHtml(b)}</span></p>`;
     receiptEl.innerHTML = `<div class="receipt__paper">
       <p class="receipt__store">Lawrence’s</p>
-      <p class="receipt__sub">Corner store, ${esc(PLACE)}</p>
-      <p class="receipt__sub">${esc(when)}</p>
+      <p class="receipt__sub">Corner store, ${escHtml(PLACE)}</p>
+      <p class="receipt__sub">${escHtml(when)}</p>
       <hr>
       ${lines.map((l) => row(l.n, money(l.p))).join('')}
       <hr>
@@ -878,11 +954,11 @@
       ${row('Includes GST', money(total / 11))}
       <hr>
       ${row('Walked', `${metres.toFixed(1)} m`)}
-      ${row('Cells searched', o.searched)}
+      ${row('Squares searched', o.searched)}
       ${row('Reroutes', stats.reroutes - o.reroutes)}
-      ${row('Cashier', 'A*')}
+      ${row('Cashier', ALGOS[algo].name.replace(' search', ''))}
       ${o.night ? '<p class="receipt__note">After-hours service. The cart would like you to know it was asleep.</p>' : ''}
-      ${o.skipped.length ? `<p class="receipt__note">Couldn’t reach: ${esc(o.skipped.join(', '))}.</p>` : ''}
+      ${o.skipped.length ? `<p class="receipt__note">Couldn’t reach: ${escHtml(o.skipped.join(', '))}.</p>` : ''}
       <p class="receipt__thanks">Thanks for shopping!</p>
     </div>
     <button type="button" class="receipt__done" data-receipt-done>Done</button>`;
@@ -891,7 +967,7 @@
     void receiptEl.offsetWidth;
     receiptEl.classList.add('is-printing');
     receiptEl.querySelector('[data-receipt-done]').addEventListener('click', hideReceipt);
-    live(`Receipt printed: ${o.got.length} item${o.got.length === 1 ? '' : 's'}, total $${money(total)}.`);
+    live(`Receipt printed: ${plural(o.got.length, 'item')}, total $${money(total)}.`);
   }
 
   // ---------- Drawing ----------
@@ -901,11 +977,11 @@
     if (staticLayer) ctx.drawImage(staticLayer, 0, 0);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-    // Cells A* looked at: revealed in search order, then fading.
+    // Squares the search looked at: revealed in the order it expanded them, then fading.
     const cells = explored.cells;
+    const reveal = explored.reveal;
     if (cells.length) {
       const age = now - explored.t0;
-      const reveal = reduce ? 0 : 420;
       const fade = reduce ? Infinity : 1700;
       for (let k = 0; k < cells.length; k++) {
         const at = (k / cells.length) * reveal;
@@ -928,7 +1004,7 @@
     }
 
     // Route still to travel
-    const searchDone = reduce || now - explored.t0 > 420;
+    const searchDone = reduce || now - explored.t0 > reveal;
     if (searchDone && cart.path.length && (cart.pi < cart.path.length || reduce)) {
       ctx.strokeStyle = colors.route;
       ctx.lineWidth = 2.5;
@@ -946,7 +1022,7 @@
     }
 
     // Items
-    ctx.font = `600 ${CELL < 20 ? 11 : 12}px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
+    ctx.font = LABEL_FONT(CELL < 20 ? 11 : 12);
     ctx.textBaseline = 'middle';
     for (const it of items) {
       const x = cx(it.cell), y = cy(it.cell);
@@ -959,10 +1035,10 @@
         ctx.strokeRect(x - 8, y - 8, 16, 16);
       }
       const tw = ctx.measureText(it.name).width;
-      const right = x + 10 + tw < W - 6;
-      ctx.fillStyle = rgba(colors.paper, 0.85);
+      const right = x + 12 + tw < W - 6;
+      ctx.fillStyle = rgba(colors.panel, 0.88);
       ctx.fillRect(right ? x + 8 : x - 12 - tw, y - 8, tw + 4, 16);
-      ctx.fillStyle = target || it.mine ? colors.ink : colors.ink3;
+      ctx.fillStyle = target || it.mine ? colors.ink : colors.ink2;
       ctx.textAlign = right ? 'left' : 'right';
       ctx.fillText(it.name, right ? x + 10 : x - 10, y + 0.5);
     }
@@ -981,7 +1057,7 @@
       ctx.stroke();
     }
 
-    // Shopper (gone home when the shop is closed)
+    // Shopper (gone home when the store is closed)
     if (!closed) {
       ctx.strokeStyle = colors.ink2;
       ctx.lineWidth = 2;
@@ -992,7 +1068,7 @@
 
     // Lights off: dim the floor, leaving a pool of light around the cart.
     if (closed) {
-      const shade = colors.dark ? 'rgba(0,0,0,0.32)' : 'rgba(18,26,44,0.11)';
+      const shade = colors.dark ? 'rgba(0,0,0,0.34)' : 'rgba(18,26,44,0.12)';
       const grad = ctx.createRadialGradient(cart.x, cart.y, CELL * 1.2, cart.x, cart.y, CELL * 5);
       grad.addColorStop(0, 'rgba(0,0,0,0)');
       grad.addColorStop(1, shade);
@@ -1013,7 +1089,7 @@
 
     if (closed) drawClosedSign();
     if (cart.mode === 'sleep') {
-      ctx.font = `600 ${CELL < 20 ? 11 : 12}px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
+      ctx.font = LABEL_FONT(CELL < 20 ? 11 : 12);
       ctx.textAlign = 'left';
       ctx.fillStyle = colors.ink3;
       for (let k = 0; k < 3; k++) {
@@ -1024,11 +1100,11 @@
       ctx.globalAlpha = 1;
     }
     if (bubble && now < bubble.until) {
-      ctx.font = `600 ${CELL < 20 ? 11 : 12}px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
+      ctx.font = LABEL_FONT(CELL < 20 ? 11 : 12);
       const tw = ctx.measureText(bubble.text).width;
       const bx = Math.min(W - tw - 18, Math.max(6, cart.x - tw / 2 - 7));
-      const by = cart.y - CELL * 1.5 - 10;
-      ctx.fillStyle = colors.paper;
+      const by = Math.max(6, cart.y - CELL * 1.5 - 10);
+      ctx.fillStyle = colors.panel;
       ctx.strokeStyle = colors.ink3;
       ctx.lineWidth = 1;
       roundRect(ctx, bx, by, tw + 14, 20, 10);
@@ -1040,56 +1116,57 @@
     }
   }
 
-  // A little hanging sign above the cart's parking spot.
+  // A little hanging sign near the checkout.
   function drawClosedSign() {
     if (parkCell < 0) return;
     const x0 = cx(parkCell), y0 = cy(parkCell);
     ctx.save();
-    ctx.font = `760 15px Anybody, system-ui, sans-serif`;
     const t1 = 'Closed';
     const t2 = `Opens ${OPEN_HOUR} am`;
+    ctx.font = '400 18px "Newsreader Display", Georgia, serif';
     const w1 = ctx.measureText(t1).width;
-    ctx.font = `600 11px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
+    ctx.font = LABEL_FONT(11);
     const w2 = ctx.measureText(t2).width;
-    const w = Math.max(w1, w2) + 22, h = 42;
-    // Try above the cart, then below, then either side; skip the sign rather than cover any text.
+    const w = Math.max(w1, w2) + 24, h = 44;
+    // Try to the left of the cart, then above, then below, keeping clear of the
+    // fixtures and their labels; skip the sign if nothing fits.
     const spots = [
-      [x0 - w / 2, y0 - CELL * 2.4 - h],
+      [x0 - w - CELL * 1.2, y0 - h / 2 - CELL * 0.6],
+      [x0 - w / 2, y0 - CELL * 2.6 - h],
       [x0 - w / 2, y0 + CELL * 1.6],
-      [x0 - w - CELL * 1.2, y0 - h / 2],
-      [x0 + CELL * 1.2, y0 - h / 2],
     ];
-    const clear = (x, y) => {
-      if (x < 6 || y < 14 || x + w > W - 6 || y + h > H - 6) return false;
-      for (let r = Math.floor((y - 14 - oy) / CELL); r <= Math.floor((y + h - oy) / CELL); r++)
-        for (let c = Math.floor((x - ox) / CELL); c <= Math.floor((x + w - ox) / CELL); c++)
-          if (inb(c, r) && (grid[idx(c, r)] === 2 || grid[idx(c, r)] === 3)) return false;
-      return true;
-    };
-    const spot = spots.find(([x, y]) => clear(x, y));
+    const overlaps = (x, y, list, pad) =>
+      list.filter((f) => {
+        const fx = ox + f.c * CELL - pad, fy = oy + f.r * CELL - pad - 14, fw = f.w * CELL + pad * 2, fh = f.h * CELL + pad + 14;
+        return x < fx + fw && x + w > fx && y - 14 < fy + fh && y + h > fy;
+      }).length;
+    const inside = (x, y) => x >= 6 && y >= 16 && x + w <= W - 6 && y + h <= H - 6;
+    // Never over the checkout or its label; over a shelf only if nothing else fits.
+    const ok = spots.filter(([x, y]) => inside(x, y) && !overlaps(x, y, fixtures, 20));
+    const spot = ok.find(([x, y]) => !overlaps(x, y, shelves, 2)) || ok[0];
     if (!spot) { ctx.restore(); return; }
     const [x, y] = spot;
     ctx.translate(x + w / 2, y);
-    ctx.rotate(-0.04);
+    ctx.rotate(-0.035);
     ctx.strokeStyle = colors.ink3;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(-w / 2 + 10, 0); ctx.lineTo(0, -12); ctx.lineTo(w / 2 - 10, 0);
     ctx.stroke();
-    ctx.fillStyle = colors.paper;
+    ctx.fillStyle = colors.panel;
     ctx.strokeStyle = colors.ink;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.25;
     roundRect(ctx, -w / 2, 0, w, h, 5);
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = colors.ink;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `760 15px Anybody, system-ui, sans-serif`;
-    ctx.fillText(t1, 0, 14);
-    ctx.font = `600 11px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
+    ctx.font = '400 18px "Newsreader Display", Georgia, serif';
+    ctx.fillText(t1, 0, 16);
+    ctx.font = LABEL_FONT(11);
     ctx.fillStyle = colors.ink2;
-    ctx.fillText(t2, 0, 30);
+    ctx.fillText(t2, 0, 32);
     ctx.restore();
   }
 
@@ -1113,26 +1190,30 @@
     cancelAnimationFrame(raf);
   }
 
-  const captionEl = hero.querySelector('[data-caption]');
-  const captionDefault = captionEl ? captionEl.innerHTML : '';
+  // ---------- Words under the floor ----------
+  // On touch screens, "click" becomes "tap".
+  const touch = window.matchMedia('(hover: none)').matches;
+  const verb = (t) => (touch ? t.replace(/\bClick\b/g, 'Tap').replace(/\bclick\b/g, 'tap') : t);
+  const captionDefault = captionEl ? verb(captionEl.innerHTML) : '';
   function updateCaption() {
     if (!captionEl) return;
     const note = season ? ` ${SEASONS[season].note}` : '';
     if (closed) {
       const time = new Intl.DateTimeFormat('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: TZ }).format(new Date()).replace(/\s?([ap])m$/i, ' $1m');
-      captionEl.textContent = `The shop is closed for the night. It's ${time} in ${PLACE} and the cart is asleep. Click anywhere, or add something to the list, to wake it for one trip.${note}`;
+      captionEl.textContent = verb(`The store’s shut for the night. It’s ${time} in ${PLACE}, so the lights are down and the cart is asleep by the checkout. Click the floor or give it something from the list, and it’ll get up for one trip.${note}`);
     } else {
-      captionEl.innerHTML = captionDefault + (note ? ` ${note.trim()}` : '');
+      captionEl.innerHTML = captionDefault + note;
     }
   }
 
-  const trayEl = hero.querySelector('[data-tray]');
   function renderTray() {
     if (!trayEl) return;
     const names = [...TRAY];
     if (season && !names.includes(SEASONS[season].tray)) names.push(SEASONS[season].tray);
     const holder = trayEl.querySelector('[data-tray-items]');
-    holder.innerHTML = names.map((n) => `<button type="button" class="tray__item" data-item="${n}"><i aria-hidden="true"></i>${n}</button>`).join('');
+    holder.innerHTML = names
+      .map((n) => `<button type="button" class="ticket" data-item="${escHtml(n)}" aria-label="Add ${escHtml(n)} to the list">${escHtml(n)} <b>$${money(PRICES[n] ?? 4)}</b></button>`)
+      .join('');
     trayEl.hidden = false;
     holder.querySelectorAll('[data-item]').forEach(bindTrayItem);
   }
@@ -1147,42 +1228,65 @@
     updateCaption();
     ready = build();
     if (!ready) return;
-    if (reduce) {
-      if (!closed) nextItem();
-      draw(performance.now());
-    } else {
-      start();
-    }
+    if (algoEl) algoEl.hidden = false;
+    if (reduce && !closed) nextItem();
+    // Draw once straight away, so the store is there even before it scrolls into view.
+    draw(performance.now());
+    if (!reduce) start();
   }
 
-  // Check the shop's hours every minute; rebuild when it opens or closes.
+  // Check the store's hours every minute; rebuild when it opens or closes.
   setInterval(() => {
     if (isClosed() !== closed || currentSeason() !== season) init();
     else if (closed) updateCaption();
   }, 60000);
 
   // ---------- Input ----------
-  hero.addEventListener('click', (e) => {
-    if (!ready || e.target.closest('a, button, input, label, textarea, select, [data-tray], [data-receipt]')) return;
-    if (window.getSelection && String(window.getSelection()).length) return;
-    const rect = hero.getBoundingClientRect();
-    const c = Math.floor((e.clientX - rect.left - ox) / CELL);
-    const r = Math.floor((e.clientY - rect.top - oy) / CELL);
-    if (!inb(c, r)) return;
-    const goal = nearestFree(idx(c, r), shopperBlocks);
+  const cellAt = (clientX, clientY) => {
+    const rect = floorEl.getBoundingClientRect();
+    const c = Math.floor((clientX - rect.left - floorEl.clientLeft - ox) / CELL);
+    const r = Math.floor((clientY - rect.top - floorEl.clientTop - oy) / CELL);
+    return inb(c, r) ? idx(c, r) : -1;
+  };
+
+  floorEl.addEventListener('click', (e) => {
+    if (!ready || e.target.closest('[data-receipt]')) return;
+    const at = cellAt(e.clientX, e.clientY);
+    if (at < 0) return;
+    const goal = nearestFree(at, shopperBlocks);
     if (goal < 0) return;
     pin = goal;
     if (cart.mode === 'sleep') grumble();
     cart.mode = 'pin';
     cart.item = null;
-    if (plan(goal)) cart.wait = reduce ? 0 : closed ? 0.8 : 0.45;
+    if (plan(goal)) cart.wait = reduce ? 0 : closed ? 0.8 : cart.wait;
     if (reduce) {
       draw(performance.now());
       if (closed) setTimeout(() => { goHome(); draw(performance.now()); }, 1600);
     }
   });
 
-  // ---------- The item tray: tap to add, or drag onto the floor ----------
+  // Switching the search re-plans the current trip straight away, so the difference shows.
+  if (algoEl) {
+    algoEl.addEventListener('change', (e) => {
+      if (!ALGOS[e.target.value]) return;
+      setAlgo(e.target.value);
+    });
+  }
+  function setAlgo(name) {
+    if (!ALGOS[name]) return;
+    algo = name;
+    const radio = algoEl && algoEl.querySelector(`input[value="${name}"]`);
+    if (radio) radio.checked = true;
+    if (!ready) return;
+    if (cart.goal >= 0 && cart.path.length && cart.pi < cart.path.length) plan(cart.goal);
+    else if (cart.mode === 'sleep') { stats.algo = algo; updateReadout(); }
+    else { cart.wait = 0; cart.path = []; if (cart.mode === 'idle' || cart.mode === 'pin') cart.mode = 'shop'; nextItem(); }
+    if (reduce) draw(performance.now());
+    live(`Now planning with ${ALGOS[name].name}.`);
+  }
+
+  // ---------- The tickets: tap to add, or drag onto the floor ----------
   function bindTrayItem(btn) {
     let startX = 0, startY = 0, dragging = false, ghost = null, id = null;
     btn.addEventListener('pointerdown', (e) => {
@@ -1196,20 +1300,19 @@
         dragging = true;
         ghost = document.createElement('div');
         ghost.className = 'tray__ghost';
-        ghost.innerHTML = `<i></i>${btn.dataset.item}`;
+        ghost.innerHTML = btn.innerHTML;
         document.body.appendChild(ghost);
       }
-      if (ghost) ghost.style.transform = `translate(${e.clientX + 8}px, ${e.clientY - 14}px)`;
+      if (ghost) ghost.style.transform = `translate(${e.clientX + 8}px, ${e.clientY - 16}px)`;
     });
     const end = (e, cancel) => {
       if (e.pointerId !== id) return;
       id = null;
       if (ghost) { ghost.remove(); ghost = null; }
       if (!dragging || cancel) return;
-      const rect = hero.getBoundingClientRect();
-      const c = Math.floor((e.clientX - rect.left - ox) / CELL);
-      const r = Math.floor((e.clientY - rect.top - oy) / CELL);
-      if (inb(c, r) && !trayEl.contains(document.elementFromPoint(e.clientX, e.clientY))) addItem(btn.dataset.item, idx(c, r));
+      const over = document.elementFromPoint(e.clientX, e.clientY);
+      const at = over && floorEl.contains(over) && !over.closest('[data-receipt]') ? cellAt(e.clientX, e.clientY) : -1;
+      if (at >= 0) addItem(btn.dataset.item, at);
       btn.dataset.dragged = '1';
     };
     btn.addEventListener('pointerup', (e) => end(e, false));
@@ -1223,35 +1326,29 @@
   window.floorDemo = {
     shop() {
       if (!ready) return;
-      if (closed) {
-        addItem(pick(TRAY));
-        return;
-      }
-      cart.wait = 0;
-      nextItem();
-      if (reduce) draw(performance.now());
+      addItem(pick(TRAY));
     },
     addItem,
+    setAlgo,
   };
 
   // ---------- Lifecycle ----------
   let resizeTimer = 0;
-  let lastW = 0;
-  const onResize = () => {
+  let lastW = 0, lastH = 0;
+  new ResizeObserver(() => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      const w = hero.getBoundingClientRect().width;
-      // Mobile browsers fire resize when the address bar hides; only rebuild on width changes or big height changes.
-      if (Math.abs(w - lastW) < 2 && Math.abs(hero.getBoundingClientRect().height - H) < 120) return;
+      const w = floorEl.clientWidth, h = floorEl.clientHeight;
+      if (Math.abs(w - lastW) < 2 && Math.abs(h - lastH) < 2) return;
       lastW = w;
+      lastH = h;
       init();
-    }, 180);
-  };
-  window.addEventListener('resize', onResize);
+    }, 160);
+  }).observe(floorEl);
   new IntersectionObserver((entries) => {
     visible = entries[0].isIntersecting;
     visible ? start() : stop();
-  }).observe(hero);
+  }).observe(floorEl);
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   reduceMq.addEventListener('change', () => { reduce = reduceMq.matches; init(); });
 
@@ -1260,14 +1357,20 @@
   new MutationObserver(recolour).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recolour);
 
+  const goShopping = () => {
+    const smooth = !reduce;
+    store.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+    setTimeout(() => window.floorDemo.shop(), smooth ? 450 : 0);
+  };
   const go = () => {
-    lastW = hero.getBoundingClientRect().width;
+    lastW = floorEl.clientWidth;
+    lastH = floorEl.clientHeight;
     init();
     // Arriving from "Send the cart shopping" on another page.
-    if (location.hash === '#shop') setTimeout(() => window.floorDemo.shop(), 300);
+    if (location.hash === '#shop') setTimeout(goShopping, 300);
   };
   window.addEventListener('hashchange', () => {
-    if (location.hash === '#shop') window.floorDemo.shop();
+    if (location.hash === '#shop') goShopping();
     else if (['closed', 'open', ...Object.keys(SEASONS)].includes(hash())) init();
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(go);

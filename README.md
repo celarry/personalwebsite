@@ -2,7 +2,7 @@
 
 My personal website: a homepage with interactive project demos, and a blog I can update from a web editor.
 
-- **Homepage:** a shop floor where a cart plans routes with A*, a Valorant win-probability simulator, a homelab diagram and an email-approval demo.
+- **Homepage:** a small store where a cart plans routes with A* (or Dijkstra, or greedy search), then a list of projects that open into working demos: a Valorant win-probability model, a homelab diagram and an email-approval mock.
 - **Blog:** posts are Markdown files in `content/posts/`, written and edited with [Pages CMS](https://pagescms.org).
 - **Hosting:** GitHub Pages. Every change on `main` rebuilds the site automatically.
 
@@ -51,21 +51,24 @@ The site updates by itself about a minute later. Tag personal updates **Life**: 
 
 All of these are in the Pages CMS sidebar:
 
-- **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page.
+- **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page. Every project is listed on the homepage; the first sentence of the summary is the short description, unless you fill in **Short description**.
 - **Now page:** what you're up to. Change **Last updated** when you edit it.
-- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Reading and so on).
+- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Casting, Reading and so on). Links work: `[Wave OCE: Proteus](https://liquipedia.net/...)`.
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.
 
 ## Things people can find
 
-- **The shop floor:** it keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps until someone wakes it. Visitors can add items from the list below it (tap, or drag onto the floor) and get a receipt when the cart has fetched them. It decorates itself for Lunar New Year, Easter, Mid-Autumn, Halloween and Christmas. Add `#open`, `#closed`, `#lunar`, `#easter`, `#midautumn`, `#halloween` or `#christmas` to the address to preview each.
-- **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post.
-- **Shortcuts:** `g` then `h`, `p`, `b`, `n` or `r` to jump between pages, `t` for the theme, `?` for the list.
-- **Project pages:** diagrams you can step through, the Valorant HUD reader, and each project's history.
+- **The store:** it keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps by the checkout until someone wakes it. Visitors can give it something from the list below it (tap, or drag onto the floor); it fetches it, takes it to the checkout and prints a receipt. The switch under it changes the search between A*, Dijkstra and greedy, and the line next to it reports how many squares each one checked. It decorates itself for Lunar New Year, Easter, Mid-Autumn, Halloween and Christmas. Add `#open`, `#closed`, `#lunar`, `#easter`, `#midautumn`, `#halloween` or `#christmas` to the address to preview each.
+- **Projects that open:** each project on the homepage opens in place; the featured ones open into their demo. Each has its own address, like `/#valorant-win-probability`.
+- **Contact:** a short text thread that asks for a name and a message, then opens the visitor's email app with it written out. Nothing is sent or stored by the site.
+- **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post, switch the cart's search, turn the store's lights off, decorate it for a festival.
+- **Shortcuts:** `1` to `5` jump between Home, Projects, Blog, Now and Resume (`g` then `h`, `p`, `b`, `n` or `r` works too), `t` for the theme, `?` for the list.
+- **Project pages:** diagrams you can step through, the Valorant HUD reader, the store on the shopping cart's page, and each project's history.
 - **Blog filters:** `/blog/#life` links straight to the Life posts.
 - **Colophon:** `/colophon/` explains how the site works, with real build numbers.
-- **Developer tools:** open the console for a hello.
+- **Section links:** hover over a heading in a post or write-up for a link to it.
+- **Developer tools:** open the console for a hello. The cart is `window.floorDemo`.
 
 ## For developers
 
@@ -85,4 +88,4 @@ node build.mjs --preview   # links point at index.html, so you can open files di
 cd dist && python3 -m http.server 8000   # view at http://localhost:8000
 ```
 
-Fonts: Anybody and Atkinson Hyperlegible Next/Mono, self-hosted under the SIL Open Font License.
+Fonts: Newsreader and Atkinson Hyperlegible Next and Mono, self-hosted as WOFF2 under the SIL Open Font License. They're subset to Latin, and Atkinson Hyperlegible Next has a plain zero in place of its slashed one.
