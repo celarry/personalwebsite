@@ -58,6 +58,7 @@ All of these are in the Pages CMS sidebar:
 
 ## Things people can find
 
+- **The shop floor:** it keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps until someone wakes it. Visitors can add items from the list below it (tap, or drag onto the floor) and get a receipt when the cart has fetched them. It decorates itself for Lunar New Year, Mid-Autumn and Christmas. Add `#open`, `#closed`, `#lunar`, `#midautumn` or `#christmas` to the address to preview each.
 - **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post.
 - **Shortcuts:** `g` then `h`, `p`, `b`, `n` or `r` to jump between pages, `t` for the theme, `?` for the list.
 - **Project pages:** diagrams you can step through, the Valorant HUD reader, and each project's history.
