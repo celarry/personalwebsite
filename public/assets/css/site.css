@@ -43,6 +43,7 @@
   --atk: #c13d29;
   --def: #0f7b77;
   --festive: #c08a1e;
+  --pumpkin: #dd7a22;
   --receipt: #fbfbf7;
 
   --display: 'Anybody', 'Arial Narrow', system-ui, sans-serif;
@@ -73,12 +74,14 @@
     --atk: #f27a63;
     --def: #49c4bd;
     --festive: #e2b34a;
+    --pumpkin: #ec8f3a;
     --receipt: #1e2633;
     color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
   --festive: #e2b34a;
+  --pumpkin: #ec8f3a;
   --receipt: #1e2633;
   --paper: #0f151e;
   --paper-2: #151d28;

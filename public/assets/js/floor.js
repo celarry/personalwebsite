@@ -42,6 +42,21 @@
       tray: 'pavlova',
       note: 'Merry Christmas. Cherries and mangoes are in season.',
     },
+    halloween: {
+      list: ['pumpkin', 'lollies', 'toffee apples', 'chocolate', 'popcorn', 'fairy floss', 'caramel'],
+      tray: 'lollies',
+      note: 'Happy Halloween. The lollies are by the door.',
+      grumbles: ['boo.', '…fine.', 'spooky hours.', 'it’s late.'],
+    },
+    easter: {
+      // Easter Sunday; shows from the week before until Easter Monday.
+      days: { 2027: '03-28', 2028: '04-16', 2029: '04-01', 2030: '04-21', 2031: '04-13', 2032: '03-28' },
+      before: 7,
+      after: 1,
+      list: ['hot cross buns', 'Easter eggs', 'chocolate bilby', 'chocolate bunny', 'lamb', 'carrots'],
+      tray: 'hot cross buns',
+      note: 'Happy Easter. Hot cross buns are fresh out of the oven.',
+    },
   };
   const TRAY = ['bubble tea', 'dumplings', 'Tim Tams', 'durian', 'mangoes'];
   // Prices in Australian dollars, for the receipt.
@@ -50,7 +65,9 @@
     milk: 3.1, eggs: 6.2, rice: 9, tofu: 3.5, bread: 4.5, apples: 4.9, coffee: 11, noodles: 4.8, 'bok choy': 3.2,
     'soy sauce': 4.2, oranges: 4.5, kimchi: 7.5, yoghurt: 6, cherries: 12, prawns: 22, 'candy canes': 3, gingerbread: 6.5,
     ham: 28, pomelo: 6, 'oolong tea': 9, taro: 4, osmanthus: 7, 'lotus paste': 8, persimmons: 5.5, 'nian gao': 7.8,
-    'red packets': 2.5, 'pineapple tarts': 11,
+    'red packets': 2.5, 'pineapple tarts': 11, pumpkin: 4.5, lollies: 3.5, 'toffee apples': 4, chocolate: 5, popcorn: 3.2,
+    'fairy floss': 3, caramel: 4.2, 'hot cross buns': 6.5, 'Easter eggs': 8, 'chocolate bilby': 5.5, 'chocolate bunny': 6,
+    lamb: 26, carrots: 2.5,
   };
   const GRUMBLES = ['…fine.', 'it’s late.', 'one trip.', 'mm.', 'five more minutes', 'really?'];
 
@@ -71,8 +88,9 @@
     if (SEASONS[forced]) return forced;
     const t = localParts();
     if (t.m === 12 && t.d <= 26) return 'christmas';
+    if (t.m === 10 && t.d >= 24) return 'halloween';
     const today = Date.UTC(t.y, t.m - 1, t.d);
-    for (const key of ['lunar', 'midautumn']) {
+    for (const key of ['lunar', 'easter', 'midautumn']) {
       const sz = SEASONS[key];
       for (const y of [t.y, t.y + 1, t.y - 1]) {
         if (!sz.days[y]) continue;
@@ -123,7 +141,7 @@
   function readColors() {
     const s = getComputedStyle(document.documentElement);
     const v = (n) => s.getPropertyValue(n).trim();
-    colors = { paper: v('--paper'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), route: v('--route'), red: v('--atk'), gold: v('--festive') };
+    colors = { paper: v('--paper'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), route: v('--route'), red: v('--atk'), gold: v('--festive'), pumpkin: v('--pumpkin') };
     const [r, g, b] = hexToRgb(colors.paper);
     colors.dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 128;
   }
@@ -406,6 +424,73 @@
         }
       }
     }
+    if (season === 'halloween') {
+      shelves.forEach((s, k) => {
+        const b = shelfBox(s);
+        const vertical = b.h > b.w;
+        if (k % 2 === 0) {
+          // A pumpkin at the foot of the shelf.
+          const x = vertical ? b.x + b.w / 2 : b.x + b.w - 2;
+          const y = vertical ? b.y + b.h - 2 : b.y + b.h / 2;
+          const rx = CELL * 0.38, ry = CELL * 0.3;
+          g.fillStyle = colors.pumpkin;
+          g.beginPath();
+          g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+          g.fill();
+          g.strokeStyle = 'rgba(0,0,0,0.2)';
+          g.lineWidth = 1;
+          g.beginPath();
+          g.ellipse(x, y, rx * 0.45, ry, 0, 0, Math.PI * 2);
+          g.stroke();
+          g.fillStyle = '#4f7a3c';
+          g.fillRect(x - 1.5, y - ry - 3, 3, 4);
+        }
+        if (k % 3 === 1) {
+          // A cobweb in the top corner.
+          const x = b.x, y = b.y, r = CELL * 0.95;
+          g.strokeStyle = rgba(colors.ink3, 0.55);
+          g.lineWidth = 0.8;
+          g.beginPath();
+          for (let a = 0; a <= 3; a++) {
+            const t = (a / 3) * (Math.PI / 2);
+            g.moveTo(x, y);
+            g.lineTo(x + Math.cos(t) * r, y + Math.sin(t) * r);
+          }
+          for (const f of [0.45, 0.8]) {
+            g.moveTo(x + r * f, y);
+            for (let a = 1; a <= 3; a++) {
+              const t = (a / 3) * (Math.PI / 2);
+              const mid = ((a - 0.5) / 3) * (Math.PI / 2);
+              g.quadraticCurveTo(x + Math.cos(mid) * r * f * 0.82, y + Math.sin(mid) * r * f * 0.82, x + Math.cos(t) * r * f, y + Math.sin(t) * r * f);
+            }
+          }
+          g.stroke();
+        }
+      });
+    }
+    if (season === 'easter') {
+      const pastels = ['#f2b8c6', '#b9d8f2', '#bfe3c5', '#f4dc9a', '#d6c4f0'];
+      shelves.forEach((s, k) => {
+        const b = shelfBox(s);
+        const vertical = b.h > b.w;
+        const count = 1 + (k % 2);
+        for (let e = 0; e < count; e++) {
+          const x = vertical ? b.x + b.w / 2 + (count > 1 ? (e ? 8 : -6) : 0) : b.x + b.w - 10 - e * 15;
+          const y = vertical ? b.y + b.h - 6 - e * 4 : b.y + b.h / 2 + (e ? 3 : -2);
+          const rx = CELL * 0.27, ry = CELL * 0.35;
+          g.fillStyle = pastels[(k * 2 + e) % pastels.length];
+          g.beginPath();
+          g.ellipse(x, y, rx, ry, (e ? 0.3 : -0.2), 0, Math.PI * 2);
+          g.fill();
+          g.strokeStyle = 'rgba(255,255,255,0.8)';
+          g.lineWidth = 1.2;
+          g.beginPath();
+          g.moveTo(x - rx * 0.8, y);
+          for (let z = 1; z <= 4; z++) g.lineTo(x - rx * 0.8 + (z * rx * 1.6) / 4, y + (z % 2 ? -2 : 1));
+          g.stroke();
+        }
+      });
+    }
     if (season === 'christmas') {
       shelves.forEach((s) => {
         const b = shelfBox(s);
@@ -608,7 +693,8 @@
 
   function grumble() {
     if (!closed) return;
-    bubble = { text: GRUMBLES[(Math.random() * GRUMBLES.length) | 0], until: performance.now() + 2600 };
+    const lines = (season && SEASONS[season].grumbles) || GRUMBLES;
+    bubble = { text: lines[(Math.random() * lines.length) | 0], until: performance.now() + 2600 };
   }
 
   function updateReadout() {
@@ -1054,6 +1140,7 @@
   function init() {
     stop();
     season = currentSeason();
+    renderTray();
     SHOPPING_LIST = season ? [...SEASONS[season].list, ...BASE_LIST.slice(0, 4)] : BASE_LIST;
     listIndex = 0;
     closed = isClosed();
@@ -1175,14 +1262,13 @@
 
   const go = () => {
     lastW = hero.getBoundingClientRect().width;
-    renderTray();
     init();
     // Arriving from "Send the cart shopping" on another page.
     if (location.hash === '#shop') setTimeout(() => window.floorDemo.shop(), 300);
   };
   window.addEventListener('hashchange', () => {
     if (location.hash === '#shop') window.floorDemo.shop();
-    else if (['closed', 'open', ...Object.keys(SEASONS)].includes(hash())) { renderTray(); init(); }
+    else if (['closed', 'open', ...Object.keys(SEASONS)].includes(hash())) init();
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(go);
   else window.addEventListener('load', go);
