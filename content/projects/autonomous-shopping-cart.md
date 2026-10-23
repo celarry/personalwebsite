@@ -44,8 +44,8 @@ Forty-eight hours, five people, and one shopping cart that drives itself to the 
 
 ## My part: getting around the store
 
-I built the navigation. The store layout became a grid, and A* worked out the shortest route between grocery locations. Then came the harder problem: people. Using ideas from the Dynamic Window Approach and Velocity Obstacles, the cart could spot something in its path and reroute around it in real time.
+I built the navigation. The store layout became a grid, and A-star worked out the shortest route between grocery locations. Then came the harder problem: people. Using ideas from the Dynamic Window Approach and Velocity Obstacles, the cart could spot something in its path and reroute around it in real time.
 
 ## Try it
 
-The cart at the top of the homepage runs a simplified version in your browser: eight-directional A* with an octile-distance heuristic, no cutting corners around shelves, and a wandering shopper that makes the cart replan when they step onto its route. I wrote more about it in [Why there's a shopping cart on my homepage](/blog/why-theres-a-shopping-cart-on-my-homepage/).
+The cart at the top of the homepage runs a simplified version in your browser: eight-directional A-star with an octile-distance heuristic, no cutting corners around shelves, and a wandering shopper that makes the cart replan when they step onto its route. I wrote more about it in [Why there's a shopping cart on my homepage](/blog/why-theres-a-shopping-cart-on-my-homepage/).

@@ -34,4 +34,4 @@ log:
 ---
 ## How it's built
 
-See the [colophon](/colophon/) for the details: fonts, the build, the A* floor and keyboard shortcuts.
+See the [colophon](/colophon/) for the details: fonts, the build, the A-star floor and keyboard shortcuts.

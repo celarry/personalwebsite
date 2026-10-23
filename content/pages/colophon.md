@@ -16,7 +16,7 @@ I write posts and update projects in [Pages CMS](https://pagescms.org), a web ed
 
 The header on the homepage is a grid of 22-pixel cells (18 on phones). When the page loads, a script measures every line of text and every button in the header and marks those cells as blocked, then places shelves in the space that's left.
 
-The cart plans with A*: eight directions of movement, an octile-distance heuristic, and no cutting corners around shelves. Filled squares are cells the search expanded. Outlined squares are cells still waiting in the open set when it found the goal. The shopper wanders on their own route, and if they step onto one of the next few cells of the cart's path, the cart plans again.
+The cart plans with A-star: eight directions of movement, an octile-distance heuristic, and no cutting corners around shelves. Filled squares are cells the search expanded. Outlined squares are cells still waiting in the open set when it found the goal. The shopper wanders on their own route, and if they step onto one of the next few cells of the cart's path, the cart plans again.
 
 If your device asks for reduced motion, nothing animates: the search and route are drawn once, and clicking moves the cart straight to its destination.
 
