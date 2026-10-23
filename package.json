@@ -1,0 +1,12 @@
+{
+  "name": "lawrence-qi-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "preview": "node build.mjs --preview"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

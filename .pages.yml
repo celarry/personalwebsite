@@ -1,0 +1,296 @@
+# Settings for Pages CMS (https://app.pagescms.org), the editor you use to write
+# blog posts and update the site without touching code.
+
+media:
+  input: public/uploads
+  output: /uploads
+
+content:
+  - name: posts
+    label: Blog posts
+    type: collection
+    path: content/posts
+    format: yaml-frontmatter
+    filename: '{year}-{month}-{day}-{primary}.md'
+    view:
+      fields: [title, date, tags, draft]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        required: true
+      - name: summary
+        label: Summary
+        description: One or two sentences shown in the list of posts.
+        type: text
+      - name: tags
+        label: Tags
+        description: Life is for personal updates. Friends and family filter by it.
+        type: select
+        options:
+          multiple: true
+          values: [Life, Projects, Tech, Travel]
+      - name: cover
+        label: Cover image
+        description: Optional. Shown at the top of the post.
+        type: image
+      - name: draft
+        label: Draft
+        description: Tick this to keep the post off the site until you're ready.
+        type: boolean
+        default: false
+      - name: body
+        label: Post
+        type: rich-text
+
+  - name: projects
+    label: Projects
+    type: collection
+    path: content/projects
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      fields: [title, dates, status, featured]
+      primary: title
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: Name
+        type: string
+        required: true
+      - name: featured
+        label: Show on the homepage with its demo
+        description: Only works for projects that have an interactive demo.
+        type: boolean
+        default: false
+      - name: order
+        label: Order
+        description: Lower numbers come first.
+        type: number
+        default: 50
+      - name: demo
+        label: Interactive demo
+        type: select
+        default: none
+        options:
+          values: [none, valorant, homelab, email, cart]
+      - name: dates
+        label: Dates (as shown)
+        description: For example "Apr 2026 – present".
+        type: string
+      - name: started
+        label: Started
+        description: Used to sort the projects page by year.
+        type: date
+        options:
+          format: yyyy-MM
+      - name: status
+        label: Status
+        type: select
+        options:
+          values: [In progress, Running, Finished, Paused]
+      - name: team
+        label: Team
+        description: For example "Solo" or "5-person team". Leave empty to hide.
+        type: string
+      - name: stack
+        label: Tech used (comma-separated)
+        type: string
+      - name: summary
+        label: Summary
+        type: text
+      - name: points
+        label: Highlights
+        type: string
+        list: true
+      - name: repo
+        label: Code link
+        type: string
+      - name: live
+        label: Live site link
+        type: string
+      - name: diagram_title
+        label: Diagram title
+        type: string
+      - name: diagram
+        label: Diagram steps
+        description: Each step is a box in the diagram. Click a box on the site to see its detail.
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Label
+            type: string
+          - name: note
+            label: Short note
+            type: string
+          - name: detail
+            label: Detail
+            type: text
+      - name: log
+        label: History
+        description: Milestones, shown on the project page and the projects page.
+        type: object
+        list: true
+        fields:
+          - name: date
+            label: Month
+            type: date
+            options:
+              format: yyyy-MM
+          - name: text
+            label: What happened
+            type: text
+      - name: body
+        label: Write-up
+        type: rich-text
+
+  - name: now
+    label: Now page
+    type: file
+    path: content/pages/now.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Title
+        type: string
+      - name: updated
+        label: Last updated
+        description: Change this whenever you update the page.
+        type: date
+      - name: body
+        label: What I'm up to
+        type: rich-text
+
+  - name: site
+    label: Profile
+    type: file
+    path: content/site.yml
+    format: yaml
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - name: headline
+        label: Headline
+        description: The big sentence under your name.
+        type: string
+      - name: intro
+        label: Intro
+        type: text
+      - name: now
+        label: Now (one line)
+        description: Shown just below the top of the homepage. The Now page has the longer version.
+        type: string
+      - name: location
+        label: Location
+        type: string
+      - name: timezone
+        label: Time zone
+        description: Used for the "It's 6:30 pm for me in…" clock.
+        type: select
+        options:
+          values:
+            - Australia/Melbourne
+            - Asia/Singapore
+            - Australia/Sydney
+            - Australia/Perth
+            - Asia/Hong_Kong
+            - Asia/Shanghai
+            - Europe/London
+            - America/Los_Angeles
+            - America/New_York
+      - name: email
+        label: Email
+        type: string
+      - name: github
+        label: GitHub URL
+        type: string
+      - name: linkedin
+        label: LinkedIn URL
+        description: Leave empty to hide LinkedIn links.
+        type: string
+      - name: resume
+        label: Resume (PDF)
+        type: file
+      - name: url
+        label: Website address
+        description: The full address of this site, used for the RSS feed and share previews.
+        type: string
+      - name: about
+        label: About, first paragraph
+        type: text
+      - name: about_more
+        label: About, second paragraph
+        type: text
+      - name: languages
+        label: Languages (comma-separated)
+        type: string
+      - name: skills
+        label: Skills
+        type: object
+        list: true
+        fields:
+          - name: group
+            label: Group
+            type: string
+          - name: items
+            label: Skills (comma-separated)
+            type: string
+      - name: experience
+        label: Experience and education
+        description: Newest first. Shown on the homepage and the resume page.
+        type: object
+        list: true
+        fields:
+          - name: role
+            label: Role or degree
+            type: string
+          - name: type
+            label: Type
+            type: select
+            default: work
+            options:
+              values: [work, education]
+          - name: org
+            label: Organisation
+            type: string
+          - name: dates
+            label: Dates
+            type: string
+          - name: summary
+            label: Summary
+            type: text
+          - name: points
+            label: Bullet points
+            type: string
+            list: true
+
+  - name: colophon
+    label: How this site works
+    type: file
+    path: content/pages/colophon.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Title
+        type: string
+      - name: summary
+        label: Summary
+        type: string
+      - name: body
+        label: Page
+        type: rich-text

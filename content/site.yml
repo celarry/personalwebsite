@@ -1,0 +1,60 @@
+name: Lawrence Qi
+headline: I train machine-learning models and run the machines they live on.
+intro: >-
+  I study Computer Science at Monash University and graduate in October 2026.
+  In November I'm moving to Singapore to start an AI/ML internship at NetGain,
+  working on small language models that run locally.
+now: Finishing my degree at Monash and packing for Singapore.
+location: Melbourne, Australia
+timezone: Australia/Melbourne
+email: celarry1@gmail.com
+github: https://github.com/rockminelaw
+linkedin: ''
+resume: /uploads/Lawrence-Qi-Resume.pdf
+url: https://lawrenceqi.com
+about: >-
+  I like problems where a model has to make a call in real time from messy
+  inputs: predicting who wins a Valorant round from a broadcast feed, or
+  steering a shopping cart around people at a hackathon. I also like owning the
+  whole stack, which is why I run a multi-machine homelab with a Kubernetes
+  cluster, my media server, databases and a chatbot fine-tuned on my own
+  messages.
+about_more: >-
+  Away from the keyboard I tutor primary and middle-school students, and I
+  built the stream overlays for MEGA's fighting-game weeklies. I speak English,
+  Mandarin, Cantonese and French.
+languages: English, Mandarin, Cantonese, French
+skills:
+  - group: Machine learning
+    items: Python, PyTorch, NumPy, Pandas, XGBoost, R, LoRA and QLoRA fine-tuning
+  - group: Infrastructure
+    items: Docker, Kubernetes, Proxmox, Linux, Nginx, Cloudflare, AWS, Azure
+  - group: Software
+    items: JavaScript, TypeScript, HTML and CSS, Java, SQL, Git
+experience:
+  - role: AI/ML Intern (incoming)
+    type: work
+    org: NetGain
+    dates: Nov 2026 – Feb 2027
+    summary: >-
+      A three-month internship on knowledge distillation and small, locally
+      hosted language models for infrastructure and monitoring workflows.
+    points:
+      - Evaluating open-weight models for log analysis, classification, summarisation, structured extraction and routing.
+      - Benchmarking accuracy, latency, memory use and inference cost on CPU-only systems.
+      - Testing fine-tuning, LoRA, quantisation, distillation and fallback to larger models for uncertain cases.
+  - role: Academic Tutor
+    type: work
+    org: Unitop
+    dates: Feb 2023 – present
+    summary: >-
+      One-on-one tutoring for students from grade 1 to grade 9.
+    points:
+      - Raised students' marks by up to 35 percent.
+      - Worked with parents and teachers to keep learning plans aligned between home and school.
+  - role: Bachelor of Computer Science
+    type: education
+    org: Monash University
+    dates: Graduating Oct 2026
+    summary: ''
+    points: []
