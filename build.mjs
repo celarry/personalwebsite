@@ -97,9 +97,83 @@ const mdFiles = (dir) =>
 const site = loadYaml(read('content/site.yml')) || {};
 site.introHtml = inlineMarkdown(site.intro, 0);
 site.intro = decode(site.introHtml.replace(/<[^>]+>/g, '')).trim(); // plain text, for the resume
+site.now_api = String(site.now_api || '').trim().replace(/\/$/, '');
 site.offclock = (Array.isArray(site.offclock) ? site.offclock : [])
-  .filter((r) => r && r.label && r.text)
-  .map((r) => ({ label: String(r.label), text: String(r.text), html: inlineMarkdown(r.text, 0) }));
+  .map((r) => ({ label: String(r?.label || ''), text: String(r?.text || '').trim(), live: String(r?.live || '').trim().replace(/^none$/, '') }))
+  .filter((r) => r.label && (r.text || r.live))
+  .map((r) => ({ ...r, html: r.text ? inlineMarkdown(r.text, 0) : '' }));
+
+// Books and manga for the Reading row. Anything without an uploaded cover gets one looked
+// up when the site is built (Open Library for books, AniList for manga); if that fails,
+// the title is drawn as a plain cover instead.
+site.reading = (Array.isArray(site.reading) ? site.reading : [])
+  .filter((b) => b && b.title)
+  .map((b) => ({
+    title: String(b.title),
+    author: String(b.author || ''),
+    kind: String(b.kind || 'Book'),
+    isbn: String(b.isbn || '').replace(/[^0-9Xx]/g, ''),
+    note: String(b.note || ''),
+    link: String(b.link || ''),
+    cover: String(b.cover || ''),
+    slug: slugify(`${b.title}-${b.author || ''}`),
+  }));
+const fetchedCovers = new Map(); // slug -> { bytes, ext }
+async function lookUpCover(b) {
+  const get = async (url, opts = {}) => {
+    const res = await fetch(url, { ...opts, signal: AbortSignal.timeout(8000), headers: { 'User-Agent': 'lawrenceqi.com build', ...(opts.headers || {}) } });
+    if (!res.ok) throw new Error(String(res.status));
+    return res;
+  };
+  const image = async (url) => {
+    const res = await get(url);
+    const type = res.headers.get('content-type') || '';
+    if (!type.startsWith('image/')) throw new Error('not an image');
+    const bytes = Buffer.from(await res.arrayBuffer());
+    if (bytes.length < 1000) throw new Error('too small');
+    return { bytes, ext: type.includes('png') ? 'png' : type.includes('webp') ? 'webp' : 'jpg' };
+  };
+  const tries = [];
+  if (/manga|comic/i.test(b.kind)) {
+    tries.push(async () => {
+      const res = await get('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ query: 'query($s:String){Media(search:$s,type:MANGA){coverImage{large}}}', variables: { s: b.title } }),
+      });
+      const url = (await res.json())?.data?.Media?.coverImage?.large;
+      if (!url) throw new Error('no cover');
+      return image(url);
+    });
+  }
+  if (b.isbn) tries.push(() => image(`https://covers.openlibrary.org/b/isbn/${b.isbn}-M.jpg?default=false`));
+  tries.push(async () => {
+    const q = new URLSearchParams({ title: b.title, limit: '1', fields: 'cover_i' });
+    if (b.author) q.set('author', b.author);
+    const id = (await (await get(`https://openlibrary.org/search.json?${q}`)).json())?.docs?.[0]?.cover_i;
+    if (!id) throw new Error('no cover');
+    return image(`https://covers.openlibrary.org/b/id/${id}-M.jpg`);
+  });
+  for (const t of tries) {
+    try {
+      return await t();
+    } catch (e) {}
+  }
+  return null;
+}
+if (!process.argv.includes('--offline')) {
+  await Promise.all(
+    site.reading
+      .filter((b) => !b.cover)
+      .map(async (b) => {
+        const found = await lookUpCover(b).catch(() => null);
+        if (found) {
+          fetchedCovers.set(b.slug, found);
+          b.cover = `/assets/covers/${b.slug}.${found.ext}`;
+        }
+      })
+  );
+}
 
 // Projects
 const projects = mdFiles('content/projects')
@@ -214,6 +288,7 @@ const build = {
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 fs.cpSync(path.join(root, 'public'), out, { recursive: true });
+for (const [slug, c] of fetchedCovers) write(`assets/covers/${slug}.${c.ext}`, c.bytes);
 
 const pages = []; // [path, render()] so build time can include everything
 const ctx = (depth) => ({ site, projects, posts, history, now, colophon, build, L: T.linker(depth, preview) });

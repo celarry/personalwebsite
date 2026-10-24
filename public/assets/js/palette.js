@@ -112,6 +112,27 @@
     },
     { title: 'Read a random post', keywords: 'blog surprise random', run: () => randomPost() },
     {
+      title: 'What is Lawrence playing?',
+      keywords: 'steam game gaming playing now',
+      when: () => !!(window.nowData && window.nowData.steam),
+      run: () => {
+        const s = window.nowData.steam;
+        const g = s.playing || (s.games || [])[0];
+        answer(s.playing ? `<p>Right now: <b>${esc(g.name)}</b>.</p>` : g ? `<p>Nothing right now. Lately it's been <b>${esc(g.name)}</b>.</p>` : '<p>Nothing on Steam lately.</p>');
+      },
+      stay: true,
+    },
+    {
+      title: 'What is Lawrence listening to?',
+      keywords: 'music spotify last.fm song listening now',
+      when: () => !!(window.nowData && window.nowData.music && window.nowData.music.tracks.length),
+      run: () => {
+        const t = window.nowData.music.tracks[0];
+        answer(`<p>${t.nowPlaying ? 'Right now' : 'Most recently'}: <b>${esc(t.name)}</b> by ${esc(t.artist)}.</p>`);
+      },
+      stay: true,
+    },
+    {
       title: 'Send the cart shopping',
       keywords: 'cart a* astar pathfinding store shop demo receipt',
       run: () => {

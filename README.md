@@ -57,6 +57,21 @@ All of these are in the Pages CMS sidebar:
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.
 
+## Live games, music and book covers
+
+Off the clock can show what I'm playing on Steam and listening to on Last.fm. A small Cloudflare Worker (`worker/now.js`) holds the API keys, so they never go in the website, and it caches everything for 30 seconds. Set it up once:
+
+1. **Steam:** get a Web API key at [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) (any domain name works, for example `lawrenceqi.com`). Find your 64-bit Steam ID (17 digits) on your profile's address or with a SteamID lookup. In Steam, go to **Profile → Edit Profile → Privacy Settings** and set **My profile** and **Game details** to **Public**.
+2. **Last.fm:** make an account, then connect Spotify under **Settings → Applications → Spotify scrobbling** on last.fm. Create an API account at [last.fm/api/account/create](https://www.last.fm/api/account/create) and copy the **API key**.
+3. **Cloudflare:** in the dashboard, go to **Workers & Pages → Create → Create Worker**, name it `now`, deploy it, then **Edit code**, paste in everything from `worker/now.js`, and deploy again.
+4. In the worker's **Settings → Variables and Secrets**, add `STEAM_KEY` and `LASTFM_KEY` as **Secrets**, and `STEAM_ID` and `LASTFM_USER` as plain text.
+5. In **Settings → Domains & Routes**, add the custom domain `now.lawrenceqi.com`. Opening `https://now.lawrenceqi.com/now` should show your games and music as JSON.
+6. In Pages CMS, open **Profile** and set **Live data address** to `https://now.lawrenceqi.com`. The site updates a minute later.
+
+To turn it off, clear **Live data address**. The text you've written for each row still shows either way.
+
+**Reading** shows covers for the books and manga in Profile → Reading. Upload a cover, or leave it empty: when the site builds it looks one up (AniList for manga, Open Library for books, using the ISBN if you add one). If nothing's found, the title is shown as a plain cover.
+
 ## Things people can find
 
 - **The store:** it keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps by the checkout until someone wakes it. Visitors can give it something from the list below it (tap, or drag onto the floor); it fetches it, takes it to the checkout and prints a receipt. The switch under it changes the search between A*, Dijkstra and greedy, and the line next to it reports how many squares each one checked. It decorates itself for Lunar New Year, Easter, Mid-Autumn, Halloween and Christmas. Add `#open`, `#closed`, `#lunar`, `#easter`, `#midautumn`, `#halloween` or `#christmas` to the address to preview each.

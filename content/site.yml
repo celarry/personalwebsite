@@ -12,6 +12,9 @@ github: https://github.com/rockminelaw
 linkedin: ''
 resume: /uploads/Lawrence-Qi-Resume.pdf
 url: https://lawrenceqi.com
+# The address of the small worker that reports what I'm playing and listening to.
+# Leave empty to show only the text below.
+now_api: ''
 about: >-
   I like problems where a model has to make a call in real time from messy
   inputs: predicting who wins a Valorant round from a broadcast feed, or
@@ -60,6 +63,7 @@ experience:
     points: []
 offclock:
   - label: Games
+    live: steam
     text: >-
       Deadlock, Valorant, Street Fighter 6, Smash Bros. Ultimate, Overwatch,
       Slay the Spire 2 and Disco Elysium. I also go to Street Fighter and Smash
@@ -68,9 +72,25 @@ offclock:
     text: >-
       Tenor saxophone, on a King Super 20 (Series 3) with a Theo Wanne Lakshmi
       mouthpiece and Légère American Cut 2.5 reeds.
+  - label: Listening
+    live: music
+    text: ''
   - label: Casting
     text: I do some Valorant casting.
   - label: Reading
-    text: Working through One Piece, and reading Root Rot.
+    live: reading
+    text: ''
   - label: Also
     text: Board games with friends.
+reading:
+  - title: Root Rot
+    author: Saskia Nislow
+    kind: Book
+    isbn: '9781951971250'
+    note: Reading it now
+    cover: /uploads/covers/root-rot.jpg
+  - title: One Piece
+    author: Eiichiro Oda
+    kind: Manga
+    note: Working through it
+    cover: /uploads/covers/one-piece.jpg

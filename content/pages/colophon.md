@@ -33,3 +33,5 @@ The colours come from a shop floor: pale floor vinyl, navy ink and one blue for 
 ## Privacy
 
 No analytics, no cookies and no trackers. The only thing stored in your browser is your light or dark theme choice, if you change it. The contact form doesn't send anything by itself: it writes the email, and your own email app sends it.
+
+The games and music under Off the clock come from a small Cloudflare Worker of mine that asks Steam and Last.fm what I've been playing and listening to. Your browser only talks to that worker, so Steam and Last.fm never see you, and it keeps nothing about visitors. Book covers are stored with the site.

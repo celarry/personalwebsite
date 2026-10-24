@@ -235,6 +235,10 @@ content:
         label: Website address
         description: The full address of this site, used for the RSS feed and share previews.
         type: string
+      - name: now_api
+        label: Live data address
+        description: The address of your Cloudflare worker, like https://now.lawrenceqi.com. Leave empty to turn off the live Steam and Last.fm parts.
+        type: string
       - name: about
         label: About, first paragraph
         type: text
@@ -257,6 +261,43 @@ content:
             label: Text
             description: You can add a link like [text](https://example.com).
             type: text
+          - name: live
+            label: Show with it
+            description: Steam shows what you're playing, Last.fm what you're listening to, and covers shows the Reading list below.
+            type: select
+            options:
+              values: [none, steam, music, reading]
+      - name: reading
+        label: Reading
+        description: Books and manga shown with their covers. Upload a cover, or leave it empty and one is found when the site builds.
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Title
+            type: string
+          - name: author
+            label: Author
+            type: string
+          - name: kind
+            label: Kind
+            type: select
+            default: Book
+            options:
+              values: [Book, Manga]
+          - name: isbn
+            label: ISBN (optional, helps find the right cover)
+            type: string
+          - name: note
+            label: Note
+            description: For example "Reading it now" or "Volume 104".
+            type: string
+          - name: cover
+            label: Cover (optional)
+            type: image
+          - name: link
+            label: Link (optional)
+            type: string
       - name: skills
         label: Skills
         type: object

@@ -1036,9 +1036,12 @@ a.row__title:hover {
   gap: 0.6rem;
   margin: 1.5rem 0 0;
 }
-.pairs div {
+.pairs > div {
   display: grid;
   gap: 0 1.25rem;
+}
+.pairs > div[hidden] {
+  display: none;
 }
 .pairs dt {
   font-weight: 600;
@@ -1049,7 +1052,7 @@ a.row__title:hover {
   color: var(--ink-2);
 }
 @media (min-width: 600px) {
-  .pairs div {
+  .pairs > div {
     grid-template-columns: 9.5rem minmax(0, 1fr);
   }
 }
@@ -1068,6 +1071,186 @@ a.row__title:hover {
 }
 .pairs--facts dd {
   color: var(--ink);
+}
+
+/* ---------- Off the clock: live games and music, and covers ---------- */
+.pairs dd > p {
+  margin: 0;
+}
+.pairs dd > * + * {
+  margin-top: 0.7rem;
+}
+.live[hidden] {
+  display: none;
+}
+.live p {
+  margin: 0;
+}
+.live__status {
+  color: var(--ink-2);
+}
+.live__status b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.live__status i,
+.live__meta i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.45em;
+  border-radius: 50%;
+  background: var(--route);
+  vertical-align: 0.12em;
+  box-shadow: 0 0 0 3px var(--route-soft);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  50% {
+    box-shadow: 0 0 0 5px transparent;
+  }
+}
+.live__games {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0;
+}
+.live__games li {
+  display: grid;
+  align-content: start;
+  gap: 0.1rem;
+  margin: 0;
+  min-width: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+.live__shot {
+  display: block;
+  aspect-ratio: 460 / 215;
+  margin-bottom: 0.35rem;
+  border-radius: 6px;
+  background: var(--sunk);
+  overflow: hidden;
+}
+.live__shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.live__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+  font-weight: 600;
+}
+.live__meta {
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}
+.live__track {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.live__art {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  background: var(--sunk);
+  overflow: hidden;
+}
+.live__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.live__track p {
+  display: grid;
+  min-width: 0;
+  line-height: 1.35;
+}
+.live__track b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+  font-weight: 600;
+}
+.live__track b a {
+  text-decoration: none;
+}
+.live__month {
+  margin-top: 0.7rem !important;
+}
+.covers {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+.covers li {
+  width: 7.5rem;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+.covers a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.covers__art {
+  display: block;
+  aspect-ratio: 2 / 3;
+  margin-bottom: 0.5rem;
+  border-radius: 3px 6px 6px 3px;
+  background: var(--sunk);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(24, 32, 46, 0.12), 0 8px 18px -12px rgba(24, 32, 46, 0.5);
+}
+.covers__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.covers__blank {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding: 0.6rem;
+  background: var(--ink);
+  color: var(--paper);
+  font: 400 1rem/1.15 var(--display);
+}
+.covers__title,
+.covers__by,
+.covers__note {
+  display: block;
+}
+.covers__title {
+  color: var(--ink);
+  font-weight: 600;
+}
+.covers__note {
+  color: var(--ink-3);
+}
+@media (max-width: 420px) {
+  .live__games {
+    gap: 0.5rem;
+  }
+  .live__games li {
+    font-size: 0.8125rem;
+  }
 }
 
 /* ---------- Contact: a little text thread ---------- */
