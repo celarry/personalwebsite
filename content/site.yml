@@ -1,15 +1,12 @@
 name: Lawrence Qi
 headline: I train machine-learning models and run the machines they live on.
-intro: >-
-  I study Computer Science at Monash University and graduate in October 2026.
-  In November I'm moving to Singapore to start an AI/ML internship at NetGain,
-  working on small language models that run locally.
+intro: I study Computer Science at Monash University and graduate in October
+  2026. In November I'm moving to Singapore to start an AI/ML internship at
+  NetGain, working on small language models that run locally.
 now: Finishing my degree at Monash and packing for Singapore.
-# The countdown in the Now section.
 move:
   place: Singapore
   date: 2026-11-19
-# What's done and what's left, shown under the countdown.
 checklist:
   - text: Finish classes at Monash
     done: true
@@ -25,30 +22,67 @@ location: Melbourne, Australia
 timezone: Australia/Melbourne
 email: celarry1@gmail.com
 github: https://github.com/rockminelaw
-linkedin: ''
 resume: /uploads/Lawrence-Qi-Resume.pdf
 url: https://lawrenceqi.com
-# The address of the small worker that reports what I'm playing and listening to.
-# Leave empty to show only the text below.
-now_api: ''
-# Live music from Last.fm (Spotify scrobbles), read straight from the browser.
-lastfm_user: ''
-lastfm_key: ''
-# Live Steam games, from the file .github/workflows/steam.yml publishes. Turn on once the
-# STEAM_KEY secret and STEAM_ID variable are set in GitHub.
-steam_live: false
-about: >-
-  I like problems where a model has to make a call in real time from messy
+lastfm_user: rockminelaw
+lastfm_key: f3cbcc19d92935e5de9fa888e25e81d5
+steam_live: true
+now_api: https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json
+about: "I like problems where a model has to make a call in real time from messy
   inputs: predicting who wins a Valorant round from a broadcast feed, or
   steering a shopping cart around people at a hackathon. I also like owning the
   whole stack, which is why I run a multi-machine homelab with a Kubernetes
   cluster, my media server, databases and a chatbot fine-tuned on my own
-  messages.
-about_more: >-
-  Away from the keyboard I tutor primary and middle-school students, and I
-  built the stream overlays for MEGA's fighting-game weeklies. I speak English,
-  Mandarin, Cantonese and French.
+  messages."
+about_more: Away from the keyboard I tutor primary and middle-school students,
+  and I built the stream overlays for MEGA's fighting-game weeklies. I speak
+  English, Mandarin, Cantonese and French.
 languages: English, Mandarin, Cantonese, French
+offclock:
+  - label: Games
+    text: Deadlock, Valorant, Street Fighter 6, Smash Bros. Ultimate, Overwatch,
+      Slay the Spire 2 and Disco Elysium. I also go to Street Fighter and Smash
+      locals.
+    live: steam
+    more_label: Where games turn up in my projects
+    projects:
+      - valorant-win-probability
+      - smash-theater
+      - mega-stream-overlays
+  - label: Music
+    text: Tenor saxophone, on a King Super 20 (Series 3) with a Theo Wanne Lakshmi
+      mouthpiece and Légère American Cut 2.5 reeds.
+    more_label: The setup, part by part
+    setup:
+      - part: Horn
+        name: King Super 20 (Series 3)
+        note: The saxophone itself, a vintage King. The keys, the tube and the bell.
+      - part: Mouthpiece
+        name: Theo Wanne Lakshmi
+        note: Where the sound starts. Its shape has a big say in how bright or dark the
+          tone is.
+      - part: Reed
+        name: Légère American Cut, strength 2.5
+        note: Vibrates against the mouthpiece. Légère reeds are synthetic, so they play
+          the same every day; 2.5 is how stiff it is.
+  - label: Listening
+    live: music
+  - label: Reading
+    live: reading
+  - label: Also
+    text: Board games with friends.
+reading:
+  - title: Root Rot
+    author: Saskia Nislow
+    kind: Book
+    isbn: "9781951971250"
+    note: Reading it now
+    cover: /uploads/covers/root-rot.jpg
+  - title: One Piece
+    author: Eiichiro Oda
+    kind: Manga
+    note: Working through it
+    cover: /uploads/covers/one-piece.jpg
 skills:
   - group: Machine learning
     items: Python, PyTorch, NumPy, Pandas, XGBoost, R, LoRA and QLoRA fine-tuning
@@ -61,74 +95,27 @@ experience:
     type: work
     org: NetGain
     dates: Nov 2026 – Feb 2027
-    summary: >-
-      A three-month internship on knowledge distillation and small, locally
+    summary: A three-month internship on knowledge distillation and small, locally
       hosted language models for infrastructure and monitoring workflows.
     points:
-      - Evaluating open-weight models for log analysis, classification, summarisation, structured extraction and routing.
-      - Benchmarking accuracy, latency, memory use and inference cost on CPU-only systems.
-      - Testing fine-tuning, LoRA, quantisation, distillation and fallback to larger models for uncertain cases.
+      - Evaluating open-weight models for log analysis, classification,
+        summarisation, structured extraction and routing.
+      - Benchmarking accuracy, latency, memory use and inference cost on
+        CPU-only systems.
+      - Testing fine-tuning, LoRA, quantisation, distillation and fallback to
+        larger models for uncertain cases.
   - role: Academic Tutor
     type: work
     org: Unitop
     dates: Feb 2023 – present
-    summary: >-
-      One-on-one tutoring for students from grade 1 to grade 9.
+    summary: One-on-one tutoring for students from grade 1 to grade 9.
     points:
       - Raised students' marks by up to 35 percent.
-      - Worked with parents and teachers to keep learning plans aligned between home and school.
+      - Worked with parents and teachers to keep learning plans aligned between
+        home and school.
   - role: Bachelor of Computer Science
     type: education
     org: Monash University
     dates: Graduating Oct 2026
-    summary: ''
-    points: []
     projects:
       - ai-email-assistant
-offclock:
-  - label: Games
-    live: steam
-    text: >-
-      Deadlock, Valorant, Street Fighter 6, Smash Bros. Ultimate, Overwatch,
-      Slay the Spire 2 and Disco Elysium. I also go to Street Fighter and Smash
-      locals.
-    more_label: Where games turn up in my projects
-    projects:
-      - valorant-win-probability
-      - smash-theater
-      - mega-stream-overlays
-  - label: Music
-    text: >-
-      Tenor saxophone, on a King Super 20 (Series 3) with a Theo Wanne Lakshmi
-      mouthpiece and Légère American Cut 2.5 reeds.
-    more_label: The setup, part by part
-    setup:
-      - part: Horn
-        name: King Super 20 (Series 3)
-        note: The saxophone itself, a vintage King. The keys, the tube and the bell.
-      - part: Mouthpiece
-        name: Theo Wanne Lakshmi
-        note: Where the sound starts. Its shape has a big say in how bright or dark the tone is.
-      - part: Reed
-        name: Légère American Cut, strength 2.5
-        note: Vibrates against the mouthpiece. Légère reeds are synthetic, so they play the same every day; 2.5 is how stiff it is.
-  - label: Listening
-    live: music
-    text: ''
-  - label: Reading
-    live: reading
-    text: ''
-  - label: Also
-    text: Board games with friends.
-reading:
-  - title: Root Rot
-    author: Saskia Nislow
-    kind: Book
-    isbn: '9781951971250'
-    note: Reading it now
-    cover: /uploads/covers/root-rot.jpg
-  - title: One Piece
-    author: Eiichiro Oda
-    kind: Manga
-    note: Working through it
-    cover: /uploads/covers/one-piece.jpg
