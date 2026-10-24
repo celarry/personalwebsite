@@ -200,6 +200,48 @@ content:
         label: Now (one line)
         description: Shown under the store on the homepage. The Now page has the longer version.
         type: string
+      - name: move
+        label: Countdown
+        description: The countdown in the Now section. It disappears once the date has passed.
+        type: object
+        fields:
+          - name: place
+            label: Going to
+            type: string
+          - name: date
+            label: Date
+            type: date
+      - name: checklist
+        label: Before I go
+        description: The checklist under the countdown. Tick things off as they happen.
+        type: object
+        list: true
+        fields:
+          - name: text
+            label: Item
+            type: string
+          - name: done
+            label: Done
+            type: boolean
+      - name: timeline
+        label: Timeline
+        description: Things for the homepage timeline. Project milestones are added from each project's history, so they don't need to go here.
+        type: object
+        list: true
+        fields:
+          - name: date
+            label: Date
+            description: A month like 2026-11, or a day like 2026-11-19.
+            type: string
+          - name: kind
+            label: Kind
+            type: select
+            default: life
+            options:
+              values: [work, study, life]
+          - name: text
+            label: What happened
+            type: string
       - name: location
         label: Location
         type: string
@@ -267,6 +309,45 @@ content:
             type: select
             options:
               values: [none, steam, music, reading]
+          - name: more_label
+            label: Label for the part that opens
+            description: For example "The setup, part by part". Only shows if one of the fields below has something in it.
+            type: string
+          - name: more
+            label: More to say
+            description: Extra text that appears when the row is opened.
+            type: rich-text
+          - name: projects
+            label: Related projects
+            description: The project file names, like smash-theater.
+            type: string
+            list: true
+          - name: links
+            label: Links
+            description: Clips, streams or anything else worth linking.
+            type: object
+            list: true
+            fields:
+              - name: label
+                label: Label
+                type: string
+              - name: url
+                label: Address
+                type: string
+          - name: setup
+            label: Setup (numbered on the sax drawing)
+            type: object
+            list: true
+            fields:
+              - name: part
+                label: Part
+                type: string
+              - name: name
+                label: Name
+                type: string
+              - name: note
+                label: Note
+                type: text
       - name: reading
         label: Reading
         description: Books and manga shown with their covers. Upload a cover, or leave it empty and one is found when the site builds.
@@ -292,6 +373,14 @@ content:
             label: Note
             description: For example "Reading it now" or "Volume 104".
             type: string
+          - name: progress
+            label: How far in (optional)
+            description: Shown when the cover is opened, instead of the note.
+            type: string
+          - name: thoughts
+            label: My notes on it
+            description: What you think so far. Shown when someone opens the cover.
+            type: rich-text
           - name: cover
             label: Cover (optional)
             type: image
@@ -335,6 +424,11 @@ content:
             type: text
           - name: points
             label: Bullet points
+            type: string
+            list: true
+          - name: projects
+            label: Related projects
+            description: The project file names, like ai-email-assistant. Shown when the row is opened.
             type: string
             list: true
 

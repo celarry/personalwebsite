@@ -98,10 +98,34 @@ const site = loadYaml(read('content/site.yml')) || {};
 site.introHtml = inlineMarkdown(site.intro, 0);
 site.intro = decode(site.introHtml.replace(/<[^>]+>/g, '')).trim(); // plain text, for the resume
 site.now_api = String(site.now_api || '').trim().replace(/\/$/, '');
-site.offclock = (Array.isArray(site.offclock) ? site.offclock : [])
-  .map((r) => ({ label: String(r?.label || ''), text: String(r?.text || '').trim(), live: String(r?.live || '').trim().replace(/^none$/, '') }))
+const arr = (v) => (Array.isArray(v) ? v : []);
+site.offclock = arr(site.offclock)
+  .map((r) => ({
+    label: String(r?.label || ''),
+    text: String(r?.text || '').trim(),
+    live: String(r?.live || '').trim().replace(/^none$/, ''),
+    // What opens under a row: more words, the projects it connects to, links, or a setup.
+    more: String(r?.more || '').trim(),
+    more_label: String(r?.more_label || '').trim(),
+    projects: arr(r?.projects).map(String).filter(Boolean),
+    links: arr(r?.links).filter((l) => l && l.url).map((l) => ({ label: String(l.label || l.url), url: String(l.url) })),
+    setup: arr(r?.setup).filter((x) => x && x.name).map((x) => ({ part: String(x.part || ''), name: String(x.name), note: String(x.note || '') })),
+  }))
   .filter((r) => r.label && (r.text || r.live))
-  .map((r) => ({ ...r, html: r.text ? inlineMarkdown(r.text, 0) : '' }));
+  .map((r) => ({ ...r, html: r.text ? inlineMarkdown(r.text, 0) : '', moreHtml: r.more ? renderMarkdown(r.more, 0) : '' }));
+
+// Now: a countdown to the move, and what's done and what's left.
+site.move = { place: String(site.move?.place || '').trim(), date: asDate(site.move?.date, 10) };
+site.checklist = arr(site.checklist)
+  .filter((x) => x && x.text)
+  .map((x) => ({ text: String(x.text), done: x.done === true || x.done === 'true' }));
+
+// Timeline entries that aren't project milestones.
+site.timeline = arr(site.timeline)
+  .filter((e) => e && e.date && e.text)
+  .map((e) => ({ date: asDate(e.date, 10), kind: String(e.kind || 'life'), text: String(e.text) }));
+
+site.experience = arr(site.experience).map((j) => ({ ...j, projects: arr(j?.projects).map(String).filter(Boolean), points: arr(j?.points).map(String).filter(Boolean) }));
 
 // Books and manga for the Reading row. Anything without an uploaded cover gets one looked
 // up when the site is built (Open Library for books, AniList for manga); if that fails,
@@ -114,6 +138,8 @@ site.reading = (Array.isArray(site.reading) ? site.reading : [])
     kind: String(b.kind || 'Book'),
     isbn: String(b.isbn || '').replace(/[^0-9Xx]/g, ''),
     note: String(b.note || ''),
+    progress: String(b.progress || ''),
+    thoughts: b.thoughts ? renderMarkdown(String(b.thoughts), 0) : '',
     link: String(b.link || ''),
     cover: String(b.cover || ''),
     slug: slugify(`${b.title}-${b.author || ''}`),

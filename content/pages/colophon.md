@@ -1,6 +1,6 @@
 ---
 title: How this site works
-summary: The build, the type, the little store on the homepage, and the shortcuts.
+summary: The build, the type and the little store on the homepage.
 ---
 ## The build
 

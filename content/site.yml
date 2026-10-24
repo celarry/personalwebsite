@@ -5,6 +5,22 @@ intro: >-
   In November I'm moving to Singapore to start an AI/ML internship at NetGain,
   working on small language models that run locally.
 now: Finishing my degree at Monash and packing for Singapore.
+# The countdown in the Now section.
+move:
+  place: Singapore
+  date: 2026-11-19
+# What's done and what's left, shown under the countdown.
+checklist:
+  - text: Finish classes at Monash
+    done: true
+  - text: Sit my final exams
+    done: false
+  - text: Graduate from Monash
+    done: false
+  - text: Fly to Singapore
+    done: false
+  - text: Start the AI/ML internship at NetGain
+    done: false
 location: Melbourne, Australia
 timezone: Australia/Melbourne
 email: celarry1@gmail.com
@@ -61,6 +77,23 @@ experience:
     dates: Graduating Oct 2026
     summary: ''
     points: []
+    projects:
+      - ai-email-assistant
+# The timeline on the homepage. Project milestones are added from each project's history;
+# these are the rest.
+timeline:
+  - date: 2023-02
+    kind: work
+    text: Started tutoring at Unitop.
+  - date: 2026-10
+    kind: study
+    text: Finished my last classes at Monash.
+  - date: 2026-11-19
+    kind: life
+    text: Fly to Singapore.
+  - date: 2026-11
+    kind: work
+    text: Start the AI/ML internship at NetGain.
 offclock:
   - label: Games
     live: steam
@@ -68,15 +101,34 @@ offclock:
       Deadlock, Valorant, Street Fighter 6, Smash Bros. Ultimate, Overwatch,
       Slay the Spire 2 and Disco Elysium. I also go to Street Fighter and Smash
       locals.
+    more_label: Where games turn up in my projects
+    projects:
+      - valorant-win-probability
+      - smash-theater
+      - mega-stream-overlays
   - label: Music
     text: >-
       Tenor saxophone, on a King Super 20 (Series 3) with a Theo Wanne Lakshmi
       mouthpiece and Légère American Cut 2.5 reeds.
+    more_label: The setup, part by part
+    setup:
+      - part: Horn
+        name: King Super 20 (Series 3)
+        note: The saxophone itself, a vintage King. The keys, the tube and the bell.
+      - part: Mouthpiece
+        name: Theo Wanne Lakshmi
+        note: Where the sound starts. Its shape has a big say in how bright or dark the tone is.
+      - part: Reed
+        name: Légère American Cut, strength 2.5
+        note: Vibrates against the mouthpiece. Légère reeds are synthetic, so they play the same every day; 2.5 is how stiff it is.
   - label: Listening
     live: music
     text: ''
   - label: Casting
     text: I do some Valorant casting.
+    more_label: Related
+    projects:
+      - valorant-win-probability
   - label: Reading
     live: reading
     text: ''

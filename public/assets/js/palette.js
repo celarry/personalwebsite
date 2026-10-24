@@ -1,4 +1,4 @@
-// Command palette (⌘K / Ctrl K, or /) and keyboard shortcuts. On phones it doubles as the menu.
+// Search and commands (⌘K / Ctrl K, or /). On phones it doubles as the menu.
 (() => {
   const body = document.body;
   const root = body.dataset.root || './';
@@ -23,31 +23,16 @@
   const STORE_HASHES = ['closed', 'open', 'shop', 'lunar', 'easter', 'midautumn', 'halloween', 'christmas', ...Array.from({ length: 100 }, (_, i) => `store-${i + 1}`)];
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
-  const SHORTCUTS = [
-    [isMac() ? '⌘ K' : 'Ctrl K', 'Open this palette'],
-    ['/', 'Open this palette'],
-    ['1', 'Homepage'],
-    ['2', 'Projects'],
-    ['3', 'Blog'],
-    ['4', 'Now page'],
-    ['5', 'Resume'],
-    ['t', 'Switch light and dark'],
-    ['?', 'Show shortcuts'],
-  ];
-  function isMac() {
-    const p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
-    return /mac|iphone|ipad|ipod/i.test(p);
-  }
   const kbd = (k) => k.split(' ').map((x) => `<kbd>${esc(x)}</kbd>`).join(' ');
 
   // ---------- Items ----------
   const pages = [
-    { title: 'Home', href: '', keywords: 'homepage start store shop cart', hint: '1' },
-    { title: 'Projects', href: 'projects/', keywords: 'work portfolio history built', hint: '2' },
-    { title: 'Blog', href: 'blog/', keywords: 'posts writing life archive', hint: '3' },
-    { title: 'Now', href: 'now/', keywords: 'currently up to singapore where', hint: '4' },
-    { title: 'Resume', href: 'resume/', keywords: 'cv experience skills hire', hint: '5' },
-    { title: 'How this site works', href: 'colophon/', keywords: 'colophon build fonts privacy shortcuts source' },
+    { title: 'Home', href: '', keywords: 'homepage start store shop cart' },
+    { title: 'Projects', href: 'projects/', keywords: 'work portfolio history built' },
+    { title: 'Blog', href: 'blog/', keywords: 'posts writing life archive' },
+    { title: 'Now', href: 'now/', keywords: 'currently up to singapore where' },
+    { title: 'Resume', href: 'resume/', keywords: 'cv experience skills hire' },
+    { title: 'How this site works', href: 'colophon/', keywords: 'colophon build fonts privacy source' },
     { title: 'About', href: '#about', keywords: 'bio skills languages' },
     { title: 'Experience', href: '#experience', keywords: 'jobs work netgain unitop monash education' },
     { title: 'Off the clock', href: '#offclock', keywords: 'games music saxophone reading hobbies casting valorant' },
@@ -67,7 +52,6 @@
     {
       title: () => (window.siteTheme && window.siteTheme.current() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'),
       keywords: 'theme dark light mode colour',
-      hint: 't',
       run: () => window.siteTheme && window.siteTheme.toggle(),
       stay: true,
     },
@@ -173,7 +157,6 @@
     { title: 'Play with the Valorant predictor', keywords: 'valorant demo win probability model', href: '#valorant-win-probability' },
     repo && { title: "View this site's source on GitHub", keywords: 'code repository source github', href: repo, external: true },
     { title: 'Follow with RSS', keywords: 'rss feed subscribe', href: 'feed.xml' },
-    { title: 'Show keyboard shortcuts', keywords: 'keys keyboard help shortcuts', hint: '?', run: () => showShortcuts(), stay: true },
   ]
     .filter(Boolean)
     .map((a) => ({ ...a, group: 'Actions' }));
@@ -233,9 +216,6 @@
   function answer(html) {
     answerEl.innerHTML = html;
     answerEl.hidden = false;
-  }
-  function showShortcuts() {
-    answer(`<table class="palette__keys"><tbody>${SHORTCUTS.map(([k, d]) => `<tr><td>${kbd(k)}</td><td>${esc(d)}</td></tr>`).join('')}</tbody></table>`);
   }
 
   function score(item, q) {
@@ -360,10 +340,7 @@
 
   document.querySelectorAll('[data-palette-open]').forEach((b) => b.addEventListener('click', open));
 
-  // ---------- Shortcuts ----------
-  const goMap = { h: '', p: 'projects/', b: 'blog/', n: 'now/', r: 'resume/' };
-  const numberMap = { 1: '', 2: 'projects/', 3: 'blog/', 4: 'now/', 5: 'resume/' };
-  let gAt = 0;
+  // ⌘K or Ctrl K opens search from anywhere, and so does / outside a text box.
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === 'k') {
       e.preventDefault();
@@ -373,20 +350,7 @@
     if (dialog.open || e.metaKey || e.ctrlKey || e.altKey) return;
     const t = e.target;
     if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) return;
-    if (gAt && Date.now() - gAt < 1200 && goMap[e.key] !== undefined) {
-      gAt = 0;
-      location.href = link(goMap[e.key]);
-      return;
-    }
-    gAt = 0;
-    if (numberMap[e.key] !== undefined && !e.shiftKey) {
-      location.href = link(numberMap[e.key]);
-      return;
-    }
     if (e.key === '/') { e.preventDefault(); open(); }
-    else if (e.key === '?') { e.preventDefault(); open(); showShortcuts(); }
-    else if (e.key === 't' && window.siteTheme) window.siteTheme.toggle();
-    else if (e.key === 'g') gAt = Date.now();
   });
 
   window.palette = { open, close };

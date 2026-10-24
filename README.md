@@ -53,7 +53,11 @@ All of these are in the Pages CMS sidebar:
 
 - **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page. Every project is listed on the homepage; the first sentence of the summary is the short description, unless you fill in **Short description**.
 - **Now page:** what you're up to. Change **Last updated** when you edit it.
-- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Casting, Reading and so on). Links work: `[text](https://example.com)`.
+- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Casting, Reading and so on). Links work: `[text](https://example.com)`. A row opens to show more when it has any of: **More to say**, **Related projects**, **Links** (clips, streams) or a **Setup** (the numbered parts on the sax drawing). Name the opener with **Label for the part that opens**.
+- **Reading notes** (in Profile, under Reading): fill in **My notes on it** and **How far in**; people see them when they tap a cover.
+- **Countdown and checklist** (in Profile): **Countdown** is the place and date in the Now section; **Before I go** is the checklist under it. Tick items off as they happen.
+- **Timeline** (in Profile): work, study and life events for the homepage timeline. Project milestones are added automatically from each project's History.
+- **Skills:** each skill on the homepage opens to the projects and jobs that mention it, worked out when the site builds. Mention a skill in a project's stack, highlights or write-up and it shows up there.
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.
 
@@ -77,9 +81,9 @@ To turn it off, clear **Live data address**. The text you've written for each ro
 - **The store:** it keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps by the checkout until someone wakes it. Visitors can give it something from the list below it (tap, or drag onto the floor); it fetches it, takes it to the checkout and prints a receipt. The switch under it changes the search between A*, Dijkstra and greedy, and the line next to it reports how many squares each one checked. It decorates itself for Lunar New Year, Easter, Mid-Autumn, Halloween and Christmas. Add `#open`, `#closed`, `#lunar`, `#easter`, `#midautumn`, `#halloween` or `#christmas` to the address to preview each.
 - **A hundred stores:** the first visit gets the original store; every visit or refresh after that gets one you haven't seen. They're all in `public/assets/js/stores.js`. `/stores/` shows the ones you've found (the browser remembers), and `#store-37` on the homepage opens a particular one.
 - **Projects that open:** each project on the homepage opens in place; the featured ones open into their demo. Each has its own address, like `/#valorant-win-probability`.
+- **Experience rows that open:** each job opens to its bullet points and related projects.
 - **Contact:** a short text thread that asks for a name and a message, then opens the visitor's email app with it written out. Nothing is sent or stored by the site.
 - **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post, switch the cart's search, turn the store's lights off, decorate it for a festival.
-- **Shortcuts:** `1` to `5` jump between Home, Projects, Blog, Now and Resume (`g` then `h`, `p`, `b`, `n` or `r` works too), `t` for the theme, `?` for the list.
 - **Project pages:** diagrams you can step through, the Valorant HUD reader, the store on the shopping cart's page, and each project's history.
 - **Blog filters:** `/blog/#life` links straight to the Life posts.
 - **Colophon:** `/colophon/` explains how the site works, with real build numbers.

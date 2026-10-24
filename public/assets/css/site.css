@@ -59,6 +59,12 @@
   --atk: #c13d29;
   --def: #0f7b77;
   --festive: #c08a1e;
+  --brass-1: #b5862b;
+  --brass-2: #f0d27e;
+  --brass-3: #7d5a16;
+  --pearl: #f8f3e6;
+  --mp: #23272e;
+  --reed: #e6d7ad;
   --pumpkin: #dd7a22;
   --receipt: #fbfbf7;
   --lift: 0 1px 0 rgba(24, 32, 46, 0.04), 0 18px 40px -24px rgba(24, 32, 46, 0.45);
@@ -95,6 +101,18 @@
     --atk: #f27a63;
     --def: #49c4bd;
     --festive: #e2b34a;
+  --brass-1: #a87c28;
+  --brass-2: #e3c06a;
+  --brass-3: #5e4412;
+  --pearl: #d9d2bf;
+  --mp: #5b6271;
+  --reed: #c9bb92;
+    --brass-1: #a87c28;
+    --brass-2: #e3c06a;
+    --brass-3: #5e4412;
+    --pearl: #d9d2bf;
+    --mp: #5b6271;
+    --reed: #c9bb92;
     --pumpkin: #ec8f3a;
     --receipt: #1e2633;
     --lift: 0 20px 44px -22px rgba(0, 0, 0, 0.8);
@@ -1277,6 +1295,491 @@ a.row__title:hover {
   .live__games li {
     font-size: 0.8125rem;
   }
+}
+
+/* ---------- Now: the countdown and what's left ---------- */
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--panel);
+}
+.countdown__n {
+  flex: none;
+  min-width: 2ch;
+  font: 400 3.25rem/1 var(--display);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.countdown__text {
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.countdown.is-today .countdown__n {
+  color: var(--route);
+}
+.checklist {
+  margin-top: 1.5rem;
+}
+.checklist__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.checklist__count {
+  font-weight: 400;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.checklist__bar {
+  display: block;
+  height: 3px;
+  margin-bottom: 0.5rem;
+  border-radius: 2px;
+  background: var(--rule-2);
+  overflow: hidden;
+}
+.checklist__bar i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--route);
+}
+.checklist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.checklist li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.3rem 0;
+  color: var(--ink);
+}
+.checklist__box {
+  position: relative;
+  top: 0.12em;
+  flex: none;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--ink-3);
+  border-radius: 4px;
+}
+.checklist li.is-done {
+  color: var(--ink-3);
+}
+.checklist li.is-done .checklist__box {
+  background: var(--route);
+  border-color: var(--route);
+}
+.checklist li.is-done .checklist__box::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--route-ink);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- About: skills that show where they were used ---------- */
+.about__hint {
+  margin: 1.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+.pairs--skills {
+  margin-top: 0.6rem;
+}
+.skill {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--ink-2);
+  text-align: left;
+  text-decoration: underline dotted var(--ink-3);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+.skill--plain {
+  text-decoration: none;
+  cursor: auto;
+}
+button.skill:hover,
+button.skill[aria-expanded='true'] {
+  color: var(--route);
+  text-decoration: underline solid currentColor;
+}
+.skill__n {
+  margin-left: 0.12em;
+  font-size: 0.6875rem;
+  vertical-align: 0.45em;
+  line-height: 0;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+button.skill:hover .skill__n,
+button.skill[aria-expanded='true'] .skill__n {
+  color: inherit;
+}
+.proof,
+.book-notes {
+  margin: 0.75rem 0 0.35rem;
+  padding: 0.9rem 1.05rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--panel);
+  animation: row-open 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.proof[hidden],
+.book-notes[hidden] {
+  display: none;
+}
+.proof__head,
+.related__head {
+  margin: 0 0 0.55rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.proof ul,
+.related ul,
+.related__list {
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+}
+.proof li,
+.related li,
+.related__list li {
+  display: grid;
+  gap: 0.1rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.proof li a,
+.proof li b,
+.related li a,
+.related__list li a {
+  font-weight: 600;
+  color: var(--ink);
+}
+.proof li span,
+.related li span,
+.related__list li span {
+  color: var(--ink-2);
+}
+.related {
+  margin-top: 1.25rem;
+}
+
+/* Experience rows with nothing more to show stay still, lined up with the ones that open. */
+.row--still > .row__head {
+  grid-template-columns: minmax(0, 1fr) auto 1.25rem;
+  padding: 0.95rem 0;
+}
+.row--still .row__lead {
+  grid-column: 1 / 3;
+}
+
+/* ---------- Timeline ---------- */
+.tl__filters {
+  margin: 0 0 1.25rem;
+}
+.tl__key {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 0.45rem;
+  border-radius: 50%;
+  vertical-align: 0.05em;
+}
+.tl__key.tl--work {
+  background: var(--route);
+}
+.tl__key.tl--study {
+  background: var(--festive);
+}
+.tl__key.tl--project {
+  background: var(--ink-2);
+}
+.tl__key.tl--life {
+  background: var(--atk);
+}
+.tl__filters button[aria-pressed='true'] .tl__key {
+  box-shadow: 0 0 0 1.5px var(--paper);
+}
+.tl {
+  --tl-date: 4.25rem;
+  --tl-mid: 1.5rem;
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tl::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--tl-date) + var(--tl-mid) / 2);
+  top: 2.4rem;
+  bottom: 0.9rem;
+  width: 1px;
+  background: var(--rule);
+}
+.tl__year {
+  margin: 0;
+  padding: 1.25rem 0 0.35rem;
+  font: 400 1.125rem/1 var(--display);
+  color: var(--ink);
+}
+.tl__year:first-child {
+  padding-top: 0.5rem;
+}
+.tl__item,
+.tl__today {
+  display: grid;
+  grid-template-columns: var(--tl-date) var(--tl-mid) minmax(0, 1fr);
+  align-items: baseline;
+  margin: 0;
+  padding: 0.38rem 0;
+}
+.tl time {
+  color: var(--ink-3);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.tl__dot {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  top: 0.05rem;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--ink-3);
+  border-radius: 50%;
+  background: var(--paper);
+}
+.tl p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.tl p a {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tl--work .tl__dot {
+  background: var(--route);
+  border-color: var(--route);
+}
+.tl--study .tl__dot {
+  background: var(--festive);
+  border-color: var(--festive);
+}
+.tl--project .tl__dot {
+  background: var(--ink-2);
+  border-color: var(--ink-2);
+}
+.tl--life .tl__dot {
+  background: var(--atk);
+  border-color: var(--atk);
+}
+.tl .is-future p {
+  color: var(--ink-3);
+}
+.tl .is-future .tl__dot {
+  background: var(--paper);
+}
+.tl__today .tl__dot {
+  grid-column: 2;
+  width: 11px;
+  height: 11px;
+  border-color: var(--route);
+  background: var(--route);
+  box-shadow: 0 0 0 4px var(--route-soft);
+}
+.tl__today p {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--route);
+}
+@media (max-width: 480px) {
+  .tl {
+    --tl-date: 3.6rem;
+    --tl-mid: 1.25rem;
+  }
+}
+
+/* ---------- Off the clock: rows with more under them ---------- */
+.more > summary {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  list-style: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.more > summary::-webkit-details-marker {
+  display: none;
+}
+.more > summary::after {
+  content: '+';
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.more[open] > summary::after {
+  content: '\2212';
+}
+.more > summary:hover {
+  color: var(--route);
+}
+.more__body {
+  padding: 0.85rem 0 0.25rem;
+  animation: row-open 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.more__body > * + * {
+  margin-top: 1rem;
+}
+.setup {
+  display: grid;
+  grid-template-columns: 10rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+}
+.sax {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sax__marks circle {
+  fill: var(--ink);
+}
+.sax__marks text {
+  fill: var(--paper);
+  font-family: var(--sans);
+}
+.sax__marks line {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+.setup__list {
+  counter-reset: part;
+  list-style: none;
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+}
+.setup__list li {
+  counter-increment: part;
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  column-gap: 0.7rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.setup__list li::before {
+  content: counter(part);
+  grid-row: span 3;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.05rem;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.setup__part {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.setup__list b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.setup__list span:last-child {
+  color: var(--ink-2);
+}
+@media (max-width: 480px) {
+  .setup {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .sax {
+    width: 8.5rem;
+  }
+}
+
+/* Book covers that open to notes */
+.covers__btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.covers__btn .covers__art {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.covers__btn:hover .covers__art {
+  transform: translateY(-3px);
+}
+.covers__btn[aria-expanded='true'] .covers__art {
+  outline: 2px solid var(--route);
+  outline-offset: 3px;
+}
+.book-notes__head {
+  margin: 0;
+  color: var(--ink-2);
+}
+.book-notes__head b {
+  color: var(--ink);
+}
+.book-notes__head span {
+  margin-left: 0.3rem;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.book-notes__where {
+  margin: 0.2rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+.book-notes__body {
+  margin-top: 0.6rem;
+  color: var(--ink-2);
+}
+.book-notes .links {
+  margin-top: 0.6rem;
+  font-size: 0.9375rem;
 }
 
 /* ---------- Contact: a little text thread ---------- */
@@ -2555,26 +3058,6 @@ a.row__title:hover {
   margin: 0;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-}
-.shortcuts {
-  margin-top: 3.5rem;
-}
-.shortcuts h2 {
-  margin-bottom: 0.8rem;
-  font: 400 1.6rem/1.2 var(--display);
-}
-.shortcuts table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.shortcuts td {
-  padding: 8px 10px 8px 0;
-  border-bottom: 1px solid var(--rule-2);
-  vertical-align: middle;
-}
-.shortcuts td:first-child {
-  width: 8em;
-  white-space: nowrap;
 }
 
 /* All the stores */
