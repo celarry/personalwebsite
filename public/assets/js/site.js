@@ -29,6 +29,26 @@
     document.querySelectorAll('[data-kbd-mod-only]').forEach((k) => (k.textContent = 'Ctrl'));
   }
 
+  /* ---------- Appearing on scroll ----------
+     The head script hides these until they come into view (see .reveal in site.css).
+     Things that arrive together go in order, a beat apart. */
+  if (root.classList.contains('reveal')) {
+    const targets = document.querySelectorAll('main > :not(.block):not(.prose), .block__label, .block__body > :not(ul):not(ol):not(dl), .block__body > :is(ul, ol) > li, .block__body > dl > div, .covers > li, .prose > *');
+    const io = new IntersectionObserver((entries) => {
+      const coming = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left);
+      coming.forEach((e, k) => {
+        e.target.style.setProperty('--reveal-delay', `${Math.min(k, 8) * 70}ms`);
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -6% 0px' });
+    targets.forEach((el) => io.observe(el));
+    // Printing shouldn't leave anything invisible.
+    const showAll = () => targets.forEach((el) => el.classList.add('is-in'));
+    window.addEventListener('beforeprint', showAll);
+    window.revealReady = true;
+  }
+
   /* ---------- Local clock ---------- */
   const tz = body.dataset.tz;
   const place = body.dataset.place;

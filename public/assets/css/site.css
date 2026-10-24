@@ -2469,7 +2469,38 @@ a.row__title:hover {
   margin: 0;
   color: var(--ink-2);
 }
+/* ---------- Appearing on scroll ----------
+   With .reveal on <html> (set before first paint), sections, rows and paragraphs start
+   a little low and transparent, and settle into place as they come into view. */
+.reveal :is(main > :not(.block):not(.prose),
+  .block__label,
+  .block__body > :not(ul):not(ol):not(dl),
+  .block__body > :is(ul, ol) > li,
+  .block__body > dl > div,
+  .covers > li,
+  .prose > *) {
+  opacity: 0;
+  transform: translateY(0.85rem);
+}
+.reveal :is(main > :not(.block):not(.prose),
+  .block__label,
+  .block__body > :not(ul):not(ol):not(dl),
+  .block__body > :is(ul, ol) > li,
+  .block__body > dl > div,
+  .covers > li,
+  .prose > *).is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 0.84, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 0.9s cubic-bezier(0.16, 0.84, 0.3, 1) var(--reveal-delay, 0ms);
+}
+
 @media print {
+  .reveal :is(main, .block, .prose) * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
   @page {
     size: A4;
     margin: 14mm;
