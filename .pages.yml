@@ -258,9 +258,21 @@ content:
         label: Website address
         description: The full address of this site, used for the RSS feed and share previews.
         type: string
+      - name: lastfm_user
+        label: Last.fm username
+        description: Shows what you're listening to (Spotify, through Last.fm) in Off the clock. Needs the API key below too.
+        type: string
+      - name: lastfm_key
+        label: Last.fm API key
+        description: The "API key" from last.fm/api/account/create. Not the shared secret, which should never go here.
+        type: string
+      - name: steam_live
+        label: Show Steam games
+        description: Turn on once STEAM_KEY and STEAM_ID are set in GitHub (see the README). Updates about every ten minutes.
+        type: boolean
       - name: now_api
-        label: Live data address
-        description: The address of your Cloudflare worker, like https://now.lawrenceqi.com. Leave empty to turn off the live Steam and Last.fm parts.
+        label: Live data address (Cloudflare, optional)
+        description: The address of your Cloudflare worker, like https://now.lawrenceqi.com. Only needed if you use the Cloudflare worker instead of the settings above. Leave empty otherwise.
         type: string
       - name: about
         label: About, first paragraph

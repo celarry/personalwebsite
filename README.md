@@ -62,16 +62,25 @@ All of these are in the Pages CMS sidebar:
 
 ## Live games, music and book covers
 
-Off the clock can show what I'm playing on Steam and listening to on Last.fm. A small Cloudflare Worker (`worker/now.js`) holds the API keys, so they never go in the website, and it caches everything for 30 seconds. Set it up once:
+Off the clock can show what I'm playing on Steam and listening to on Spotify (through Last.fm). No server is needed.
 
-1. **Steam:** get a Web API key at [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) (any domain name works, for example `lawrenceqi.com`). Find your 64-bit Steam ID (17 digits) on your profile's address or with a SteamID lookup. In Steam, go to **Profile → Edit Profile → Privacy Settings** and set **My profile** and **Game details** to **Public**.
-2. **Last.fm:** make an account, then connect Spotify under **Settings → Applications → Spotify scrobbling** on last.fm. Create an API account at [last.fm/api/account/create](https://www.last.fm/api/account/create) and copy the **API key**.
-3. **Cloudflare:** in the dashboard, go to **Workers & Pages → Create → Create Worker**, name it `now`, deploy it, then **Edit code**, paste in everything from `worker/now.js`, and deploy again.
-4. In the worker's **Settings → Variables and Secrets**, add `STEAM_KEY` and `LASTFM_KEY` as **Secrets**, and `STEAM_ID` and `LASTFM_USER` as plain text.
-5. In **Settings → Domains & Routes**, add the custom domain `now.lawrenceqi.com`. Opening `https://now.lawrenceqi.com/now` should show your games and music as JSON.
-6. In Pages CMS, open **Profile** and set **Live data address** to `https://now.lawrenceqi.com`. The site updates a minute later.
+**Music (Spotify through Last.fm).** Last.fm's API is made to be read from a browser, so the page asks it directly.
 
-To turn it off, clear **Live data address**. The text you've written for each row still shows either way.
+1. Make a Last.fm account. On last.fm, go to **Settings → Applications** and connect **Spotify scrobbling**.
+2. Create an API account at [last.fm/api/account/create](https://www.last.fm/api/account/create). Any name and description work; leave the callback empty. Copy the **API key** (not the shared secret).
+3. In Pages CMS, open **Profile** and fill in **Last.fm username** and **Last.fm API key**.
+
+**Steam.** The Steam key has to stay secret, so a GitHub Action (`.github/workflows/steam.yml`) asks Steam every ten minutes and publishes the answer to the `live` branch, which the page reads. It's free because the repository is public.
+
+1. Get a Web API key at [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) (use `lawrenceqi.com` as the domain). In Steam, go to **Profile → Edit Profile → Privacy Settings** and set **My profile** and **Game details** to **Public**.
+2. Find your 17-digit Steam ID: it's in your profile's address, or use any SteamID lookup.
+3. On GitHub, open the repository's **Settings → Secrets and variables → Actions**. Under **Secrets**, add `STEAM_KEY` with the key. Under **Variables**, add `STEAM_ID` with the ID.
+4. Under **Actions → Steam**, press **Run workflow** once. When it's green, `https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json` shows your games.
+5. In Pages CMS, open **Profile** and turn on **Show Steam games**.
+
+GitHub runs scheduled jobs a few minutes late sometimes, so "playing right now" can lag by up to about a quarter of an hour. GitHub also pauses scheduled jobs if the repository has had no commits for 60 days; saving anything in Pages CMS keeps it going.
+
+To turn either off, clear the Last.fm fields or turn off **Show Steam games**. The text you've written for each row still shows either way. (`worker/now.js` is a Cloudflare Worker that can do both instead, if you'd rather use one: put its address in **Live data address**.)
 
 **Reading** shows covers for the books and manga in Profile → Reading. Upload a cover, or leave it empty: when the site builds it looks one up (AniList for manga, Open Library for books, using the ISBN if you add one). If nothing's found, the title is shown as a plain cover.
 

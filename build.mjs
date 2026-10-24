@@ -98,6 +98,11 @@ const site = loadYaml(read('content/site.yml')) || {};
 site.introHtml = inlineMarkdown(site.intro, 0);
 site.intro = decode(site.introHtml.replace(/<[^>]+>/g, '')).trim(); // plain text, for the resume
 site.now_api = String(site.now_api || '').trim().replace(/\/$/, '');
+// Live games and music without a server: Last.fm read straight from the browser, and Steam
+// from the file .github/workflows/steam.yml publishes to the `live` branch.
+site.lastfm_user = String(site.lastfm_user || '').trim();
+site.lastfm_key = String(site.lastfm_key || '').trim();
+site.steam_live = site.steam_live === true || site.steam_live === 'true';
 const arr = (v) => (Array.isArray(v) ? v : []);
 site.offclock = arr(site.offclock)
   .map((r) => ({
@@ -295,6 +300,8 @@ if (!sha) {
 const repoUrl = process.env.GITHUB_REPOSITORY
   ? `https://github.com/${process.env.GITHUB_REPOSITORY}`
   : (projects.find((p) => p.slug === 'this-website') || {}).repo || '';
+const repoPath = (process.env.GITHUB_REPOSITORY || repoUrl.replace(/^https:\/\/github\.com\//, '') || 'rockminelaw/personalwebsite').replace(/\/$/, '');
+site.steam_feed = site.steam_live ? `https://raw.githubusercontent.com/${repoPath}/live/steam.json` : '';
 const nowDate = new Date();
 const build = {
   sha,

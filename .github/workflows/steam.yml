@@ -1,0 +1,54 @@
+# Checks what I'm playing on Steam every ten minutes and publishes it to the `live` branch,
+# which the homepage reads. It does nothing until STEAM_ID is set under
+# Settings → Secrets and variables → Actions → Variables, and STEAM_KEY under Secrets.
+name: Steam
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: steam
+  cancel-in-progress: true
+
+jobs:
+  steam:
+    if: ${{ vars.STEAM_ID != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Ask Steam
+        env:
+          STEAM_KEY: ${{ secrets.STEAM_KEY }}
+          STEAM_ID: ${{ vars.STEAM_ID }}
+        run: node scripts/steam-feed.mjs > "$RUNNER_TEMP/steam.json"
+      - name: Publish to the live branch
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Skip the push when nothing but the time has changed and nothing is being played.
+          old=$(curl -fsS "https://raw.githubusercontent.com/$REPO/live/steam.json" || true)
+          new=$(cat "$RUNNER_TEMP/steam.json")
+          strip() { grep -v '"updated"' ; }
+          if [ -n "$old" ] && [ "$(echo "$old" | strip)" = "$(echo "$new" | strip)" ] && ! grep -q '"playing": {' "$RUNNER_TEMP/steam.json"; then
+            echo "No change."
+            exit 0
+          fi
+          # One commit on an orphan branch, replaced each time, so it never grows.
+          mkdir "$RUNNER_TEMP/live" && cd "$RUNNER_TEMP/live"
+          git init -q -b live
+          cp "$RUNNER_TEMP/steam.json" .
+          git add steam.json
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Steam"
+          git push -q -f "https://x-access-token:$TOKEN@github.com/$REPO.git" live

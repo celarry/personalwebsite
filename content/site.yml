@@ -31,6 +31,12 @@ url: https://lawrenceqi.com
 # The address of the small worker that reports what I'm playing and listening to.
 # Leave empty to show only the text below.
 now_api: ''
+# Live music from Last.fm (Spotify scrobbles), read straight from the browser.
+lastfm_user: ''
+lastfm_key: ''
+# Live Steam games, from the file .github/workflows/steam.yml publishes. Turn on once the
+# STEAM_KEY secret and STEAM_ID variable are set in GitHub.
+steam_live: false
 about: >-
   I like problems where a model has to make a call in real time from messy
   inputs: predicting who wins a Valorant round from a broadcast feed, or
