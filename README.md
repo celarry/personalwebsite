@@ -53,7 +53,7 @@ All of these are in the Pages CMS sidebar:
 
 - **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page. Every project is listed on the homepage; the first sentence of the summary is the short description, unless you fill in **Short description**.
 - **Now page:** what you're up to. Change **Last updated** when you edit it.
-- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Casting, Reading and so on). Links work: `[Wave OCE: Proteus](https://liquipedia.net/...)`.
+- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Casting, Reading and so on). Links work: `[text](https://example.com)`.
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.
 

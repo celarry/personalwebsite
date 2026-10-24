@@ -967,6 +967,8 @@
     void receiptEl.offsetWidth;
     receiptEl.classList.add('is-printing');
     receiptEl.querySelector('[data-receipt-done]').addEventListener('click', hideReceipt);
+    // On smaller screens it prints under the floor; bring it into view.
+    if (window.matchMedia('(max-width: 1099px)').matches) receiptEl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
     live(`Receipt printed: ${plural(o.got.length, 'item')}, total $${money(total)}.`);
   }
 
