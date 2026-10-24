@@ -79,21 +79,6 @@ experience:
     points: []
     projects:
       - ai-email-assistant
-# The timeline on the homepage. Project milestones are added from each project's history;
-# these are the rest.
-timeline:
-  - date: 2023-02
-    kind: work
-    text: Started tutoring at Unitop.
-  - date: 2026-10
-    kind: study
-    text: Finished my last classes at Monash.
-  - date: 2026-11-19
-    kind: life
-    text: Fly to Singapore.
-  - date: 2026-11
-    kind: work
-    text: Start the AI/ML internship at NetGain.
 offclock:
   - label: Games
     live: steam
@@ -124,11 +109,6 @@ offclock:
   - label: Listening
     live: music
     text: ''
-  - label: Casting
-    text: I do some Valorant casting.
-    more_label: Related
-    projects:
-      - valorant-win-probability
   - label: Reading
     live: reading
     text: ''

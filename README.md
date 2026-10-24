@@ -53,10 +53,9 @@ All of these are in the Pages CMS sidebar:
 
 - **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page. Every project is listed on the homepage; the first sentence of the summary is the short description, unless you fill in **Short description**.
 - **Now page:** what you're up to. Change **Last updated** when you edit it.
-- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Casting, Reading and so on). Links work: `[text](https://example.com)`. A row opens to show more when it has any of: **More to say**, **Related projects**, **Links** (clips, streams) or a **Setup** (the numbered parts on the sax drawing). Name the opener with **Label for the part that opens**.
+- **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Reading and so on). Links work: `[text](https://example.com)`. A row opens to show more when it has any of: **More to say**, **Related projects**, **Links** or a **Setup** (the numbered parts on the sax drawing). Name the opener with **Label for the part that opens**.
 - **Reading notes** (in Profile, under Reading): fill in **My notes on it** and **How far in**; people see them when they tap a cover.
 - **Countdown and checklist** (in Profile): **Countdown** is the place and date in the Now section; **Before I go** is the checklist under it. Tick items off as they happen.
-- **Timeline** (in Profile): work, study and life events for the homepage timeline. Project milestones are added automatically from each project's History.
 - **Skills:** each skill on the homepage opens to the projects and jobs that mention it, worked out when the site builds. Mention a skill in a project's stack, highlights or write-up and it shows up there.
 - **Profile:** name, headline, intro, the one-line "Now" on the homepage, contact links, resume PDF, skills and experience. The resume page is built from this too.
 - **Moving to Singapore:** in Profile, change **Location** and set **Time zone** to `Asia/Singapore` so the clocks are right.

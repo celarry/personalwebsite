@@ -223,25 +223,6 @@ content:
           - name: done
             label: Done
             type: boolean
-      - name: timeline
-        label: Timeline
-        description: Things for the homepage timeline. Project milestones are added from each project's history, so they don't need to go here.
-        type: object
-        list: true
-        fields:
-          - name: date
-            label: Date
-            description: A month like 2026-11, or a day like 2026-11-19.
-            type: string
-          - name: kind
-            label: Kind
-            type: select
-            default: life
-            options:
-              values: [work, study, life]
-          - name: text
-            label: What happened
-            type: string
       - name: location
         label: Location
         type: string

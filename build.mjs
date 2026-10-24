@@ -120,11 +120,6 @@ site.checklist = arr(site.checklist)
   .filter((x) => x && x.text)
   .map((x) => ({ text: String(x.text), done: x.done === true || x.done === 'true' }));
 
-// Timeline entries that aren't project milestones.
-site.timeline = arr(site.timeline)
-  .filter((e) => e && e.date && e.text)
-  .map((e) => ({ date: asDate(e.date, 10), kind: String(e.kind || 'life'), text: String(e.text) }));
-
 site.experience = arr(site.experience).map((j) => ({ ...j, projects: arr(j?.projects).map(String).filter(Boolean), points: arr(j?.points).map(String).filter(Boolean) }));
 
 // Books and manga for the Reading row. Anything without an uploaded cover gets one looked

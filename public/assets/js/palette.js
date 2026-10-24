@@ -35,7 +35,7 @@
     { title: 'How this site works', href: 'colophon/', keywords: 'colophon build fonts privacy source' },
     { title: 'About', href: '#about', keywords: 'bio skills languages' },
     { title: 'Experience', href: '#experience', keywords: 'jobs work netgain unitop monash education' },
-    { title: 'Off the clock', href: '#offclock', keywords: 'games music saxophone reading hobbies casting valorant' },
+    { title: 'Off the clock', href: '#offclock', keywords: 'games music saxophone reading hobbies valorant' },
     { title: 'Contact', href: '#contact', keywords: 'email get in touch hire message text' },
   ].map((p) => ({ ...p, group: 'Go to' }));
 
