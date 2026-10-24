@@ -20,7 +20,7 @@
   };
   const onHome = () => body.classList.contains('page-home');
   const hasStore = () => !!(document.querySelector('[data-floor]') && window.floorDemo);
-  const STORE_HASHES = ['closed', 'open', 'shop', 'lunar', 'easter', 'midautumn', 'halloween', 'christmas'];
+  const STORE_HASHES = ['closed', 'open', 'shop', 'lunar', 'easter', 'midautumn', 'halloween', 'christmas', ...Array.from({ length: 100 }, (_, i) => `store-${i + 1}`)];
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
   const SHORTCUTS = [
@@ -166,6 +166,21 @@
       ['halloween', 'Halloween'],
       ['christmas', 'Christmas'],
     ].map(([key, name]) => ({ title: `Decorate the store for ${name}`, keywords: `season festival decorations ${key} ${name}`, href: `#${key}`, hidden: true })),
+    {
+      title: 'Visit another store',
+      keywords: 'store layout shop cart new different another random',
+      when: () => hasStore() && !!window.floorDemo.anotherStore,
+      run: () => {
+        close();
+        const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.querySelector('[data-floor]').scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+        window.floorDemo.anotherStore();
+      },
+    },
+    { title: 'See all the stores', keywords: 'stores layouts collection found hundred 100', href: 'stores/' },
+    ...(window.StoreEngine
+      ? window.StoreEngine.list().map((st) => ({ title: `Store ${st.number}: ${st.name}`, keywords: `store layout ${st.note}`, href: `#store-${st.number}`, hidden: true }))
+      : []),
     { title: 'Play with the Valorant predictor', keywords: 'valorant demo win probability model', href: '#valorant-win-probability' },
     repo && { title: "View this site's source on GitHub", keywords: 'code repository source github', href: repo, external: true },
     { title: 'Follow with RSS', keywords: 'rss feed subscribe', href: 'feed.xml' },

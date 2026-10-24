@@ -303,6 +303,7 @@ posts.forEach((post, i) =>
   pages.push([`blog/${post.slug}/index.html`, () => T.postPage({ ...ctx(2), post, prev: posts[i + 1], next: posts[i - 1] })])
 );
 pages.push(['now/index.html', () => T.nowPage(ctx(1))]);
+pages.push(['stores/index.html', () => T.storesPage(ctx(1))]);
 pages.push(['resume/index.html', () => T.resumePage(ctx(1))]);
 pages.push(['colophon/index.html', () => T.colophonPage({ ...ctx(1), stats })]);
 pages.push(['404.html', () => T.notFoundPage(ctx(0))]);
@@ -362,7 +363,7 @@ ${p.tags.map((t) => `<category>${x(t)}</category>`).join('')}
 </rss>
 `
 );
-const urls = ['', 'projects/', 'blog/', 'now/', 'resume/', 'colophon/', ...projects.map((p) => `projects/${p.slug}/`), ...posts.map((p) => `blog/${p.slug}/`)];
+const urls = ['', 'projects/', 'blog/', 'now/', 'resume/', 'colophon/', 'stores/', ...projects.map((p) => `projects/${p.slug}/`), ...posts.map((p) => `blog/${p.slug}/`)];
 write(
   'sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>

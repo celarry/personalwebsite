@@ -192,6 +192,9 @@ kbd {
 .muted {
   color: var(--ink-3);
 }
+[hidden] {
+  display: none !important;
+}
 .skip {
   position: absolute;
   left: 12px;
@@ -551,7 +554,7 @@ kbd {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'floor' 'receipt' 'tray' 'algo' 'text' 'readout';
+  grid-template-areas: 'floor' 'receipt' 'tray' 'which' 'algo' 'text' 'readout';
   gap: 0.9rem 2.5rem;
   margin: clamp(32px, 5vw, 56px) 0 0;
 }
@@ -567,14 +570,54 @@ kbd {
 .store__text {
   grid-area: text;
 }
+.store__which {
+  grid-area: which;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.store__which[hidden] {
+  display: none;
+}
+.store__which p {
+  margin: 0;
+}
+.store__which b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.store__more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.1rem;
+  margin-top: 0.45rem !important;
+}
+.store__more button {
+  min-height: 32px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
+  font: 600 0.875rem/1 var(--sans);
+  cursor: pointer;
+}
+.store__more button:hover {
+  border-color: var(--ink-3);
+}
+.store__more a {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
 .store__readout {
   grid-area: readout;
 }
 @media (min-width: 900px) {
   .store {
     grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
-    grid-template-areas: 'floor floor' 'tray tray' 'text algo' 'text readout';
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: 'floor floor' 'tray tray' 'which algo' 'text readout';
+    grid-template-rows: auto auto auto auto;
     row-gap: 0.75rem;
   }
   .store .tray {
@@ -2518,6 +2561,66 @@ a.row__title:hover {
 .shortcuts td:first-child {
   width: 8em;
   white-space: nowrap;
+}
+
+/* All the stores */
+.storespage__count {
+  color: var(--ink) !important;
+  font-weight: 600;
+}
+.shelf-cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(44%, 14.5rem), 1fr));
+  gap: 1.5rem 1rem;
+  margin: clamp(32px, 5vw, 56px) 0 0;
+  padding: 0;
+}
+.shelf-card {
+  margin: 0;
+}
+.shelf-card a {
+  display: grid;
+  gap: 0.1rem;
+  color: inherit;
+  text-decoration: none;
+}
+.shelf-card__art {
+  display: block;
+  margin-bottom: 0.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.shelf-card__art canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 47 / 20;
+}
+.shelf-card.is-hidden .shelf-card__art {
+  border-style: dashed;
+  background: transparent;
+}
+.shelf-card__no {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.shelf-card__name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+.shelf-card.is-hidden .shelf-card__name {
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.shelf-card a:hover .shelf-card__art {
+  border-color: var(--route);
+}
+.shelf-card a:hover .shelf-card__name {
+  color: var(--route);
 }
 
 /* 404 */

@@ -22,6 +22,8 @@ A shopper wanders the aisles on their own route. If they step onto one of the ne
 
 The store keeps Melbourne hours. Between 10 pm and 7 am the lights go down and the cart sleeps by the checkout until someone wakes it. It also decorates itself for Lunar New Year, Easter, Mid-Autumn and Christmas, and for the week before Halloween.
 
+There are a hundred stores. Your first visit gets the original, and each visit after that gets one you haven't seen: a night market, a hawker centre, a server room, two mazes, a store that spells something, a sleeping cat. [All the stores](/stores/) keeps track of the ones you've found.
+
 If your device asks for reduced motion, nothing animates: each search and route is drawn once, and the cart moves straight to where it's going.
 
 ## Type and colour
@@ -32,6 +34,6 @@ The colours come from a shop floor: pale floor vinyl, navy ink and one blue for 
 
 ## Privacy
 
-No analytics, no cookies and no trackers. The only thing stored in your browser is your light or dark theme choice, if you change it. The contact form doesn't send anything by itself: it writes the email, and your own email app sends it.
+No analytics, no cookies and no trackers. The only things stored in your browser are your light or dark theme choice, if you change it, and the numbers of the stores you've visited. Neither leaves your browser. The contact form doesn't send anything by itself: it writes the email, and your own email app sends it.
 
 The games and music under Off the clock come from a small Cloudflare Worker of mine that asks Steam and Last.fm what I've been playing and listening to. Your browser only talks to that worker, so Steam and Last.fm never see you, and it keeps nothing about visitors. Book covers are stored with the site.
