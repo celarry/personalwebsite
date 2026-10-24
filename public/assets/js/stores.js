@@ -56,6 +56,8 @@
       noShopper() { L.shopper = false; },
       lightsOff() { L.dark = true; },
       park(c, r) { L.park = { c, r }; },
+      // A trip worth watching: the "Show me" button sends the cart from start to goal with this search.
+      demo(start, goal, algo = 'greedy', compare = 'astar') { L.demo = { start, goal, algo, compare }; },
       // The checkout: a counter on the right with the cart's spot beside it.
       checkout({ c = cols - 3, r, len } = {}) {
         len = len || clamp(Math.floor(rows / 5), 3, 4);
@@ -586,12 +588,20 @@
     }
     a.checkout();
   });
-  store('The greedy trap', 'Switch to greedy search and send the cart to the far side. It walks straight into the U.', (a) => {
+  store('The greedy trap', 'A U-shaped wall, open towards the cart. Press Show me to watch greedy search head straight for the goal behind it, walk into the U and have to back out. Then run the same trip with A*.', (a) => {
     const cx = Math.floor((a.cols - 8) / 2), h = Math.floor(a.rows * 0.6), top = Math.floor((a.rows - h) / 2);
+    const arm = Math.min(6, Math.max(3, a.cols - cx - 12));
     a.fix('wall', cx, top, 1, h);
-    a.fix('wall', cx + 1, top, 6, 1);
-    a.fix('wall', cx + 1, top + h - 1, 6, 1);
+    a.fix('wall', cx + 1, top, arm, 1);
+    a.fix('wall', cx + 1, top + h - 1, arm, 1);
     a.checkout();
+    // Start in line with the opening, goal straight behind the wall.
+    const mid = top + Math.floor(h / 2);
+    const start = { c: Math.min(cx + arm + 7, a.cols - 7), r: mid };
+    const goal = { c: Math.max(1, cx - 5), r: mid };
+    a.demo(start, goal);
+    a.label('Start', start.c - 1, mid - 1);
+    a.label('Goal', goal.c - 1, mid - 1);
   });
   store('The comb', 'Long teeth with dead ends between them.', (a) => {
     a.fix('wall', 1, a.rows - 3, a.cols - 9, 1);
@@ -931,6 +941,15 @@
       park: park.r * cols + park.c,
       stock: L.stock, shopper: L.shopper, dark: L.dark || !!def.dim || !!def.torch, torch: !!def.torch,
       floor: def.floor || null, seasonal: !!def.seasonal,
+      demo: L.demo
+        ? (() => {
+            const at = (p) => {
+              const q = P(p);
+              return clamp(Math.round(q.r), 0, rows - 1) * cols + clamp(Math.round(q.c), 0, cols - 1);
+            };
+            return { start: at(L.demo.start), goal: at(L.demo.goal), algo: L.demo.algo, compare: L.demo.compare };
+          })()
+        : null,
     };
   }
 

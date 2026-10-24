@@ -626,7 +626,24 @@ kbd {
   font-weight: 600;
 }
 .store__more {
-  margin-top: 0.3rem !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  margin-top: 0.45rem !important;
+}
+.store__demo {
+  min-height: 34px;
+  padding: 0 0.95rem;
+  border: 1px solid var(--route);
+  border-radius: 999px;
+  background: var(--route);
+  color: var(--route-ink);
+  font: 600 0.875rem/1 var(--sans);
+  cursor: pointer;
+}
+.store__demo:hover {
+  filter: brightness(1.1);
 }
 .store__more a {
   font-size: 0.875rem;

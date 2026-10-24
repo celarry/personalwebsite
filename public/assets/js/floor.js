@@ -661,6 +661,11 @@
     // Let people watch the search before the cart moves.
     cart.wait = reroute ? 0.12 + reveal / 2000 : 0.15 + reveal / 1000;
     stats.route = routeLength(res.path);
+    // How long the shortest route would have been, so a worse one can say by how much.
+    stats.best = algo === 'astar' ? stats.route : (() => {
+      const best = search(cart.cell, goal, shopperBlocks, 'astar');
+      return best.path ? routeLength(best.path) : stats.route;
+    })();
     if (reroute) stats.reroutes++;
     updateReadout();
     if (reduce) {
@@ -722,9 +727,12 @@
     if (!readoutEl || !stats.searched) return;
     const a = ALGOS[stats.algo];
     // Each square is about half a metre, the same scale as the receipt.
-    const route = stats.route ? ` and found a route ${(stats.route * 0.5).toFixed(1)} metres long` : '';
+    const m = (d) => `${(d * 0.5).toFixed(1)} metres`;
+    const route = stats.route ? ` and found a route ${m(stats.route)} long` : '';
+    const longer = stats.route && stats.best && stats.route - stats.best > 0.05;
+    const compare = stats.algo === 'astar' || !stats.route ? '' : longer ? ` <b>That's ${m(stats.route - stats.best)} longer than the shortest route</b>, which A* would have found.` : ' This time that matched the shortest route.';
     const rr = stats.reroutes ? ` The shopper has made it reroute ${stats.reroutes === 1 ? 'once' : plural(stats.reroutes, 'time')}.` : '';
-    readoutEl.innerHTML = `<b>${a.name}</b> checked <b>${stats.searched}</b> squares${route}. ${a.note}${rr}`;
+    readoutEl.innerHTML = `<b>${a.name}</b> checked <b>${stats.searched}</b> squares${route}.${compare} ${a.note}${rr}`;
   }
 
   // ---------- Simulation ----------
@@ -1167,9 +1175,42 @@
     if (!whichEl) return;
     const root = document.body.dataset.root || './';
     const page = `${root === './' ? '' : root}stores/${document.body.dataset.preview ? 'index.html' : ''}`;
+    const demoBtn = layout.demo ? `<button type="button" class="store__demo" data-demo>Show me</button>` : '';
     whichEl.innerHTML = `<p>Store ${storeIndex + 1} of ${STORES}: <b>${escHtml(layout.name)}</b>. ${escHtml(layout.note)}</p>
-      <p class="store__more"><a href="${page}">You've found ${seen.size} of ${STORES}</a></p>`;
+      <p class="store__more">${demoBtn}<a href="${page}">You've found ${seen.size} of ${STORES}</a></p>`;
     whichEl.hidden = false;
+    const btn = whichEl.querySelector('[data-demo]');
+    if (btn) btn.addEventListener('click', () => runDemo(btn));
+  }
+
+  // Some stores have a trip worth watching. The cart jumps to the start and drives to the goal
+  // with one search; pressing again runs the same trip with the other, for comparison.
+  let demoNext = '';
+  function runDemo(btn) {
+    const d = layout && layout.demo;
+    if (!ready || !d) return;
+    const use = demoNext || d.algo;
+    demoNext = use === d.algo ? d.compare : d.algo;
+    algo = use;
+    const radio = algoEl && algoEl.querySelector(`input[value="${use}"]`);
+    if (radio) radio.checked = true;
+    // Keep the shopper out of the way, so the comparison is fair.
+    shopper.away = true;
+    cart.cell = d.start;
+    cart.x = cx(d.start);
+    cart.y = cy(d.start);
+    cart.path = [];
+    cart.item = null;
+    cart.retry = -1;
+    stats.reroutes = 0;
+    pin = d.goal;
+    cart.mode = 'pin';
+    plan(d.goal);
+    cart.wait = reduce ? 0 : Math.max(cart.wait, 0.6);
+    if (btn) btn.textContent = `Now the same trip with ${ALGOS[demoNext].name === 'Greedy search' ? 'greedy search' : ALGOS[demoNext].name}`;
+    live(`Running the same trip with ${ALGOS[use].name}.`);
+    if (reduce) draw(performance.now());
+    else if (!running) start();
   }
   function goToStore(n) {
     if (n < 1 || n > STORES) return;
@@ -1192,6 +1233,7 @@
 
   function init() {
     stop();
+    demoNext = '';
     season = currentSeason();
     closed = isClosed();
     ready = build();
