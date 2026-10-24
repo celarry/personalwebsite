@@ -292,7 +292,7 @@
     const c = colOf(i), r = rowOf(i);
     for (let k = 0; k < 4; k++) {
       const nc = c + NB[k][0], nr = r + NB[k][1];
-      if (inb(nc, nr) && (grid[idx(nc, nr)] === 1 || grid[idx(nc, nr)] === 4)) return true;
+      if (inb(nc, nr) && (grid[idx(nc, nr)] === 1 || (grid[idx(nc, nr)] === 4 && !(layout && layout.stockOnShelves)))) return true;
     }
     return false;
   }
@@ -808,6 +808,18 @@
       else spawnItem();
       cart.wait = 0.5;
       cart.path = [];
+      // In some stores the cart takes each thing back to the checkout before the next.
+      if (layout.shuttle && !got.mine && parkCell >= 0 && cart.cell !== parkCell) {
+        cart.mode = 'return';
+        plan(parkCell);
+        cart.wait = Math.max(cart.wait, 0.5);
+      }
+      return;
+    }
+    if (cart.mode === 'return') {
+      cart.mode = 'shop';
+      cart.wait = 0.7;
+      cart.path = [];
       return;
     }
     if (cart.mode === 'checkout') {
@@ -1166,7 +1178,11 @@
       const time = new Intl.DateTimeFormat('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: TZ }).format(new Date()).replace(/\s?([ap])m$/i, ' $1m');
       captionEl.textContent = verb(`The store’s shut for the night. It’s ${time} in ${PLACE}, so the lights are down and the cart is asleep by the checkout. Click the floor or give it something from the list, and it’ll get up for one trip.${note}`);
     } else {
-      captionEl.innerHTML = captionDefault + note;
+      // In a store that starts with another search, say so instead of claiming A*.
+      const text = layout && layout.algo === 'greedy'
+        ? captionDefault.replace('The cart in this little store plans every trip with A*, the search I wrote', 'In every other store the cart plans with A*, the search I wrote').replace('The blue wash is every square it checked', 'In here it uses greedy search. The blue wash is every square it checked')
+        : captionDefault;
+      captionEl.innerHTML = text + note;
     }
   }
 
@@ -1186,6 +1202,7 @@
   // Some stores have a trip worth watching. The cart jumps to the start and drives to the goal
   // with one search; pressing again runs the same trip with the other, for comparison.
   let demoNext = '';
+  let storeAlgo = false; // the current search was picked by the store, not the visitor
   function runDemo(btn) {
     const d = layout && layout.demo;
     if (!ready || !d) return;
@@ -1241,6 +1258,16 @@
     updateCaption();
     if (!ready) return;
     if (algoEl) algoEl.hidden = false;
+    // A store can ask for a particular search to start with; the next store goes back to A*.
+    const want = layout.algo && ALGOS[layout.algo] ? layout.algo : storeAlgo ? 'astar' : '';
+    storeAlgo = !!layout.algo;
+    if (want) {
+      algo = want;
+      const radio = algoEl && algoEl.querySelector(`input[value="${algo}"]`);
+      if (radio) radio.checked = true;
+      stats.algo = algo;
+    }
+    updateCaption();
     showWhich(markSeen(storeIndex + 1));
     if (reduce && !closed) nextItem();
     // Draw once straight away, so the store is there even before it scrolls into view.
@@ -1289,6 +1316,7 @@
   function setAlgo(name) {
     if (!ALGOS[name]) return;
     algo = name;
+    storeAlgo = false;
     const radio = algoEl && algoEl.querySelector(`input[value="${name}"]`);
     if (radio) radio.checked = true;
     if (!ready) return;
