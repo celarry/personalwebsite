@@ -70,12 +70,12 @@ Off the clock can show what I'm playing on Steam and listening to on Spotify (th
 2. Create an API account at [last.fm/api/account/create](https://www.last.fm/api/account/create). Any name and description work; leave the callback empty. Copy the **API key** (not the shared secret).
 3. In Pages CMS, open **Profile** and fill in **Last.fm username** and **Last.fm API key**.
 
-**Steam.** The Steam key has to stay secret, so a GitHub Action (`.github/workflows/steam.yml`) asks Steam every ten minutes and publishes the answer to the `live` branch, which the page reads. It's free because the repository is public.
+**Steam.** The Steam key has to stay secret, so a GitHub Action (`.github/workflows/steam.yml`, called **Steam and Last.fm**) asks Steam and Last.fm every ten minutes and publishes the answer to the `live` branch, which the page reads. It's free because the repository is public. It also keeps a running record (`history.json`) that the charts on `/stats/` are drawn from: hours per game per day, when I play, songs per day, top artists, when I listen, and what I listen to while a game is open.
 
 1. Get a Web API key at [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) (use `lawrenceqi.com` as the domain). In Steam, go to **Profile → Edit Profile → Privacy Settings** and set **My profile** and **Game details** to **Public**.
 2. Find your 17-digit Steam ID: it's in your profile's address, or use any SteamID lookup.
 3. On GitHub, open the repository's **Settings → Secrets and variables → Actions**. Under **Secrets**, add `STEAM_KEY` with the key. Under **Variables**, add `STEAM_ID` with the ID.
-4. Under **Actions → Steam**, press **Run workflow** once. When it's green, `https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json` shows your games.
+4. Under **Actions → Steam and Last.fm**, press **Run workflow** once. When it's green, `https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json` shows your games.
 5. In Pages CMS, open **Profile** and turn on **Show Steam games**.
 
 GitHub runs scheduled jobs a few minutes late sometimes, so "playing right now" can lag by up to about a quarter of an hour. GitHub also pauses scheduled jobs if the repository has had no commits for 60 days; saving anything in Pages CMS keeps it going.

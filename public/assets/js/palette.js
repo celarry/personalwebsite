@@ -150,6 +150,7 @@
       ['halloween', 'Halloween'],
       ['christmas', 'Christmas'],
     ].map(([key, name]) => ({ title: `Decorate the store for ${name}`, keywords: `season festival decorations ${key} ${name}`, href: `#${key}`, hidden: true })),
+    { title: 'Playing and listening, in charts', keywords: 'stats charts data steam spotify last.fm games music listening hours', href: 'stats/' },
     { title: 'See all the stores', keywords: 'stores layouts collection found hundred 100', href: 'stores/' },
     ...(window.StoreEngine
       ? window.StoreEngine.list().map((st) => ({ title: `Store ${st.number}: ${st.name}`, keywords: `store layout ${st.note}`, href: `#store-${st.number}`, hidden: true }))

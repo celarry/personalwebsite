@@ -1,7 +1,8 @@
-# Checks what I'm playing on Steam every ten minutes and publishes it to the `live` branch,
-# which the homepage reads. It does nothing until STEAM_ID is set under
-# Settings → Secrets and variables → Actions → Variables, and STEAM_KEY under Secrets.
-name: Steam
+# Every ten minutes: what I'm playing on Steam and listening to on Last.fm. Publishes
+# steam.json (the homepage's Games row) and history.json (the charts on /stats/) to the
+# `live` branch. It does nothing until STEAM_ID is set under Settings → Secrets and
+# variables → Actions → Variables, and STEAM_KEY under Secrets. Last.fm comes from Profile.
+name: Steam and Last.fm
 
 on:
   schedule:
@@ -12,43 +13,47 @@ permissions:
   contents: write
 
 concurrency:
-  group: steam
-  cancel-in-progress: true
+  group: live-data
+  cancel-in-progress: false
 
 jobs:
-  steam:
+  collect:
     if: ${{ vars.STEAM_ID != '' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     steps:
       - uses: actions/checkout@v5
         with:
-          sparse-checkout: scripts
+          sparse-checkout: |
+            scripts
+            content
+            lib/vendor
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Ask Steam
+      - name: Get the history so far
+        run: |
+          if git fetch -q --depth=1 origin live 2>/dev/null && git show FETCH_HEAD:history.json > "$RUNNER_TEMP/history.json" 2>/dev/null; then
+            echo "Found history.json"
+          else
+            echo '{}' > "$RUNNER_TEMP/history.json"
+          fi
+          # Keep the old steam.json in case Steam doesn't answer this time.
+          mkdir -p "$RUNNER_TEMP/out"
+          git show FETCH_HEAD:steam.json > "$RUNNER_TEMP/out/steam.json" 2>/dev/null || true
+      - name: Ask Steam and Last.fm
         env:
           STEAM_KEY: ${{ secrets.STEAM_KEY }}
           STEAM_ID: ${{ vars.STEAM_ID }}
-        run: node scripts/steam-feed.mjs > "$RUNNER_TEMP/steam.json"
+        run: node scripts/live-feed.mjs "$RUNNER_TEMP/history.json" "$RUNNER_TEMP/out"
       - name: Publish to the live branch
         env:
           REPO: ${{ github.repository }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Skip the push when nothing but the time has changed and nothing is being played.
-          old=$(curl -fsS "https://raw.githubusercontent.com/$REPO/live/steam.json" || true)
-          new=$(cat "$RUNNER_TEMP/steam.json")
-          strip() { grep -v '"updated"' ; }
-          if [ -n "$old" ] && [ "$(echo "$old" | strip)" = "$(echo "$new" | strip)" ] && ! grep -q '"playing": {' "$RUNNER_TEMP/steam.json"; then
-            echo "No change."
-            exit 0
-          fi
           # One commit on an orphan branch, replaced each time, so it never grows.
-          mkdir "$RUNNER_TEMP/live" && cd "$RUNNER_TEMP/live"
+          cd "$RUNNER_TEMP/out"
           git init -q -b live
-          cp "$RUNNER_TEMP/steam.json" .
-          git add steam.json
-          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Steam"
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Live data"
           git push -q -f "https://x-access-token:$TOKEN@github.com/$REPO.git" live

@@ -59,6 +59,13 @@
   --atk: #c13d29;
   --def: #0f7b77;
   --festive: #c08a1e;
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+  --viz-3: #1baf7a;
+  --viz-4: #eda100;
+  --viz-other: #a9b0ba;
+  --viz-games: #2a78d6;
+  --viz-music: #eb6834;
   --brass-1: #b5862b;
   --brass-2: #f0d27e;
   --brass-3: #7d5a16;
@@ -101,12 +108,26 @@
     --atk: #f27a63;
     --def: #49c4bd;
     --festive: #e2b34a;
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+  --viz-3: #199e70;
+  --viz-4: #c98500;
+  --viz-other: #556073;
+  --viz-games: #3987e5;
+  --viz-music: #d95926;
   --brass-1: #a87c28;
   --brass-2: #e3c06a;
   --brass-3: #5e4412;
   --pearl: #d9d2bf;
   --mp: #5b6271;
   --reed: #c9bb92;
+    --viz-1: #3987e5;
+    --viz-2: #d95926;
+    --viz-3: #199e70;
+    --viz-4: #c98500;
+    --viz-other: #556073;
+    --viz-games: #3987e5;
+    --viz-music: #d95926;
     --brass-1: #a87c28;
     --brass-2: #e3c06a;
     --brass-3: #5e4412;
@@ -1652,6 +1673,396 @@ button.skill[aria-expanded='true'] .skill__n {
 .book-notes .links {
   margin-top: 0.6rem;
   font-size: 0.9375rem;
+}
+
+/* ---------- Playing and listening: charts ---------- */
+.offclock__charts {
+  margin-top: 1.5rem;
+}
+.stats {
+  margin-top: 1.5rem;
+}
+.stats.is-loading .chart__plot {
+  opacity: 0.5;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 0 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--rule);
+  overflow: hidden;
+}
+@media (min-width: 720px) {
+  .kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.kpi {
+  min-width: 0;
+  padding: 0.9rem 1rem 1rem;
+  background: var(--panel);
+}
+.kpi p {
+  margin: 0;
+}
+.kpi__label {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.kpi__value {
+  margin-top: 0.3rem !important;
+  font: 600 1.375rem/1.2 var(--sans);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.kpi__sub {
+  margin-top: 0.2rem !important;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.stats__group > h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 3rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font: 400 1.6rem/1.2 var(--display);
+}
+.stats__key {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.stats__key--games {
+  background: var(--viz-games);
+}
+.stats__key--music {
+  background: var(--viz-music);
+}
+.chart {
+  margin: 2rem 0 0;
+}
+.chart figcaption h3 {
+  margin: 0;
+  font: 600 1rem/1.35 var(--sans);
+  color: var(--ink);
+}
+.chart figcaption p {
+  margin: 0.15rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+.chart__plot {
+  margin-top: 1rem;
+  transition: opacity 0.2s;
+}
+.chart__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+.chart__empty {
+  margin: 0;
+  padding: 1.1rem 1rem;
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+.chart__table {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+.chart__table > summary {
+  width: fit-content;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.chart__table > summary:hover {
+  color: var(--ink);
+}
+.viz-table {
+  width: 100%;
+  margin-top: 0.5rem;
+  border-collapse: collapse;
+}
+.viz-table th,
+.viz-table td {
+  padding: 0.35rem 0.75rem 0.35rem 0;
+  border-bottom: 1px solid var(--rule-2);
+  text-align: left;
+}
+.viz-table th {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.viz-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Horizontal bars */
+.viz-bars {
+  display: grid;
+  gap: 0.15rem;
+}
+.viz-bars__row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.3rem 0;
+  border-radius: 6px;
+  outline-offset: 2px;
+}
+.viz-bars__name {
+  overflow: hidden;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.viz-bars__track {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.viz-bars__bar {
+  flex: none;
+  height: 14px;
+  max-width: calc(100% - 3.75rem);
+  border-radius: 0 4px 4px 0;
+  transition: filter 0.15s;
+}
+.viz-bars__row:hover .viz-bars__bar,
+.viz-bars__row:focus-visible .viz-bars__bar {
+  filter: brightness(1.12);
+}
+.viz-bars__value {
+  flex: none;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .viz-bars__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+}
+
+/* Columns over days */
+.viz-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.viz-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+.viz-legend__key {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.viz-cols {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  grid-template-rows: 9.5rem auto;
+  column-gap: 0.4rem;
+}
+.viz-cols__axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: -0.45rem 0;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.viz-cols__area {
+  position: relative;
+}
+.viz-cols__grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--rule-2);
+}
+.viz-cols__grid:first-child {
+  background: var(--rule);
+}
+.viz-cols__bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+.viz-cols__col {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  height: 100%;
+  min-width: 0;
+  border-radius: 4px 4px 0 0;
+  outline-offset: 1px;
+}
+.viz-cols__col:hover,
+.viz-cols__col:focus-visible {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.viz-cols__stack {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  width: 100%;
+  max-width: 24px;
+  margin: 0 auto;
+}
+.viz-cols__seg {
+  flex-basis: 0;
+  min-height: 2px;
+}
+.viz-cols__stack .viz-cols__seg:last-child {
+  border-radius: 4px 4px 0 0;
+}
+.viz-cols__x {
+  display: flex;
+  gap: 2px;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.viz-cols__x span {
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+.viz-cols__x span:last-child {
+  direction: rtl;
+}
+
+/* Week-by-hour heatmaps */
+.viz-heat {
+  display: grid;
+  grid-template-columns: 2.25rem repeat(24, minmax(0, 1fr));
+  gap: 2px;
+}
+.viz-heat__day {
+  align-self: center;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.viz-heat__cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--heat) var(--f, 0%), var(--sunk));
+}
+.viz-heat__cell:hover {
+  outline: 2px solid var(--ink);
+  outline-offset: -1px;
+}
+.viz-heat__hour {
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.viz-heat__scale {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.viz-heat__ramp {
+  width: 7rem;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--sunk), color-mix(in oklab, var(--heat) 18%, var(--sunk)), var(--heat));
+}
+
+/* What I listen to while I play */
+.soundtrack {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.soundtrack li {
+  display: grid;
+  gap: 0.1rem;
+  margin: 0;
+}
+.soundtrack b {
+  color: var(--ink);
+}
+.soundtrack span {
+  color: var(--ink-2);
+}
+.stats__foot {
+  margin: 3rem 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+/* The one tooltip */
+.viz-tip {
+  position: absolute;
+  z-index: 70;
+  max-width: 16rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 8px 24px -10px rgba(24, 32, 46, 0.35);
+  font-size: 0.8125rem;
+  pointer-events: none;
+}
+.viz-tip p {
+  margin: 0;
+}
+.viz-tip__title {
+  color: var(--ink-3);
+}
+.viz-tip__row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem !important;
+}
+.viz-tip__row b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.viz-tip__row span {
+  color: var(--ink-2);
+}
+.viz-tip__key {
+  width: 10px;
+  height: 2px;
+  border-radius: 1px;
 }
 
 /* ---------- Contact: a little text thread ---------- */

@@ -335,6 +335,7 @@ posts.forEach((post, i) =>
 );
 pages.push(['now/index.html', () => T.nowPage(ctx(1))]);
 pages.push(['stores/index.html', () => T.storesPage(ctx(1))]);
+pages.push(['stats/index.html', () => T.statsPage(ctx(1))]);
 pages.push(['resume/index.html', () => T.resumePage(ctx(1))]);
 pages.push(['colophon/index.html', () => T.colophonPage({ ...ctx(1), stats })]);
 pages.push(['404.html', () => T.notFoundPage(ctx(0))]);

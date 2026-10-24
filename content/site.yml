@@ -55,15 +55,17 @@ offclock:
     setup:
       - part: Horn
         name: King Super 20 (Series 3)
-        note: The saxophone itself, a vintage King. The keys, the tube and the bell.
+        note: I wanted an older horn with a big, warm sound rather than a bright
+          modern one, and the Super 20 has exactly that.
       - part: Mouthpiece
         name: Theo Wanne Lakshmi
-        note: Where the sound starts. Its shape has a big say in how bright or dark the
-          tone is.
+        note: It gives me more edge and volume than a stock mouthpiece without losing
+          the warmth of the horn, so it works for ballads and for louder sets.
       - part: Reed
         name: Légère American Cut, strength 2.5
-        note: Vibrates against the mouthpiece. Légère reeds are synthetic, so they play
-          the same every day; 2.5 is how stiff it is.
+        note: Synthetic, so it plays the same every day and I'm not hunting through a
+          box of cane for a good one. A 2.5 stays comfortable through long practice
+          sessions.
   - label: Listening
     live: music
   - label: Reading
