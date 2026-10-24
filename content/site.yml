@@ -27,7 +27,7 @@ url: https://lawrenceqi.com
 lastfm_user: rockminelaw
 lastfm_key: f3cbcc19d92935e5de9fa888e25e81d5
 steam_live: true
-now_api: https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json
+now_api: ''
 about: "I like problems where a model has to make a call in real time from messy
   inputs: predicting who wins a Valorant round from a broadcast feed, or
   steering a shopping cart around people at a hackathon. I also like owning the

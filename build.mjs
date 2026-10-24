@@ -98,6 +98,9 @@ const site = loadYaml(read('content/site.yml')) || {};
 site.introHtml = inlineMarkdown(site.intro, 0);
 site.intro = decode(site.introHtml.replace(/<[^>]+>/g, '')).trim(); // plain text, for the resume
 site.now_api = String(site.now_api || '').trim().replace(/\/$/, '');
+// That box is only for the Cloudflare worker. A file address (like the Steam file) there would
+// stop the live rows working, so it's ignored.
+if (/\.json$|raw\.githubusercontent\.com/i.test(site.now_api)) site.now_api = '';
 // Live games and music without a server: Last.fm read straight from the browser, and Steam
 // from the file .github/workflows/steam.yml publishes to the `live` branch.
 site.lastfm_user = String(site.lastfm_user || '').trim();
