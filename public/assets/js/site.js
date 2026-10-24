@@ -124,6 +124,92 @@
     fromHash();
   }
 
+  /* ---------- Email, for people without an email app ----------
+     A mailto: link only works if the computer has an email app set up for it. On plenty of
+     machines it doesn't, and the visitor gets a system error instead. So every email link
+     offers a choice: Gmail or Outlook in the browser, the email app, or just copying. */
+  const composeLinks = (to, subject = '', text = '') => {
+    const q = (o) => Object.entries(o).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+    return {
+      gmail: `https://mail.google.com/mail/?${q({ view: 'cm', fs: '1', to, su: subject, body: text })}`,
+      outlook: `https://outlook.live.com/mail/0/deeplink/compose?${q({ to, subject, body: text })}`,
+      app: `mailto:${to}${subject || text ? `?${q({ subject, body: text })}` : ''}`,
+    };
+  };
+  const copyText = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      // Older browsers: a hidden text box and the copy command.
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) {}
+      ta.remove();
+      return ok;
+    }
+  };
+  let menuEl = null;
+  let menuFrom = null;
+  const closeMenu = (refocus) => {
+    if (!menuEl) return;
+    menuEl.remove();
+    menuEl = null;
+    if (refocus && menuFrom) menuFrom.focus();
+    menuFrom = null;
+  };
+  function emailMenu(from, { to, subject = '', text = '' }) {
+    closeMenu();
+    const links = composeLinks(to, subject, text);
+    menuEl = document.createElement('div');
+    menuEl.className = 'mailmenu';
+    menuEl.setAttribute('role', 'dialog');
+    menuEl.setAttribute('aria-label', 'Send an email');
+    menuEl.innerHTML = `<p class="mailmenu__to">${text ? 'Send it with' : 'Email'} <b></b></p>
+      <a href="${links.gmail}" target="_blank" rel="noopener">Gmail</a>
+      <a href="${links.outlook}" target="_blank" rel="noopener">Outlook</a>
+      <a href="${links.app}" data-app>Your email app</a>
+      <button type="button" data-copy-mail>${text ? 'Copy the message' : 'Copy the address'}</button>`;
+    menuEl.querySelector('b').textContent = text ? '' : to;
+    menuEl.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setTimeout(() => closeMenu(), 0)));
+    const copyBtn = menuEl.querySelector('[data-copy-mail]');
+    copyBtn.addEventListener('click', async () => {
+      const ok = await copyText(text ? `To: ${to}\nSubject: ${subject}\n\n${text}` : to);
+      copyBtn.textContent = ok ? (text ? 'Copied. Paste it into an email.' : 'Copied') : to;
+    });
+    document.body.appendChild(menuEl);
+    menuFrom = from;
+    // Under the link that opened it, kept on screen; centred if there's nothing to sit under.
+    const r = from && from.getBoundingClientRect ? from.getBoundingClientRect() : null;
+    const w = menuEl.offsetWidth, h = menuEl.offsetHeight;
+    let left = r ? r.left : (innerWidth - w) / 2;
+    let top = r ? r.bottom + 8 : (innerHeight - h) / 2;
+    if (r && top + h > innerHeight - 8 && r.top - h - 8 > 8) top = r.top - h - 8;
+    left = Math.max(8, Math.min(innerWidth - w - 8, left));
+    menuEl.style.left = `${left + scrollX}px`;
+    menuEl.style.top = `${top + scrollY}px`;
+    menuEl.querySelector('a').focus({ preventScroll: true });
+  }
+  window.emailMenu = (opts) => emailMenu(null, { to: body.dataset.email || '', ...opts });
+  document.addEventListener('click', (e) => {
+    if (menuEl && !menuEl.contains(e.target) && !e.target.closest('a[href^="mailto:"]')) closeMenu();
+    const a = e.target.closest('a[href^="mailto:"]');
+    if (!a || a.closest('.mailmenu') || a.hasAttribute('data-direct') || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (menuEl && menuFrom === a) return closeMenu();
+    const url = new URL(a.href);
+    emailMenu(a, { to: decodeURIComponent(url.pathname), subject: url.searchParams.get('subject') || '', text: url.searchParams.get('body') || '' });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menuEl) closeMenu(true);
+  });
+  window.addEventListener('resize', () => closeMenu());
+
   /* ---------- Contact: a short text thread that ends in an email ---------- */
   const chat = document.querySelector('[data-chat]');
   if (chat) {
@@ -191,26 +277,34 @@
       }
       step = 'done';
       form.hidden = true;
-      const href = `mailto:${email}?subject=${encodeURIComponent(`Hello from ${name}`)}&body=${encodeURIComponent(`${text}\n\n${name}`)}`;
-      // Open the visitor's email app now, while the click still counts as theirs.
-      window.location.href = href;
-      reply(`Thanks, ${name}. Your email app should have opened with that message ready to go. Press send there and it comes straight to me.`, () => {
+      const subject = `Hello from ${name}`;
+      const message = `${text}\n\n${name}`;
+      const links = composeLinks(email, subject, message);
+      reply(`Thanks, ${name}. How do you want to send it? Pick one and it opens with your message already written.`, () => {
         const li = document.createElement('li');
-        li.className = 'msg__actions';
-        const again = document.createElement('a');
-        again.href = href;
-        again.textContent = 'Open the email again';
+        li.className = 'msg__send';
+        const make = (label, href, external) => {
+          const a = document.createElement('a');
+          a.href = href;
+          a.textContent = label;
+          if (external) { a.target = '_blank'; a.rel = 'noopener'; }
+          a.className = 'msg__choice';
+          a.dataset.direct = '';
+          return a;
+        };
         const copy = document.createElement('button');
         copy.type = 'button';
-        copy.textContent = 'Copy the message';
+        copy.className = 'msg__choice';
+        copy.textContent = 'Copy it';
         copy.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(text);
-            copy.textContent = 'Copied. Paste it into an email to me.';
-          } catch (err) {
-            copy.textContent = `Email it to ${email}`;
-          }
+          const ok = await copyText(`To: ${email}\nSubject: ${subject}\n\n${message}`);
+          copy.textContent = ok ? 'Copied' : 'Copy failed';
+          if (ok) reply(`Copied. Paste it into an email to ${email} and it comes straight to me.`);
         });
+        li.append(make('Gmail', links.gmail, true), make('Outlook', links.outlook, true), make('Email app', links.app, false), copy);
+        log.appendChild(li);
+        const after = document.createElement('li');
+        after.className = 'msg__actions';
         const reset = document.createElement('button');
         reset.type = 'button';
         reset.textContent = 'Start over';
@@ -222,8 +316,9 @@
           form.hidden = false;
           input.focus();
         });
-        li.append(again, copy, reset);
-        log.appendChild(li);
+        after.append(reset);
+        log.appendChild(after);
+        li.querySelector('a').focus({ preventScroll: true });
       });
     });
   }

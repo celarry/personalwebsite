@@ -82,7 +82,8 @@ To turn it off, clear **Live data address**. The text you've written for each ro
 - **A hundred stores:** the first visit gets the original store; every visit or refresh after that gets one you haven't seen. They're all in `public/assets/js/stores.js`. `/stores/` shows the ones you've found (the browser remembers), and `#store-37` on the homepage opens a particular one.
 - **Projects that open:** each project on the homepage opens in place; the featured ones open into their demo. Each has its own address, like `/#valorant-win-probability`.
 - **Experience rows that open:** each job opens to its bullet points and related projects.
-- **Contact:** a short text thread that asks for a name and a message, then opens the visitor's email app with it written out. Nothing is sent or stored by the site.
+- **Contact:** a short text thread that asks for a name and a message, then lets the visitor send it with Gmail, Outlook, their email app, or copy it. Nothing is sent or stored by the site.
+- **Email links:** every email link opens a small menu (Gmail, Outlook, email app, copy the address), so people without an email app set up don't hit a system error.
 - **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post, switch the cart's search, turn the store's lights off, decorate it for a festival.
 - **Project pages:** diagrams you can step through, the Valorant HUD reader, the store on the shopping cart's page, and each project's history.
 - **Blog filters:** `/blog/#life` links straight to the Life posts.

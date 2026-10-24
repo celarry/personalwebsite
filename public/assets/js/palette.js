@@ -74,7 +74,7 @@
       },
       stay: true,
     },
-    { title: 'Email Lawrence', keywords: 'contact mail message', href: `mailto:${email}`, external: true },
+    { title: 'Email Lawrence', keywords: 'contact mail message gmail outlook', run: () => { close(); setTimeout(() => window.emailMenu && window.emailMenu({}), 0); } },
     resume && { title: 'Download resume (PDF)', keywords: 'cv pdf download', href: resume, external: true },
     {
       title: 'What time is it for Lawrence?',

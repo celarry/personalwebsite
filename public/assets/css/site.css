@@ -1885,6 +1885,88 @@ button.skill[aria-expanded='true'] .skill__n {
   color: var(--ink-2);
   font-weight: 600;
 }
+/* Ways to send the message, at the end of the thread */
+.msg__send {
+  align-self: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0 !important;
+}
+.msg__choice {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 600 0.875rem/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+}
+.msg__choice:hover {
+  border-color: var(--route);
+  color: var(--route);
+}
+
+/* The little menu every email link opens */
+.mailmenu {
+  position: absolute;
+  z-index: 60;
+  display: grid;
+  min-width: 13.5rem;
+  padding: 0.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 2px 4px rgba(24, 32, 46, 0.08), 0 14px 32px -12px rgba(24, 32, 46, 0.35);
+  font-size: 0.9375rem;
+  animation: row-open 0.18s ease-out;
+}
+.mailmenu__to {
+  margin: 0.2rem 0.6rem 0.35rem !important;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.mailmenu__to b {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.mailmenu a,
+.mailmenu button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font: 600 0.9375rem/1.2 var(--sans);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.mailmenu a:hover,
+.mailmenu button:hover,
+.mailmenu a:focus-visible,
+.mailmenu button:focus-visible {
+  background: var(--sunk);
+  color: var(--route);
+}
+.mailmenu button {
+  border-top: 1px solid var(--rule-2);
+  border-radius: 0 0 8px 8px;
+  margin-top: 0.2rem;
+}
+@media print {
+  .mailmenu {
+    display: none !important;
+  }
+}
+
 .chat__form {
   display: flex;
   align-items: flex-end;
