@@ -149,6 +149,7 @@
   }
   let closed = false;
   let season = '';
+  let festive = ''; // the season, but only in the stores that decorate for it
   let SHOPPING_LIST = BASE_LIST;
   const SQRT2 = Math.SQRT2;
   const NB = [
@@ -227,7 +228,10 @@
     fixtures = layout.fixtures;
     parkCell = layout.park;
     // Some stores sell their own things.
-    SHOPPING_LIST = layout.stock ? (season ? [...layout.stock, ...SEASONS[season].list.slice(0, 2)] : layout.stock) : season ? [...SEASONS[season].list, ...BASE_LIST.slice(0, 4)] : BASE_LIST;
+    // Ordinary supermarkets decorate for the season; the themed stores keep to their theme.
+    // Asking for a season by name (#halloween) decorates whichever store you're in.
+    festive = season && (layout.seasonal || hash() === season) ? season : '';
+    SHOPPING_LIST = layout.stock ? (festive ? [...layout.stock, ...SEASONS[festive].list.slice(0, 2)] : layout.stock) : festive ? [...SEASONS[festive].list, ...BASE_LIST.slice(0, 4)] : BASE_LIST;
     listIndex = 0;
   }
 
@@ -369,17 +373,17 @@
 
   // Seasonal decorations, drawn once with the shelves.
   function drawDecor(g) {
-    if (!season) return;
+    if (!festive) return;
     const shelfBox = (s) => ({ x: ox + s.c * CELL + 2, y: oy + s.r * CELL + 2, w: s.w * CELL - 4, h: s.h * CELL - 4 });
-    if (season === 'lunar' || season === 'midautumn') {
-      const every = season === 'lunar' ? 2 : 3;
+    if (festive === 'lunar' || festive === 'midautumn') {
+      const every = festive === 'lunar' ? 2 : 3;
       shelves.forEach((s, k) => {
         if (k % every) return;
         const b = shelfBox(s);
         const x = b.x + b.w / 2;
         const top = b.y + 2;
-        const rx = CELL * (season === 'lunar' ? 0.34 : 0.36);
-        const ry = CELL * (season === 'lunar' ? 0.44 : 0.34);
+        const rx = CELL * (festive === 'lunar' ? 0.34 : 0.36);
+        const ry = CELL * (festive === 'lunar' ? 0.44 : 0.34);
         const yc = top + 6 + ry;
         g.strokeStyle = colors.ink3;
         g.lineWidth = 1;
@@ -387,21 +391,21 @@
         g.moveTo(x, top - 4);
         g.lineTo(x, yc - ry);
         g.stroke();
-        g.fillStyle = season === 'lunar' ? colors.red : colors.gold;
+        g.fillStyle = festive === 'lunar' ? colors.red : colors.gold;
         g.beginPath();
         g.ellipse(x, yc, rx, ry, 0, 0, Math.PI * 2);
         g.fill();
-        g.fillStyle = season === 'lunar' ? colors.gold : colors.red;
+        g.fillStyle = festive === 'lunar' ? colors.gold : colors.red;
         g.fillRect(x - rx * 0.45, yc - ry - 1.5, rx * 0.9, 3);
         g.fillRect(x - rx * 0.45, yc + ry - 1.5, rx * 0.9, 3);
-        g.strokeStyle = season === 'lunar' ? colors.gold : colors.red;
+        g.strokeStyle = festive === 'lunar' ? colors.gold : colors.red;
         g.beginPath();
         g.moveTo(x, yc + ry + 1);
         g.lineTo(x, yc + ry + 7);
         g.stroke();
       });
     }
-    if (season === 'midautumn') {
+    if (festive === 'midautumn') {
       // A full moon in the emptiest top corner.
       const r = CELL * 1.2;
       for (let c = cols - 3; c > cols / 2; c--) {
@@ -419,7 +423,7 @@
         }
       }
     }
-    if (season === 'halloween') {
+    if (festive === 'halloween') {
       shelves.forEach((s, k) => {
         const b = shelfBox(s);
         const vertical = b.h > b.w;
@@ -463,7 +467,7 @@
         }
       });
     }
-    if (season === 'easter') {
+    if (festive === 'easter') {
       const pastels = ['#f2b8c6', '#b9d8f2', '#bfe3c5', '#f4dc9a', '#d6c4f0'];
       shelves.forEach((s, k) => {
         const b = shelfBox(s);
@@ -486,7 +490,7 @@
         }
       });
     }
-    if (season === 'christmas') {
+    if (festive === 'christmas') {
       shelves.forEach((s) => {
         const b = shelfBox(s);
         const vertical = b.h > b.w;
@@ -709,7 +713,7 @@
 
   function grumble() {
     if (!closed) return;
-    const lines = (season && SEASONS[season].grumbles) || GRUMBLES;
+    const lines = (festive && SEASONS[festive].grumbles) || GRUMBLES;
     bubble = { text: lines[(Math.random() * lines.length) | 0], until: performance.now() + 2600 };
   }
 
@@ -1149,7 +1153,7 @@
   const captionDefault = captionEl ? verb(captionEl.innerHTML) : '';
   function updateCaption() {
     if (!captionEl) return;
-    const note = season ? ` ${SEASONS[season].note}` : '';
+    const note = festive ? ` ${SEASONS[festive].note}` : '';
     if (closed) {
       const time = new Intl.DateTimeFormat('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: TZ }).format(new Date()).replace(/\s?([ap])m$/i, ' $1m');
       captionEl.textContent = verb(`The store’s shut for the night. It’s ${time} in ${PLACE}, so the lights are down and the cart is asleep by the checkout. Click the floor or give it something from the list, and it’ll get up for one trip.${note}`);
@@ -1158,22 +1162,14 @@
     }
   }
 
-  // Which store this is, and a way to visit another.
+  // Which store this is. A different one turns up on the next visit.
   function showWhich(seen) {
     if (!whichEl) return;
     const root = document.body.dataset.root || './';
     const page = `${root === './' ? '' : root}stores/${document.body.dataset.preview ? 'index.html' : ''}`;
     whichEl.innerHTML = `<p>Store ${storeIndex + 1} of ${STORES}: <b>${escHtml(layout.name)}</b>. ${escHtml(layout.note)}</p>
-      <p class="store__more"><button type="button" data-another>Visit another store</button><a href="${page}">You've found ${seen.size} of ${STORES}</a></p>`;
+      <p class="store__more"><a href="${page}">You've found ${seen.size} of ${STORES}</a></p>`;
     whichEl.hidden = false;
-    whichEl.querySelector('[data-another]').addEventListener('click', anotherStore);
-  }
-  function anotherStore() {
-    storeIndex = pickStore(storeIndex);
-    if (/^#store-\d+$/i.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
-    hideReceipt();
-    init();
-    live(`Now in store ${storeIndex + 1}, ${layout ? layout.name : ''}.`);
   }
   function goToStore(n) {
     if (n < 1 || n > STORES) return;
@@ -1185,7 +1181,7 @@
   function renderTray() {
     if (!trayEl) return;
     const names = [...TRAY];
-    if (season && !names.includes(SEASONS[season].tray)) names.push(SEASONS[season].tray);
+    if (festive && !names.includes(SEASONS[festive].tray)) names.push(SEASONS[festive].tray);
     const holder = trayEl.querySelector('[data-tray-items]');
     holder.innerHTML = names
       .map((n) => `<button type="button" class="ticket" data-item="${escHtml(n)}" aria-label="Add ${escHtml(n)} to the list">${escHtml(n)} <b>$${money(PRICES[n] ?? 4)}</b></button>`)
@@ -1197,12 +1193,10 @@
   function init() {
     stop();
     season = currentSeason();
-    renderTray();
-    SHOPPING_LIST = season ? [...SEASONS[season].list, ...BASE_LIST.slice(0, 4)] : BASE_LIST;
-    listIndex = 0;
     closed = isClosed();
-    updateCaption();
     ready = build();
+    renderTray();
+    updateCaption();
     if (!ready) return;
     if (algoEl) algoEl.hidden = false;
     showWhich(markSeen(storeIndex + 1));
@@ -1307,7 +1301,6 @@
     },
     addItem,
     setAlgo,
-    anotherStore,
     goToStore,
   };
 

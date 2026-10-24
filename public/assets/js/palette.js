@@ -166,17 +166,6 @@
       ['halloween', 'Halloween'],
       ['christmas', 'Christmas'],
     ].map(([key, name]) => ({ title: `Decorate the store for ${name}`, keywords: `season festival decorations ${key} ${name}`, href: `#${key}`, hidden: true })),
-    {
-      title: 'Visit another store',
-      keywords: 'store layout shop cart new different another random',
-      when: () => hasStore() && !!window.floorDemo.anotherStore,
-      run: () => {
-        close();
-        const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-        document.querySelector('[data-floor]').scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
-        window.floorDemo.anotherStore();
-      },
-    },
     { title: 'See all the stores', keywords: 'stores layouts collection found hundred 100', href: 'stores/' },
     ...(window.StoreEngine
       ? window.StoreEngine.list().map((st) => ({ title: `Store ${st.number}: ${st.name}`, keywords: `store layout ${st.note}`, href: `#store-${st.number}`, hidden: true }))
