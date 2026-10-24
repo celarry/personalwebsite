@@ -27,7 +27,6 @@ url: https://lawrenceqi.com
 lastfm_user: rockminelaw
 lastfm_key: f3cbcc19d92935e5de9fa888e25e81d5
 steam_live: true
-now_api: ''
 about: "I like problems where a model has to make a call in real time from messy
   inputs: predicting who wins a Valorant round from a broadcast feed, or
   steering a shopping cart around people at a hackathon. I also like owning the
@@ -82,6 +81,16 @@ reading:
     author: Eiichiro Oda
     kind: Manga
     note: Working through it
+    progress: Chapter 700
+    thoughts: |+
+      1. Water 7 + Enies Lobby
+      2. Marineford
+      3. Alabasta
+      4. Skypiea
+      5. Arlong Park
+      6. Thriller Bark
+      7. Baratie/rest of starting arcs
+
     cover: /uploads/covers/one-piece.jpg
 skills:
   - group: Machine learning
