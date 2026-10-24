@@ -1957,7 +1957,8 @@ button.skill[aria-expanded='true'] .skill__n {
   white-space: nowrap;
 }
 .viz-cols__x span:last-child {
-  direction: rtl;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Week-by-hour heatmaps */
