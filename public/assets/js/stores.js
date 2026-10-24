@@ -56,8 +56,6 @@
       noShopper() { L.shopper = false; },
       lightsOff() { L.dark = true; },
       park(c, r) { L.park = { c, r }; },
-      // A trip worth watching: the "Show me" button sends the cart from start to goal with this search.
-      demo(start, goal, algo = 'greedy', compare = 'astar') { L.demo = { start, goal, algo, compare }; },
       // The checkout: a counter on the right with the cart's spot beside it.
       checkout({ c = cols - 3, r, len } = {}) {
         len = len || clamp(Math.floor(rows / 5), 3, 4);
@@ -588,7 +586,7 @@
     }
     a.checkout();
   });
-  store('The greedy trap', 'This one runs greedy search, and the cart brings everything back to the checkout. The stock is behind a bowl of walls that opens towards the checkout, so greedy heads straight for it, ends up in the bowl and has to back out. Switch to A* to see it go round, or press Show me.', (a) => {
+  store('The greedy trap', 'Greedy search, and a bowl of walls between the checkout and the shelves.', (a) => {
     const x1 = a.cols - 12;
     const top = 2, bot = a.rows - 3, back = Math.max(4, Math.floor(x1 * 0.35));
     // The bowl, open towards the checkout, and a smaller one inside it.
@@ -602,8 +600,7 @@
       a.fix('wall', back2, b2, x1 - back2 - 2, 1);
     }
     // The stock, behind the bowl.
-    const shelfRows = [];
-    for (let r = 2; r + 2 <= a.rows - 2; r += 4) { a.shelf(1, r, Math.max(1, back - 3), 1); shelfRows.push(r); }
+    for (let r = 2; r + 2 <= a.rows - 2; r += 4) a.shelf(1, r, Math.max(1, back - 3), 1);
     // A cup in front of the checkout that opens the other way, for the trip back.
     const cx = a.cols - 8, ct = Math.floor(a.rows / 2) - 2, cb = a.rows - 2;
     if (cb - ct >= 4) {
@@ -613,9 +610,6 @@
     }
     a.checkout();
     a.stock(['a tin of beans', 'rice', 'dish soap', 'coffee', 'pasta', 'tea bags', 'cereal']);
-    // Show me: from the checkout to the shelf nearest the middle, behind the bowl.
-    const mid = shelfRows.reduce((b, r) => (Math.abs(r - a.rows / 2) < Math.abs(b - a.rows / 2) ? r : b), shelfRows[0]);
-    a.demo('park', { c: Math.max(1, Math.floor((back - 3) / 2)), r: mid + 1 });
   }, { algo: 'greedy', shuttle: true, stockOnShelves: true });
   store('The comb', 'Long teeth with dead ends between them.', (a) => {
     a.fix('wall', 1, a.rows - 3, a.cols - 9, 1);
@@ -958,15 +952,6 @@
       // A store can start with a different search, take every item back to the checkout, or
       // only put stock beside its shelves (not its walls).
       algo: def.algo || null, shuttle: !!def.shuttle, stockOnShelves: !!def.stockOnShelves,
-      demo: L.demo
-        ? (() => {
-            const at = (p) => {
-              const q = P(p);
-              return clamp(Math.round(q.r), 0, rows - 1) * cols + clamp(Math.round(q.c), 0, cols - 1);
-            };
-            return { start: L.demo.start === 'park' ? park.r * cols + park.c : at(L.demo.start), goal: at(L.demo.goal), algo: L.demo.algo, compare: L.demo.compare };
-          })()
-        : null,
     };
   }
 

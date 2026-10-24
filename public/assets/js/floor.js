@@ -83,6 +83,7 @@
     greedy: { name: 'Greedy search', wg: 0, wh: 1, note: 'It rushes at the goal and checks very little, but the route can come out longer.' },
   };
   let algo = 'astar';
+  let storeAlgo = false; // the current search was picked by the store, not the visitor
 
   // ---------- Which store ----------
   // The first visit gets the original. After that, each visit gets one you haven't seen yet.
@@ -1180,7 +1181,7 @@
     } else {
       // In a store that starts with another search, say so instead of claiming A*.
       const text = layout && layout.algo === 'greedy'
-        ? captionDefault.replace('The cart in this little store plans every trip with A*, the search I wrote', 'In every other store the cart plans with A*, the search I wrote').replace('The blue wash is every square it checked', 'In here it uses greedy search. The blue wash is every square it checked')
+        ? captionDefault.replace(/The cart in this little store plans every trip with A\*[^.]*\./, 'The cart in this store plans every trip with greedy search.')
         : captionDefault;
       captionEl.innerHTML = text + note;
     }
@@ -1191,44 +1192,11 @@
     if (!whichEl) return;
     const root = document.body.dataset.root || './';
     const page = `${root === './' ? '' : root}stores/${document.body.dataset.preview ? 'index.html' : ''}`;
-    const demoBtn = layout.demo ? `<button type="button" class="store__demo" data-demo>Show me</button>` : '';
     whichEl.innerHTML = `<p>Store ${storeIndex + 1} of ${STORES}: <b>${escHtml(layout.name)}</b>. ${escHtml(layout.note)}</p>
-      <p class="store__more">${demoBtn}<a href="${page}">You've found ${seen.size} of ${STORES}</a></p>`;
+      <p class="store__more"><a href="${page}">You've found ${seen.size} of ${STORES}</a></p>`;
     whichEl.hidden = false;
-    const btn = whichEl.querySelector('[data-demo]');
-    if (btn) btn.addEventListener('click', () => runDemo(btn));
   }
 
-  // Some stores have a trip worth watching. The cart jumps to the start and drives to the goal
-  // with one search; pressing again runs the same trip with the other, for comparison.
-  let demoNext = '';
-  let storeAlgo = false; // the current search was picked by the store, not the visitor
-  function runDemo(btn) {
-    const d = layout && layout.demo;
-    if (!ready || !d) return;
-    const use = demoNext || d.algo;
-    demoNext = use === d.algo ? d.compare : d.algo;
-    algo = use;
-    const radio = algoEl && algoEl.querySelector(`input[value="${use}"]`);
-    if (radio) radio.checked = true;
-    // Keep the shopper out of the way, so the comparison is fair.
-    shopper.away = true;
-    cart.cell = d.start;
-    cart.x = cx(d.start);
-    cart.y = cy(d.start);
-    cart.path = [];
-    cart.item = null;
-    cart.retry = -1;
-    stats.reroutes = 0;
-    pin = d.goal;
-    cart.mode = 'pin';
-    plan(d.goal);
-    cart.wait = reduce ? 0 : Math.max(cart.wait, 0.6);
-    if (btn) btn.textContent = `Now the same trip with ${ALGOS[demoNext].name === 'Greedy search' ? 'greedy search' : ALGOS[demoNext].name}`;
-    live(`Running the same trip with ${ALGOS[use].name}.`);
-    if (reduce) draw(performance.now());
-    else if (!running) start();
-  }
   function goToStore(n) {
     if (n < 1 || n > STORES) return;
     storeIndex = n - 1;
@@ -1250,7 +1218,6 @@
 
   function init() {
     stop();
-    demoNext = '';
     season = currentSeason();
     closed = isClosed();
     ready = build();
