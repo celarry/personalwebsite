@@ -161,6 +161,25 @@ content:
         label: Write-up
         type: rich-text
 
+      - name: gallery_title
+        label: Pictures heading
+        description: For example "The scenes". Leave empty for "Pictures".
+        type: string
+      - name: gallery_note
+        label: Pictures note
+        type: string
+      - name: gallery
+        label: Pictures
+        description: Shown as a grid on the project page and a strip when the project is opened on the homepage.
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: Image
+            type: image
+          - name: caption
+            label: Caption
+            type: text
   - name: now
     label: Now page
     type: file

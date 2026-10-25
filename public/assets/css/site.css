@@ -2070,6 +2070,157 @@ button.skill[aria-expanded='true'] .skill__n {
   border-radius: 1px;
 }
 
+/* ---------- Project pictures ---------- */
+.gallery {
+  margin-top: clamp(48px, 7vw, 80px);
+}
+.gallery h2 {
+  margin: 0;
+  font: 400 1.6rem/1.2 var(--display);
+}
+.gallery__note {
+  margin: 0.35rem 0 0;
+  color: var(--ink-2);
+}
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: 1.75rem 1.25rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.gallery__grid li,
+.gallery-strip li {
+  margin: 0;
+}
+.gallery figure {
+  margin: 0;
+}
+.gallery a,
+.gallery-strip a {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--sunk);
+  box-shadow: 0 1px 2px rgba(24, 32, 46, 0.12), 0 10px 24px -16px rgba(24, 32, 46, 0.55);
+}
+.gallery img,
+.gallery-strip img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+.gallery a:hover img,
+.gallery-strip a:hover img {
+  transform: scale(1.02);
+}
+.gallery figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.gallery-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.gallery-strip a {
+  border-radius: 6px;
+}
+.gallery-strip__more a {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+@media (max-width: 480px) {
+  .gallery-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The picture viewer */
+.lightbox {
+  width: min(100vw - 2rem, 1400px);
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #e6eaf0;
+  overflow: visible;
+}
+.lightbox::backdrop {
+  background: rgba(8, 11, 16, 0.86);
+}
+.lightbox figure {
+  margin: 0;
+}
+.lightbox img {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 9rem);
+  object-fit: contain;
+  border-radius: 8px;
+}
+.lightbox figcaption {
+  max-width: 60ch;
+  margin: 0.8rem auto 0;
+  text-align: center;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.lightbox__count {
+  margin: 0.3rem 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #95a0b0;
+}
+.lightbox button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(22, 30, 42, 0.8);
+  color: #e6eaf0;
+  font: 400 1.75rem/1 var(--sans);
+  cursor: pointer;
+}
+.lightbox button:hover {
+  background: rgba(43, 69, 224, 0.9);
+}
+.lightbox button[hidden] {
+  display: none;
+}
+.lightbox__close {
+  top: -3.25rem;
+  right: 0;
+}
+.lightbox__prev,
+.lightbox__next {
+  top: calc(50% - 3rem);
+}
+.lightbox__prev {
+  left: 0.75rem;
+}
+.lightbox__next {
+  right: 0.75rem;
+}
+
 /* ---------- Contact: a little text thread ---------- */
 .chat {
   max-width: 28rem;

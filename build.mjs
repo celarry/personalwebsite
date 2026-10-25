@@ -234,6 +234,12 @@ const projects = mdFiles('content/projects')
       diagram: Array.isArray(data.diagram) ? data.diagram : [],
       log: (data.log || []).filter((e) => e && e.text).map((e) => ({ date: asDate(e.date, 7), text: String(e.text) })),
       html: renderMarkdown(body, 2),
+      // Pictures: each an image, an optional smaller copy for lists, and a caption.
+      gallery: (Array.isArray(data.gallery) ? data.gallery : [])
+        .filter((x) => x && x.image)
+        .map((x) => ({ image: String(x.image), thumb: String(x.thumb || x.image), caption: String(x.caption || ''), alt: String(x.alt || x.caption || '') })),
+      gallery_title: String(data.gallery_title || ''),
+      gallery_note: String(data.gallery_note || ''),
       draft: data.draft === true,
     };
   })

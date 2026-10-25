@@ -49,6 +49,52 @@
     window.revealReady = true;
   }
 
+  /* ---------- Pictures open full size ----------
+     Links marked data-lightbox open in a viewer on the page; arrows move through the set. */
+  const shots = [...document.querySelectorAll('a[data-lightbox]')];
+  if (shots.length && typeof HTMLDialogElement === 'function') {
+    const box = document.createElement('dialog');
+    box.className = 'lightbox';
+    box.setAttribute('aria-label', 'Picture');
+    box.innerHTML = `<figure><img alt=""><figcaption></figcaption></figure>
+      <button type="button" class="lightbox__close" aria-label="Close">×</button>
+      <button type="button" class="lightbox__prev" aria-label="Previous picture">‹</button>
+      <button type="button" class="lightbox__next" aria-label="Next picture">›</button>
+      <p class="lightbox__count" aria-live="polite"></p>`;
+    document.body.appendChild(box);
+    const img = box.querySelector('img');
+    const cap = box.querySelector('figcaption');
+    const count = box.querySelector('.lightbox__count');
+    let set = [], at = 0;
+    const show = (k) => {
+      at = (k + set.length) % set.length;
+      const a = set[at];
+      img.src = a.href;
+      img.alt = a.querySelector('img') ? a.querySelector('img').alt : '';
+      cap.textContent = a.dataset.caption || '';
+      count.textContent = set.length > 1 ? `${at + 1} of ${set.length}` : '';
+      box.querySelector('.lightbox__prev').hidden = box.querySelector('.lightbox__next').hidden = set.length < 2;
+    };
+    shots.forEach((a) =>
+      a.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        // The set is every picture from the same project in the same list.
+        set = [...a.closest('ul').querySelectorAll(`a[data-lightbox="${a.dataset.lightbox}"]`)];
+        show(set.indexOf(a));
+        box.showModal();
+      })
+    );
+    box.querySelector('.lightbox__close').addEventListener('click', () => box.close());
+    box.querySelector('.lightbox__prev').addEventListener('click', () => show(at - 1));
+    box.querySelector('.lightbox__next').addEventListener('click', () => show(at + 1));
+    box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(at - 1);
+      if (e.key === 'ArrowRight') show(at + 1);
+    });
+  }
+
   /* ---------- Local clock ---------- */
   const tz = body.dataset.tz;
   const place = body.dataset.place;

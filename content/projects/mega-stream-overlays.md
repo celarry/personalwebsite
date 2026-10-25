@@ -32,6 +32,33 @@ diagram:
   - label: OBS
     note: Browser sources
     detail: Each scene is an OBS browser source at 1920×1080. Transparent overlays sit above the game capture or the replay footage.
+gallery_title: The scenes
+gallery_note: Eight of the twelve, drawn from the overlay pages with the sample night that comes with the pack.
+gallery:
+  - image: /uploads/projects/mega/index.webp
+    thumb: /uploads/projects/mega/index-small.webp
+    caption: Gameplay nametags, with names, scores, the round and first-to. On stream it's transparent over the game; here it's on a plain background.
+  - image: /uploads/projects/mega/casters.webp
+    thumb: /uploads/projects/mega/casters-small.webp
+    caption: Casters. Boxes for the main cam and two player cams, with the casters' names.
+  - image: /uploads/projects/mega/hold.webp
+    thumb: /uploads/projects/mega/hold-small.webp
+    caption: Starting soon, with the break timer. The same scene does BRB, tech pause and thanks for watching.
+  - image: /uploads/projects/mega/versus.webp
+    thumb: /uploads/projects/mega/versus-small.webp
+    caption: Versus. Both players, their characters and the score.
+  - image: /uploads/projects/mega/queue.webp
+    thumb: /uploads/projects/mega/queue-small.webp
+    caption: Coming up. The next three matches.
+  - image: /uploads/projects/mega/winner.webp
+    thumb: /uploads/projects/mega/winner-small.webp
+    caption: Winner, after a set.
+  - image: /uploads/projects/mega/replay.webp
+    thumb: /uploads/projects/mega/replay-small.webp
+    caption: Instant replay. Bars above and below the replay footage in OBS.
+  - image: /uploads/projects/mega/top8.webp
+    thumb: /uploads/projects/mega/top8-small.webp
+    caption: Top 8.
 log:
   - date: 2026-09
     text: Twelve overlay scenes, plus Event and Layout tabs with presets so weekly changes need no code.
