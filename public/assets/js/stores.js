@@ -1318,7 +1318,8 @@
         break;
       }
       case 'lane': {
-        g.fillStyle = rgba(P.d ? '#8a7150' : '#e9d3ad', P.d ? 0.45 : 0.75); g.fillRect(x, y + 2, w, h - 4);
+        // Solid, so the carpet doesn't show through the wood.
+        g.fillStyle = P.d ? '#4d4334' : '#ecdcbf'; g.fillRect(x, y + 2, w, h - 4);
         if (!fine) break;
         g.strokeStyle = P.grain; g.lineWidth = 0.6; g.beginPath();
         for (let yy = y + 2 + 3; yy < y + h - 2; yy += 3) { g.moveTo(x, yy); g.lineTo(x + w, yy); }
@@ -2308,7 +2309,7 @@
         for (let yy = y + 3; yy < y + h - 2; yy += 4) for (let xx = x + 3; xx < x + w - 2; xx += 4) g.fillRect(xx, yy, 1.4, 1.4);
         break;
       }
-      case 'gutter': rr(x, y + h * 0.2, w, h * 0.6, h * 0.3, ink(P.d ? 0.3 : 0.18)); break;
+      case 'gutter': rr(x, y + h * 0.2, w, h * 0.6, h * 0.3, P.d ? '#323a48' : '#c6cbd2'); break;
       case 'pins': {
         // Ten pins in a triangle at the end of each lane.
         turned((lw, lh, X, Y) => {
