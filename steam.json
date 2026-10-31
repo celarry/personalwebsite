@@ -1,0 +1,73 @@
+{
+ "updated": "2026-10-31T20:58:46.526Z",
+ "steam": {
+  "online": false,
+  "playing": null,
+  "games": [
+   {
+    "appid": 1422450,
+    "name": "Deadlock",
+    "minutes2w": 2123,
+    "minutesTotal": 2442,
+    "lastPlayed": 1793461093,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422450/header.jpg"
+   },
+   {
+    "appid": 2868840,
+    "name": "Slay the Spire 2",
+    "minutes2w": 1418,
+    "minutesTotal": 12113,
+    "lastPlayed": 1793457796,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2868840/header.jpg"
+   },
+   {
+    "appid": 1364780,
+    "name": "Street Fighter™ 6",
+    "minutes2w": 878,
+    "minutesTotal": 42999,
+    "lastPlayed": 1793422152,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1364780/header.jpg"
+   },
+   {
+    "appid": 2483190,
+    "name": "Forza Horizon 6",
+    "minutes2w": 148,
+    "minutesTotal": 6260,
+    "lastPlayed": 1793287958,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2483190/header.jpg"
+   },
+   {
+    "appid": 2642680,
+    "name": "Half Sword Demo",
+    "minutes2w": 93,
+    "minutesTotal": 9101,
+    "lastPlayed": 1793273024,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2642680/header.jpg"
+   },
+   {
+    "appid": 2424420,
+    "name": "Avatar Legends: The Fighting Game ",
+    "minutes2w": 240,
+    "minutesTotal": 889,
+    "lastPlayed": 1792994970,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2424420/header.jpg"
+   },
+   {
+    "appid": 2357570,
+    "name": "Overwatch®",
+    "minutes2w": 64,
+    "minutesTotal": 6199,
+    "lastPlayed": 1792825045,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg"
+   },
+   {
+    "appid": 646570,
+    "name": "Slay the Spire",
+    "minutes2w": 1,
+    "minutesTotal": 15894,
+    "lastPlayed": 1792476776,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/646570/header.jpg"
+   }
+  ]
+ }
+}
