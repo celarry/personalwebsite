@@ -1,0 +1,77 @@
+{
+ "updated": "2026-11-07T13:22:27.811Z",
+ "steam": {
+  "online": true,
+  "playing": {
+   "appid": 2642680,
+   "name": "Half Sword Demo",
+   "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2642680/header.jpg"
+  },
+  "games": [
+   {
+    "appid": 2642680,
+    "name": "Half Sword Demo",
+    "minutes2w": 247,
+    "minutesTotal": 9288,
+    "lastPlayed": 1794057721,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2642680/header.jpg"
+   },
+   {
+    "appid": 1422450,
+    "name": "Deadlock",
+    "minutes2w": 1824,
+    "minutesTotal": 3264,
+    "lastPlayed": 1794057715,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422450/header.jpg"
+   },
+   {
+    "appid": 1364780,
+    "name": "Street Fighter™ 6",
+    "minutes2w": 545,
+    "minutesTotal": 43249,
+    "lastPlayed": 1794031534,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1364780/header.jpg"
+   },
+   {
+    "appid": 2868840,
+    "name": "Slay the Spire 2",
+    "minutes2w": 1172,
+    "minutesTotal": 12434,
+    "lastPlayed": 1793976829,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2868840/header.jpg"
+   },
+   {
+    "appid": 2483190,
+    "name": "Forza Horizon 6",
+    "minutes2w": 223,
+    "minutesTotal": 6405,
+    "lastPlayed": 1793956862,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2483190/header.jpg"
+   },
+   {
+    "appid": 3198890,
+    "name": "Scale the Depths",
+    "minutes2w": 169,
+    "minutesTotal": 169,
+    "lastPlayed": 1793846583,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3198890/header.jpg"
+   },
+   {
+    "appid": 3569420,
+    "name": "Chained Beasts",
+    "minutes2w": 142,
+    "minutesTotal": 147,
+    "lastPlayed": 1793717370,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3569420/header.jpg"
+   },
+   {
+    "appid": 493520,
+    "name": "GTFO",
+    "minutes2w": 121,
+    "minutesTotal": 5716,
+    "lastPlayed": 1793615799,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/493520/header.jpg"
+   }
+  ]
+ }
+}
