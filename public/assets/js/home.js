@@ -43,6 +43,40 @@
     }
   });
 
+  /* ---------- On this page ----------
+     The list in the right margin (wide screens only) shows once the live demo has scrolled
+     away, and steps aside whenever something full-width, like an opened project's demo,
+     passes behind it. Jumping and marking the current section are in site.js. */
+  const toc = document.querySelector('[data-toc-home]');
+  const live = document.getElementById('live');
+  if (toc) {
+    let queued = false;
+    const update = () => {
+      queued = false;
+      if (getComputedStyle(toc).display === 'none') return;
+      const box = toc.getBoundingClientRect();
+      const pastHero = !live || live.getBoundingClientRect().bottom < box.top;
+      const wide = [...document.querySelectorAll('.row[open] .demo, .row[open] .gallery-strip')];
+      const blocked = wide.some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.right > box.left && r.top < box.bottom + 16 && r.bottom > box.top - 16;
+      });
+      // Keep it while it has focus, so a keyboard user never loses the link they're on.
+      const show = (pastHero && !blocked) || toc.contains(document.activeElement);
+      toc.classList.toggle('is-shown', show);
+    };
+    const queue = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
+    document.addEventListener('toggle', queue, true); // rows opening and closing
+    toc.addEventListener('focusout', () => setTimeout(queue));
+    update();
+  }
+
   /* ---------- Countdown ---------- */
   const cd = document.querySelector('[data-countdown]');
   if (cd) {
