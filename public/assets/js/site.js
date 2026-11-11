@@ -380,27 +380,81 @@
   } catch (e) {}
 })();
 
-// Project pages: the "On this page" list marks the section you're reading.
+// Project pages: the "On this page" list jumps to a section and marks the one you're reading.
 (() => {
   const toc = document.querySelector('[data-toc]');
-  if (!toc || !('IntersectionObserver' in window)) return;
+  if (!toc) return;
   const links = [...toc.querySelectorAll('a[href^="#"]')];
-  const heads = links.map((a) => document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)))).filter(Boolean);
-  if (!heads.length) return;
+  const pairs = links
+    .map((a) => ({ a, h: document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))) }))
+    .filter((x) => x.h);
+  if (!pairs.length) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  let pinned = null; // the link just clicked, until the scroll it started has finished
+
+  const set = (i) =>
+    pairs.forEach(({ a }, k) => {
+      if (k === i) {
+        if (a.getAttribute('aria-current') === 'true') return;
+        a.setAttribute('aria-current', 'true');
+        // Keep the marked link in view when the list is taller than the screen.
+        if (getComputedStyle(toc).position === 'sticky') {
+          const t = a.offsetTop - toc.scrollTop;
+          if (t < 0 || t + a.offsetHeight > toc.clientHeight) toc.scrollTop = a.offsetTop - toc.clientHeight / 2;
+        }
+      } else a.removeAttribute('aria-current');
+    });
+
   const mark = () => {
-    // The current section is the last heading above a line a third of the way down the screen.
-    const line = window.innerHeight / 3;
+    if (pinned !== null) return set(pinned);
+    // The section you're reading is the last heading above a line a third of the way down.
+    // At the very bottom, short last sections can't reach that line, so the last heading on
+    // screen wins instead.
+    const line = innerHeight / 3;
+    const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
     let i = -1;
-    heads.forEach((h, k) => { if (h.getBoundingClientRect().top <= line) i = k; });
-    links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+    pairs.forEach(({ h }, k) => {
+      const top = h.getBoundingClientRect().top;
+      if (top <= line || (atEnd && top < innerHeight)) i = k;
+    });
+    set(i);
   };
+
+  links.forEach((a, k) =>
+    a.addEventListener('click', (e) => {
+      const pair = pairs.find((x) => x.a === a);
+      if (!pair || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault();
+      pinned = pairs.indexOf(pair);
+      set(pinned);
+      // Keep the clicked section marked, through the smooth scroll and after it, until the
+      // reader scrolls on their own. Near the bottom, where several headings fit on one
+      // screen, the one you picked is the one you meant.
+      pair.h.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' });
+      history.replaceState(null, '', a.getAttribute('href'));
+      // Move keyboard focus to the section, so Tab carries on from there.
+      pair.h.setAttribute('tabindex', '-1');
+      pair.h.focus({ preventScroll: true });
+    })
+  );
+
+  const release = () => {
+    if (pinned === null) return;
+    pinned = null;
+    mark();
+  };
+  addEventListener('wheel', release, { passive: true });
+  addEventListener('touchmove', release, { passive: true });
+  addEventListener('pointerdown', release, { passive: true }); // dragging the scrollbar, say
+  addEventListener('keydown', (e) => /^(Arrow|Page|Home|End| $)/.test(e.key) && release());
+
   let queued = false;
   const onScroll = () => {
     if (queued) return;
     queued = true;
     requestAnimationFrame(() => { queued = false; mark(); });
   };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
   mark();
 })();

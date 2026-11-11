@@ -179,10 +179,11 @@
   const root = document.querySelector('[data-wiki-edits]');
   if (!root) return;
   const js = new URL('.', document.currentScript.src);
+  const ver = new URL(document.currentScript.src).search; // the build's fingerprint, if any
   let demo = null;
   let loading = null;
   const load = () =>
-    (loading ||= import(new URL('wiki-edits/live.mjs', js).href)
+    (loading ||= import(new URL(`wiki-edits/live.mjs${ver}`, js).href)
       .then((m) => (demo = m.mount(root, { assets: new URL('../models/wiki-edits/', js).href, vendor: new URL('../vendor/onnxruntime-web/', js).href })))
       .catch((err) => {
         root.querySelector('[data-we-status]').textContent = 'The demo didn’t load. Reload the page to try again.';

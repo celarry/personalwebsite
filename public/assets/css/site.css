@@ -3489,40 +3489,72 @@ button.skill[aria-expanded='true'] .skill__n {
   max-width: var(--measure);
   margin: clamp(48px, 7vw, 80px) auto 0;
 }
+.prose--sans h2 {
+  scroll-margin-top: 28px;
+}
+.read__history {
+  margin-top: clamp(48px, 7vw, 72px);
+}
+.read__history h2 {
+  margin: 0 0 0.75rem;
+  font: 400 1.55rem/1.2 var(--display);
+  letter-spacing: -0.01em;
+  scroll-margin-top: 28px;
+}
+.read__history h2:hover .anchor {
+  opacity: 1;
+}
+.read__main > :first-child {
+  margin-top: 0;
+}
+/* On narrow screens: a panel above the text, like the site's other panels. */
 .toc {
   margin-bottom: 2.25rem;
-  padding: 14px 18px 16px;
+  padding: 16px 18px 18px;
   background: var(--panel);
   border: 1px solid var(--rule);
   border-radius: var(--r);
-  font-size: 0.9375rem;
-  line-height: 1.4;
 }
 .toc__head {
-  margin: 0 0 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--ink-3);
+  margin: 0 0 0.65rem;
+  font: 400 1.125rem/1.25 var(--display);
+  letter-spacing: -0.005em;
+  color: var(--ink);
 }
 .toc ol {
   margin: 0;
   padding: 0;
   list-style: none;
+  counter-reset: toc;
 }
-.toc li + li {
-  margin-top: 0.4rem;
+.toc li {
+  counter-increment: toc;
 }
 .toc a {
+  display: grid;
+  grid-template-columns: 1.6em minmax(0, 1fr);
+  padding: 5px 0;
+  font-size: 0.9375rem;
+  line-height: 1.4;
   color: var(--ink-2);
   text-decoration: none;
+}
+.toc a::before {
+  content: counter(toc, decimal-leading-zero);
+  font: 400 0.75rem/1.85 var(--mono);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
 }
 .toc a:hover {
   color: var(--route);
 }
-.toc a[aria-current='true'] {
-  color: var(--ink);
-  font-weight: 700;
+.toc a:focus-visible {
+  outline: 2px solid var(--route);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
 }
+/* On wide screens: a rail in the left margin, where the section names sit on the rest of
+   the site, that follows you down and marks the section you're reading in route blue. */
 @media (min-width: 1120px) {
   .read--toc {
     display: grid;
@@ -3532,26 +3564,43 @@ button.skill[aria-expanded='true'] .skill__n {
   }
   .toc {
     position: sticky;
-    top: 24px;
+    top: 28px;
     align-self: start;
-    max-height: calc(100vh - 48px);
+    max-height: calc(100vh - 56px);
     overflow-y: auto;
-    margin: 0;
-    padding: 2px 2rem 0 0;
+    margin: 0 2.25rem 0 0;
+    padding: 0;
     background: none;
     border: 0;
     border-radius: 0;
-    font-size: 0.875rem;
+    scrollbar-width: none;
+  }
+  .toc__head {
+    margin-bottom: 0.8rem;
+    font-size: 1.25rem;
+  }
+  .toc ol {
+    border-left: 1px solid var(--rule);
   }
   .toc a {
-    display: block;
-    padding-left: 10px;
-    margin-left: -12px;
+    grid-template-columns: 1.85em minmax(0, 1fr);
+    margin-left: -1px;
+    padding: 6px 0 6px 12px;
     border-left: 2px solid transparent;
+    font-size: 0.875rem;
+    transition: color 0.15s, border-color 0.15s;
   }
-  .toc a[aria-current='true'] {
-    border-left-color: var(--route);
+  .toc a::before {
+    line-height: 1.75;
   }
+}
+.toc a[aria-current='true'] {
+  color: var(--ink);
+  font-weight: 700;
+  border-left-color: var(--route);
+}
+.toc a[aria-current='true']::before {
+  color: var(--route);
 }
 
 /* Interactive diagram */
