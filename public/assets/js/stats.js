@@ -351,6 +351,13 @@
       table('playdays', ['Day', 'Average hours', 'Days counted'], DAYS.map((name, i) => [name, (avg[i] / 60).toFixed(1), String(perDay[i].count)]));
     } else empty('playdays', since ? `Not enough yet. This needs a full week of record, which started on ${longDate(since)}.` : notYet);
 
+    // When I play.
+    const pg = S.grid || [];
+    if (pg.flat && pg.flat().some(Boolean)) {
+      heatmap('playclock', pg, { hue: GAMES, fmt: fmtHours });
+      table('playclock', ['Day', 'Hours'], pg.map((r, i) => [DAYS[i], (r.reduce((a, b) => a + b, 0) / 60).toFixed(1)]));
+    } else empty('playclock', notYet);
+
     // Songs each day.
     const songDays = days30.map((dd) => ({ date: dd, parts: { songs: (M.days || {})[dd] || 0 } }));
     if (songDays.some((dd) => dd.parts.songs)) {
