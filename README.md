@@ -2,7 +2,7 @@
 
 My personal website: a homepage with interactive project demos, and a blog I can update from a web editor.
 
-- **Homepage:** a small store where a cart plans routes with A* (or Dijkstra, or greedy search), then a list of projects that open into working demos: a Valorant win-probability model, a homelab diagram and an email-approval mock.
+- **Homepage:** a small store where a cart plans routes with A* (or Dijkstra, or greedy search), then a list of projects that open into working demos: a Valorant win-probability model, a live feed of Wikipedia edits scored by a model in the browser, a homelab diagram and an email-approval mock.
 - **Blog:** posts are Markdown files in `content/posts/`, written and edited with [Pages CMS](https://pagescms.org).
 - **Hosting:** GitHub Pages. Every change on `main` rebuilds the site automatically.
 
@@ -93,6 +93,7 @@ To turn either off, clear the Last.fm fields or turn off **Show Steam games**. T
 - **Contact:** a short text thread that asks for a name and a message, then lets the visitor send it with Gmail, Outlook, their email app, or copy it. Nothing is sent or stored by the site.
 - **Email links:** every email link opens a small menu (Gmail, Outlook, email app, copy the address), so people without an email app set up don't hit a system error.
 - **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post, switch the cart's search, turn the store's lights off, decorate it for a festival.
+- **Live Wikipedia edits:** opening the project's row (or pressing Start on its page) downloads an 11 MB model and starts scoring live English Wikipedia edits in the browser. It pauses when the row closes, when the tab is in the background, and after 15 minutes. The model comes from [`rockminelaw/wikilogreader`](https://github.com/rockminelaw/wikilogreader) (`training/web_bundle.py`); to update it, replace the three files in `public/assets/models/wiki-edits/`.
 - **Project pages:** diagrams you can step through, the Valorant HUD reader, the store on the shopping cart's page, and each project's history.
 - **Blog filters:** `/blog/#life` links straight to the Life posts.
 - **Colophon:** `/colophon/` explains how the site works, with real build numbers.
@@ -106,7 +107,8 @@ build.mjs              builds the site into dist/
 lib/templates.mjs      HTML for every page
 lib/vendor/            marked (Markdown) and js-yaml, vendored so the build needs no npm install
 content/               everything that changes: site.yml, projects/, posts/, pages/
-public/                copied as-is: CSS, JS (floor, demos, palette, site), fonts, images, uploads
+public/                copied as-is: CSS, JS (floor, demos, palette, site), fonts, images, uploads,
+                       the Wikipedia edits model (assets/models/) and ONNX Runtime Web (assets/vendor/)
 .pages.yml             Pages CMS editor configuration
 .github/workflows/     GitHub Pages deploy
 ```

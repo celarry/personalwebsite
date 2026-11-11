@@ -85,7 +85,7 @@ content:
         type: select
         default: none
         options:
-          values: [none, valorant, homelab, email, cart]
+          values: [none, valorant, homelab, email, cart, wikipedia]
       - name: dates
         label: Dates (as shown)
         description: For example "Apr 2026 – present".

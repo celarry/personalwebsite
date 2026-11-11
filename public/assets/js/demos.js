@@ -172,6 +172,35 @@
   draft.addEventListener('input', () => (status.textContent = ''));
 })();
 
+/* ---------- Live Wikipedia edits ---------- */
+// The model (11 MB) and the stream only load once the visitor asks: by opening
+// the project's row on the homepage, or pressing Start on the project page.
+(() => {
+  const root = document.querySelector('[data-wiki-edits]');
+  if (!root) return;
+  const js = new URL('.', document.currentScript.src);
+  let demo = null;
+  let loading = null;
+  const load = () =>
+    (loading ||= import(new URL('wiki-edits/live.mjs', js).href)
+      .then((m) => (demo = m.mount(root, { assets: new URL('../models/wiki-edits/', js).href, vendor: new URL('../vendor/onnxruntime-web/', js).href })))
+      .catch((err) => {
+        root.querySelector('[data-we-status]').textContent = 'The demo didn’t load. Reload the page to try again.';
+        console.error(err);
+      }));
+  const row = root.closest('details[data-row]');
+  if (row) {
+    const sync = () => {
+      if (row.open) load().then(() => demo && demo.start());
+      else if (demo) demo.pause();
+    };
+    row.addEventListener('toggle', sync);
+    if (row.open) sync();
+  } else {
+    root.querySelector('[data-we-toggle]').addEventListener('click', () => load().then(() => demo && demo.start()), { once: true });
+  }
+})();
+
 /* ---------- "Send the cart shopping" ---------- */
 document.querySelectorAll('[data-shop]').forEach((btn) =>
   btn.addEventListener('click', () => {

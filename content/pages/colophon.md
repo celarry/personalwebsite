@@ -37,3 +37,5 @@ The colours come from a shop floor: pale floor vinyl, navy ink and one blue for 
 No analytics, no cookies and no trackers. The only things stored in your browser are your light or dark theme choice, if you change it, and the numbers of the stores you've visited. Neither leaves your browser. The contact form doesn't send anything by itself: it writes the email, and your own email app sends it.
 
 The games and music under Off the clock come from a small Cloudflare Worker of mine that asks Steam and Last.fm what I've been playing and listening to. Your browser only talks to that worker, so Steam and Last.fm never see you, and it keeps nothing about visitors. Book covers are stored with the site.
+
+The live Wikipedia edits demo connects to Wikimedia, but only once you open it. Your browser then reads Wikimedia's public stream of changes and asks Wikipedia's API for a few diffs a minute, so Wikimedia sees those requests the way it sees any visit to Wikipedia. They're sent without cookies. The model, and the code that runs it, are stored with the site.

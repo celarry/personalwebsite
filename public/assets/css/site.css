@@ -2642,6 +2642,170 @@ button.skill[aria-expanded='true'] .skill__n {
   border-color: var(--ink-3);
 }
 
+/* Live Wikipedia edits */
+.we {
+  display: grid;
+  gap: 14px;
+}
+.we__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+.we__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 600;
+}
+.we__dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+.we__status:has([data-live='true']) .we__dot {
+  background: var(--def);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .we__status:has([data-live='true']) .we__dot {
+    animation: we-pulse 2s ease-in-out infinite;
+  }
+  .we__item--new {
+    animation: we-in 0.4s ease-out;
+  }
+}
+@keyframes we-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes we-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.we__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.we__numbers {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.we__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 26rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-top: 1px solid var(--rule-2);
+}
+.we__list:empty {
+  display: none;
+}
+.we__list[data-view='flagged'] .we__item:not(.we__item--flag) {
+  display: none;
+}
+.we__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 16px;
+  align-items: center;
+  margin: 0;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-2);
+}
+.we__title {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.we__meta {
+  grid-column: 1;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.we__score {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.we__bar {
+  width: 56px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--sunk);
+  overflow: hidden;
+}
+.we__bar i {
+  display: block;
+  height: 100%;
+  background: var(--ink-3);
+}
+.we__item--flag .we__bar i {
+  background: var(--atk);
+}
+.we__item--flag .we__p {
+  white-space: nowrap;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--atk) 14%, transparent);
+  color: var(--atk);
+  font-weight: 600;
+}
+@media (max-width: 520px) {
+  .we__item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .we__score {
+    grid-column: 1;
+    grid-row: auto;
+    justify-content: flex-start;
+    margin-top: 4px;
+  }
+}
+.we__empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+.we__digest {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--paper);
+  border: 1px solid var(--rule-2);
+}
+.we__digest p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+.we__digest .we__digest-h {
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.we .demo__note {
+  margin-top: 4px;
+}
+
 /* Homelab */
 .lab {
   display: grid;
