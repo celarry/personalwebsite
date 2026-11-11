@@ -3594,6 +3594,41 @@ button.skill[aria-expanded='true'] .skill__n {
     line-height: 1.75;
   }
 }
+.home > section {
+  scroll-margin-top: 28px;
+}
+/* The homepage's list: only on wide screens, fixed in the right margin. */
+.toc--home {
+  display: none;
+}
+@media (min-width: 1120px) {
+  .toc--home {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: calc(50% + var(--measure) / 2 + 2.25rem);
+    width: calc(var(--margin) - 2.25rem);
+    max-height: calc(100vh - 56px);
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(6px, -50%);
+    transition: opacity 0.25s, transform 0.25s, visibility 0s 0.25s;
+  }
+  .toc--home.is-shown {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+    transition: opacity 0.25s, transform 0.25s, visibility 0s;
+  }
+}
+@media (min-width: 1120px) and (prefers-reduced-motion: reduce) {
+  .toc--home,
+  .toc--home.is-shown {
+    transform: translate(0, -50%);
+    transition: none;
+  }
+}
 .toc a[aria-current='true'] {
   color: var(--ink);
   font-weight: 700;
