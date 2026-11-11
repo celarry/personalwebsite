@@ -289,6 +289,11 @@ content:
         label: Show Steam games
         description: Turn on once STEAM_KEY and STEAM_ID are set in GitHub (see the README). Updates about every ten minutes.
         type: boolean
+      - name: steam_hide
+        label: Hidden Steam games
+        description: Games to leave out of the Games row and the charts, by their name on Steam. Adding one also removes it from the record already kept, within ten minutes.
+        type: string
+        list: true
       - name: now_api
         label: Live data address (Cloudflare, optional)
         description: The address of your Cloudflare worker, like https://now.lawrenceqi.com. Only needed if you use the Cloudflare worker instead of the settings above. Leave empty otherwise.

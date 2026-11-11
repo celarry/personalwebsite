@@ -17,6 +17,10 @@ const site = load(fs.readFileSync(new URL('../content/site.yml', import.meta.url
 const TZ = String(site.timezone || 'Australia/Melbourne');
 const LFM_USER = String(site.lastfm_user || '').trim();
 const LFM_KEY = String(site.lastfm_key || '').trim();
+// Games to leave out of everything, by name (as Steam spells it, ® and ™ optional) or app id.
+// Set under Profile → Hidden Steam games.
+const plain = (s) => String(s || '').replace(/[®™]/g, '').trim().toLowerCase();
+const HIDE = new Set((Array.isArray(site.steam_hide) ? site.steam_hide : []).map(plain).filter(Boolean));
 const STEAM_KEY = process.env.STEAM_KEY;
 const STEAM_ID = process.env.STEAM_ID;
 
@@ -84,9 +88,21 @@ if (STEAM_KEY && STEAM_ID) {
     getJson(`${api}/IPlayerService/GetOwnedGames/v1/?${q}&steamid=${id}&include_appinfo=1&include_played_free_games=1`).catch(() => null),
   ]);
   const player = list(summary?.response?.players)[0] || {};
-  const ownedGames = list(owned?.response?.games);
+  // Hidden games come out of Steam's answers before anything else sees them.
+  const hiddenIds = new Set();
+  const seen = [...list(owned?.response?.games), ...list(recent?.response?.games)].map((g) => [g.appid, g.name]);
+  if (player.gameid) seen.push([Number(player.gameid), player.gameextrainfo]);
+  for (const [k, n] of Object.entries(H.steam.names || {})) seen.push([Number(k), n]);
+  for (const [gid, name] of seen) if (HIDE.has(plain(name)) || HIDE.has(String(gid))) hiddenIds.add(Number(gid));
+  const shown = (g) => !hiddenIds.has(Number(g.appid));
+  if (hiddenIds.has(Number(player.gameid))) {
+    delete player.gameid;
+    delete player.gameextrainfo;
+  }
+  const ownedGames = list(owned?.response?.games).filter(shown);
   const last = new Map(ownedGames.map((g) => [g.appid, g.rtime_last_played || 0]));
   const games = list(recent?.response?.games)
+    .filter(shown)
     .map((g) => ({ appid: g.appid, name: g.name, minutes2w: g.playtime_2weeks || 0, minutesTotal: g.playtime_forever || 0, lastPlayed: last.get(g.appid) || null, art: art(g.appid) }))
     .sort((a, b) => (b.lastPlayed || 0) - (a.lastPlayed || 0) || b.minutes2w - a.minutes2w);
   const appid = Number(player.gameid) || null;
@@ -103,8 +119,19 @@ if (STEAM_KEY && STEAM_ID) {
   // that's open and otherwise at the game's "last played" time, and split across the days
   // that span covers.
   const S = H.steam;
+  // And out of everything already recorded.
+  for (const gid of hiddenIds) {
+    for (const d of Object.values(S.days)) delete d[gid];
+    delete S.totals[gid];
+    delete S.names[gid];
+    delete H.music.whilePlaying[gid];
+    if (Number(S.playing) === gid) S.playing = null;
+    if (Number(S.previous) === gid) S.previous = null;
+  }
+  for (const [date, d] of Object.entries(S.days)) if (!Object.keys(d).length) delete S.days[date];
+  S.owned = (S.owned || []).filter(shown);
   const firstTime = !Object.keys(S.totals).length;
-  const all = ownedGames.length ? ownedGames : list(recent?.response?.games);
+  const all = ownedGames.length ? ownedGames : list(recent?.response?.games).filter(shown);
   const from = lastRun || now - 10 * 60000;
   for (const g of all) {
     const total = g.playtime_forever || 0;
