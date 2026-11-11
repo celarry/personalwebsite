@@ -78,7 +78,14 @@ Off the clock can show what I'm playing on Steam and listening to on Spotify (th
 4. Under **Actions → Steam and Last.fm**, press **Run workflow** once. When it's green, `https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json` shows your games.
 5. In Pages CMS, open **Profile** and turn on **Show Steam games**.
 
-GitHub runs scheduled jobs a few minutes late sometimes, so "playing right now" can lag by up to about a quarter of an hour. GitHub also pauses scheduled jobs if the repository has had no commits for 60 days; saving anything in Pages CMS keeps it going.
+GitHub treats schedules as best effort, and in practice runs this one every few hours, not every ten minutes. GitHub also pauses scheduled jobs if the repository has had no commits for 60 days. So a small Cloudflare Worker (`worker/tick/`) starts the Action every ten minutes instead; runs started that way aren't delayed. To set it up:
+
+1. On GitHub, create a [fine-grained token](https://github.com/settings/personal-access-tokens/new): only the `personalwebsite` repository, with **Actions: Read and write** and nothing else.
+2. In Cloudflare, go to **Workers & Pages → Create → Start with Hello World**, name it `lawrenceqi-recorder-tick` and deploy it. Then **Edit code**, replace everything with `worker/tick/index.js`, and deploy again.
+3. Under the worker's **Settings → Variables and Secrets**, add a **Secret** called `GITHUB_TOKEN` with the token.
+4. Under **Settings → Trigger Events**, add a **Cron Trigger** with `*/10 * * * *`.
+
+Runs it starts show up under **Actions → Steam and Last.fm** as *workflow_dispatch*. The token expires after the time you chose when making it; make a new one and replace the secret when it does. (Or deploy it with `npx wrangler deploy` from `worker/tick`, which reads the schedule from `wrangler.toml`.)
 
 To turn either off, clear the Last.fm fields or turn off **Show Steam games**. The text you've written for each row still shows either way. (`worker/now.js` is a Cloudflare Worker that can do both instead, if you'd rather use one: put its address in **Live data address**.)
 
