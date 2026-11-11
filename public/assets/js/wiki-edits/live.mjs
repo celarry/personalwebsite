@@ -405,7 +405,7 @@ export function mount(root, { assets, vendor }) {
     const c = state.counts;
     const mins = Math.max(1, Math.round(elapsed() / 60000));
     ui.numbers.textContent = c.seen
-      ? `${fmt.format(c.seen - c.bots)} article edits in ${mins} min · ${fmt.format(c.scored)} scored · ${fmt.format(c.flagged)} likely to be reverted · ${fmt.format(c.bots)} bot edits skipped`
+      ? `${fmt.format(c.seen - c.bots)} article edits in ${mins} min · ${fmt.format(c.scored)} scored · ${fmt.format(c.flagged)} likely to be reverted · ${fmt.format(c.bots)} bot edit${c.bots === 1 ? '' : 's'} skipped`
       : 'No edits yet';
     const shown = state.view === 'flagged' ? state.items.filter((i) => i.flagged).length : state.items.length;
     ui.empty.hidden = shown > 0;
