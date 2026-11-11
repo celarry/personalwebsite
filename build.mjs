@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { load as loadYaml } from './lib/vendor/js-yaml.mjs';
 import { marked } from './lib/vendor/marked.esm.js';
@@ -320,6 +321,19 @@ const build = {
   year: nowDate.getFullYear(),
   dateLabel: new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: site.timezone || 'Australia/Melbourne' }).format(nowDate),
   ms: 0,
+  // Browsers keep the stylesheet and scripts for a while (GitHub Pages says ten minutes), so
+  // each build gives them a fingerprint of their contents. A changed file gets a new address,
+  // and a page never loads with yesterday's CSS.
+  v: (() => {
+    const h = createHash('sha256');
+    const walk = (dir) =>
+      fs.readdirSync(path.join(root, dir), { withFileTypes: true })
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .forEach((e) => (e.isDirectory() ? walk(`${dir}/${e.name}`) : /\.(css|m?js)$/.test(e.name) && h.update(fs.readFileSync(path.join(root, dir, e.name)))));
+    walk('public/assets/css');
+    walk('public/assets/js');
+    return h.digest('hex').slice(0, 10);
+  })(),
 };
 
 // ---------- output ----------
