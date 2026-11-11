@@ -27,7 +27,7 @@
 
   // ---------- Items ----------
   const pages = [
-    { title: 'Home', href: '', keywords: 'homepage start store shop cart' },
+    { title: 'Home', href: '', keywords: 'homepage start wikipedia live edits' },
     { title: 'Projects', href: 'projects/', keywords: 'work portfolio history built' },
     { title: 'Blog', href: 'blog/', keywords: 'posts writing life archive' },
     { title: 'Now', href: 'now/', keywords: 'currently up to singapore where' },
@@ -125,7 +125,7 @@
           const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
           document.querySelector('[data-floor]').scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
           setTimeout(() => window.floorDemo.shop(), smooth ? 450 : 0);
-        } else location.href = link('#shop');
+        } else location.href = link('projects/autonomous-shopping-cart/#shop');
       },
     },
     ...[
@@ -141,20 +141,21 @@
         window.floorDemo.setAlgo(key);
       },
     })),
-    { title: 'Turn the store lights off', keywords: 'closed night store sleep dark hours', href: '#closed', hidden: true },
-    { title: 'Open the store', keywords: 'open day store hours lights', href: '#open', hidden: true },
+    { title: 'Turn the store lights off', keywords: 'closed night store sleep dark hours', href: 'projects/autonomous-shopping-cart/#closed', hidden: true },
+    { title: 'Open the store', keywords: 'open day store hours lights', href: 'projects/autonomous-shopping-cart/#open', hidden: true },
     ...[
       ['lunar', 'Lunar New Year'],
       ['easter', 'Easter'],
       ['midautumn', 'Mid-Autumn Festival'],
       ['halloween', 'Halloween'],
       ['christmas', 'Christmas'],
-    ].map(([key, name]) => ({ title: `Decorate the store for ${name}`, keywords: `season festival decorations ${key} ${name}`, href: `#${key}`, hidden: true })),
+    ].map(([key, name]) => ({ title: `Decorate the store for ${name}`, keywords: `season festival decorations ${key} ${name}`, href: `projects/autonomous-shopping-cart/#${key}`, hidden: true })),
     { title: 'Playing and listening, in charts', keywords: 'stats charts data steam spotify last.fm games music listening hours', href: 'stats/' },
     { title: 'See all the stores', keywords: 'stores layouts collection found hundred 100', href: 'stores/' },
     ...(window.StoreEngine
-      ? window.StoreEngine.list().map((st) => ({ title: `Store ${st.number}: ${st.name}`, keywords: `store layout ${st.note}`, href: `#store-${st.number}`, hidden: true }))
+      ? window.StoreEngine.list().map((st) => ({ title: `Store ${st.number}: ${st.name}`, keywords: `store layout ${st.note}`, href: `projects/autonomous-shopping-cart/#store-${st.number}`, hidden: true }))
       : []),
+    { title: 'Watch live Wikipedia edits', keywords: 'wikipedia live edits revert model demo stream', href: '#live' },
     { title: 'Play with the Valorant predictor', keywords: 'valorant demo win probability model', href: '#valorant-win-probability' },
     repo && { title: "View this site's source on GitHub", keywords: 'code repository source github', href: repo, external: true },
     { title: 'Follow with RSS', keywords: 'rss feed subscribe', href: 'feed.xml' },

@@ -61,10 +61,10 @@ content:
     view:
       fields: [title, dates, status, featured]
       primary: title
-      sort: [order, title]
+      sort: [started, order, title]
       default:
-        sort: order
-        order: asc
+        sort: started
+        order: desc
     fields:
       - name: title
         label: Name
@@ -77,7 +77,7 @@ content:
         default: false
       - name: order
         label: Order
-        description: Lower numbers come first.
+        description: Projects are listed newest first by when they started. This only decides the order of projects that started in the same month; lower numbers come first.
         type: number
         default: 50
       - name: demo
@@ -92,7 +92,7 @@ content:
         type: string
       - name: started
         label: Started
-        description: Used to sort the projects page by year.
+        description: Projects are listed newest first by this date, everywhere on the site.
         type: date
         options:
           format: yyyy-MM

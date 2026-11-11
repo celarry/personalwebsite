@@ -1,6 +1,6 @@
 ---
 title: How this site works
-summary: The build, the type and the little store on the homepage.
+summary: The build, the type, the live Wikipedia demo on the homepage and the little store on the shopping cart page.
 ---
 ## The build
 
@@ -12,9 +12,13 @@ Every commit to the main branch triggers a GitHub Actions workflow that runs the
 
 I write posts and update projects in [Pages CMS](https://pagescms.org), a web editor that saves straight to the GitHub repository. Each save is a commit, so the site rebuilds itself about a minute later.
 
+## The live Wikipedia demo
+
+The homepage opens with [Wikipedia live edits](/projects/wikipedia-live-edits/). Nothing loads until you press Start. Then your browser downloads the model (BERT-mini, 11 MB at 8-bit, about 8 MB compressed) and ONNX Runtime Web, which runs it on WebAssembly on one thread. Both are stored with the site, so the only outside connections are to Wikimedia. The page reads Wikimedia's public stream of changes, keeps English Wikipedia article edits by accounts without the bot flag, and every 20 seconds picks up to three of them at random and asks Wikipedia for their diffs. A WordPiece tokeniser and the code that turns an edit into the model's input text are rewritten in JavaScript, and they match the Python versions used in training exactly. It pauses when the tab is in the background and after 15 minutes.
+
 ## The store
 
-The store on the homepage is a grid of 22-pixel squares (18 on phones), with numbered aisles at the back, a fruit stand, and a checkout where the cart parks. The cart plans each trip with A-star: eight directions of movement, an octile-distance heuristic, and no cutting corners around shelves. Filled squares are the ones the search expanded, revealed in the order it expanded them. Outlined squares were still waiting in the open set when it reached the goal.
+The store on the [shopping cart's page](/projects/autonomous-shopping-cart/) is a grid of 22-pixel squares (18 on phones), with numbered aisles at the back, a fruit stand, and a checkout where the cart parks. The cart plans each trip with A-star: eight directions of movement, an octile-distance heuristic, and no cutting corners around shelves. Filled squares are the ones the search expanded, revealed in the order it expanded them. Outlined squares were still waiting in the open set when it reached the goal.
 
 The switch under the store changes the search. Dijkstra is A-star without the guess at the distance left, so it spreads out evenly in every direction. Greedy search uses nothing but the guess, so it checks very few squares but can take the long way round. Same floor, same trip, different numbers.
 
@@ -22,7 +26,7 @@ A shopper wanders the aisles on their own route. If they step onto one of the ne
 
 The store keeps Melbourne hours. Between 10 pm and 7 am the lights go down and the cart sleeps by the checkout until someone wakes it. It also decorates itself for Lunar New Year, Easter, Mid-Autumn and Christmas, and for the week before Halloween.
 
-There are a hundred stores. Your first visit gets the original, and each visit after that gets one you haven't seen: a night market, a hawker centre, a server room, two mazes, a store that spells something, a sleeping cat. [All the stores](/stores/) keeps track of the ones you've found.
+There are a hundred stores. Your first visit to that page gets the original, and each visit after that gets one you haven't seen: a night market, a hawker centre, a server room, two mazes, a store that spells something, a sleeping cat. [All the stores](/stores/) keeps track of the ones you've found.
 
 If your device asks for reduced motion, nothing animates: each search and route is drawn once, and the cart moves straight to where it's going.
 

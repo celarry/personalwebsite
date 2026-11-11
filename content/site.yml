@@ -1,9 +1,9 @@
 name: Lawrence Qi
 headline: I train machine-learning models and run the machines they live on.
-intro: I study Computer Science at Monash University and graduate in October
-  2026. In November I'm moving to Singapore to start an AI/ML internship at
+intro: I've just finished my Computer Science degree at Monash University. In
+  November I'm moving to Singapore to start an AI/ML internship at
   NetGain, working on small language models that run locally.
-now: Finishing my degree at Monash and packing for Singapore.
+now: Done with Monash and packing for Singapore.
 move:
   place: Singapore
   date: 2026-11-19
@@ -11,9 +11,9 @@ checklist:
   - text: Finish classes at Monash
     done: true
   - text: Sit my final exams
-    done: false
+    done: true
   - text: Graduate from Monash
-    done: false
+    done: true
   - text: Fly to Singapore
     done: false
   - text: Start the AI/ML internship at NetGain
@@ -127,6 +127,6 @@ experience:
   - role: Bachelor of Computer Science
     type: education
     org: Monash University
-    dates: Graduating Oct 2026
+    dates: Graduated 2026
     projects:
       - ai-email-assistant
