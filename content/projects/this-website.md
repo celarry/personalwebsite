@@ -77,7 +77,7 @@ Each save is a commit. A GitHub Actions workflow builds the site and publishes i
 Off the clock shows what I'm playing and listening to, but the site is static files with no server of its own.
 
 - **Music** comes from Last.fm, which has an API made to be called from a browser, so each visitor's browser asks it directly.
-- **Steam** needs a secret key, which can't be in the page. So a GitHub Action runs every ten minutes, asks Steam and Last.fm, and publishes the result to a separate `live` branch that the page reads. It's free because the repository is public. It also keeps a running record that the [charts of my playing and listening](/stats/) are drawn from: hours per game per day, when I play, songs per day, top artists, and what I listen to while a game is open.
+- **Steam** needs a secret key, which can't be in the page. So a scheduled GitHub Action asks Steam and Last.fm for the latest and publishes the result to a separate `live` branch that the page reads. It's free because the repository is public. It also keeps a running record that the [charts of my playing and listening](/stats/) are drawn from: hours per game per day, which days of the week I play, songs per day, top artists, and what I listen to while a game is open.
 
 ## Type, colour and care
 

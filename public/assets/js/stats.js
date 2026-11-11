@@ -122,7 +122,7 @@
   }
 
   // Horizontal bars: one series, value at the tip.
-  function bars(key, items, { color, value, tipLabel }) {
+  function bars(key, items, { color, value, tipLabel, tip }) {
     const max = Math.max(...items.map((i) => i.v)) || 1;
     const wrap = el('div', 'viz-bars');
     for (const it of items) {
@@ -136,7 +136,7 @@
       const val = el('span', 'viz-bars__value', value(it.v));
       track.append(bar, val);
       row.append(name, track);
-      hover(row, (e) => showTip(row, it.name, [{ value: value(it.v), label: tipLabel, color }], e));
+      hover(row, (e) => showTip(row, it.tipTitle || it.name, [{ value: value(it.v), label: it.tipLabel || tipLabel, color }], e));
       wrap.appendChild(row);
     }
     plot(key).replaceChildren(wrap);
@@ -319,12 +319,37 @@
       table('daily', ['Day', 'Hours'], days.filter((dd) => sumObj(dd.parts)).map((dd) => [shortDate(dd.date), (sumObj(dd.parts) / 60).toFixed(1)]));
     } else empty('daily', notYet);
 
-    // When I play.
-    const pg = S.grid || [];
-    if (pg.flat && pg.flat().some(Boolean)) {
-      heatmap('playclock', pg, { hue: GAMES, fmt: fmtHours });
-      table('playclock', ['Day', 'Hours'], pg.map((r, i) => [DAYS[i], (r.reduce((a, b) => a + b, 0) / 60).toFixed(1)]));
-    } else empty('playclock', notYet);
+    // Which days I play: the average hours on each day of the week. Only whole days count,
+    // so the day the record started and today are left out, and days with no play count as
+    // zero. Steam only gives running totals, read every few hours, so hours of day would be
+    // guesswork; days of the week hold up.
+    const weekday = (iso) => (new Date(iso + 'T12:00:00Z').getUTCDay() + 6) % 7; // 0 = Monday
+    const wholeDays = [];
+    if (since) {
+      const first = Date.parse(since + 'T12:00:00Z') + 86400000;
+      const last = Date.parse(todayStr() + 'T12:00:00Z') - 86400000;
+      for (let t = first; t <= last; t += 86400000) wholeDays.push(new Date(t).toISOString().slice(0, 10));
+    }
+    const perDay = DAYS.map(() => ({ minutes: 0, count: 0 }));
+    wholeDays.forEach((dd) => {
+      const w = perDay[weekday(dd)];
+      w.minutes += sumObj((S.days || {})[dd]);
+      w.count += 1;
+    });
+    if (wholeDays.length >= 7 && perDay.some((w) => w.minutes)) {
+      const avg = perDay.map((w) => (w.count ? w.minutes / w.count : 0));
+      bars(
+        'playdays',
+        DAYS.map((name, i) => ({
+          name,
+          v: avg[i],
+          tipTitle: `${name}s (${perDay[i].count} so far)`,
+          tipLabel: 'on average',
+        })),
+        { color: GAMES, value: (v) => (v ? fmtHours(v) : 'None') }
+      );
+      table('playdays', ['Day', 'Average hours', 'Days counted'], DAYS.map((name, i) => [name, (avg[i] / 60).toFixed(1), String(perDay[i].count)]));
+    } else empty('playdays', since ? `Not enough yet. This needs a full week of record, which started on ${longDate(since)}.` : notYet);
 
     // Songs each day.
     const songDays = days30.map((dd) => ({ date: dd, parts: { songs: (M.days || {})[dd] || 0 } }));

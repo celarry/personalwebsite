@@ -2060,6 +2060,7 @@ button.skill[aria-expanded='true'] .skill__n {
 .viz-tip__row b {
   color: var(--ink);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .viz-tip__row span {
   color: var(--ink-2);
