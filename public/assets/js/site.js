@@ -379,3 +379,28 @@
     );
   } catch (e) {}
 })();
+
+// Project pages: the "On this page" list marks the section you're reading.
+(() => {
+  const toc = document.querySelector('[data-toc]');
+  if (!toc || !('IntersectionObserver' in window)) return;
+  const links = [...toc.querySelectorAll('a[href^="#"]')];
+  const heads = links.map((a) => document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)))).filter(Boolean);
+  if (!heads.length) return;
+  const mark = () => {
+    // The current section is the last heading above a line a third of the way down the screen.
+    const line = window.innerHeight / 3;
+    let i = -1;
+    heads.forEach((h, k) => { if (h.getBoundingClientRect().top <= line) i = k; });
+    links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+  };
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; mark(); });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  mark();
+})();

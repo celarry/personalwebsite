@@ -3437,7 +3437,121 @@ button.skill[aria-expanded='true'] .skill__n {
   margin-top: 0;
 }
 .project__body {
-  margin-top: clamp(48px, 7vw, 80px);
+  margin-top: 0;
+}
+
+/* Project write-ups: technical, full of numbers and lists, so they're set in the sans. */
+.prose--sans {
+  font: 400 1.0625rem/1.7 var(--sans);
+  color: var(--ink);
+}
+@media (min-width: 700px) {
+  .prose--sans {
+    font-size: 1.125rem;
+  }
+}
+.prose--sans > * + * {
+  margin-top: 1em;
+}
+.prose--sans h2 {
+  margin-top: 2.4em;
+  font-size: 1.55em;
+}
+.prose--sans h2 + * {
+  margin-top: 0.7em;
+}
+.prose--sans li + li {
+  margin-top: 0.65em;
+}
+.prose--sans ul,
+.prose--sans ol {
+  padding-left: 1.2em;
+}
+.prose--sans li::marker {
+  color: var(--ink-3);
+}
+.prose--sans strong {
+  font-weight: 700;
+}
+.prose--sans table {
+  font-size: 0.875em;
+}
+.prose--sans th {
+  font-weight: 700;
+}
+.prose--sans code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+}
+
+/* The write-up and its contents list. */
+.read {
+  max-width: var(--measure);
+  margin: clamp(48px, 7vw, 80px) auto 0;
+}
+.toc {
+  margin-bottom: 2.25rem;
+  padding: 14px 18px 16px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+.toc__head {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-3);
+}
+.toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.toc li + li {
+  margin-top: 0.4rem;
+}
+.toc a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.toc a:hover {
+  color: var(--route);
+}
+.toc a[aria-current='true'] {
+  color: var(--ink);
+  font-weight: 700;
+}
+@media (min-width: 1120px) {
+  .read--toc {
+    display: grid;
+    grid-template-columns: var(--margin) minmax(0, var(--measure));
+    max-width: none;
+    margin-inline: 0;
+  }
+  .toc {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    margin: 0;
+    padding: 2px 2rem 0 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    font-size: 0.875rem;
+  }
+  .toc a {
+    display: block;
+    padding-left: 10px;
+    margin-left: -12px;
+    border-left: 2px solid transparent;
+  }
+  .toc a[aria-current='true'] {
+    border-left-color: var(--route);
+  }
 }
 
 /* Interactive diagram */
