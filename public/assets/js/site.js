@@ -373,7 +373,7 @@
   try {
     const repo = body.dataset.repo;
     console.log(
-      '%cHi, I\'m Lawrence.%c\nThanks for looking under the hood. No framework here: one Node build script, plain JS and a lot of CSS.\nPress ⌘K (or Ctrl K) to search.\nThe cart is window.floorDemo, if you want to boss it around.' + (repo ? `\nSource: ${repo}` : ''),
+      '%cHi, I\'m Lawrence.%c\nThanks for looking under the hood. No framework here: one Node build script, plain JS and a lot of CSS.\nPress ⌘K (or Ctrl K) to search.\nOn the shopping cart\'s page, the cart is window.floorDemo, if you want to boss it around.' + (repo ? `\nSource: ${repo}` : ''),
       'font: 700 16px system-ui; color: #2b45e0',
       'font: 13px/1.5 system-ui'
     );

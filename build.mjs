@@ -244,7 +244,8 @@ const projects = mdFiles('content/projects')
     };
   })
   .filter((p) => !p.draft)
-  .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+  // Newest first, by the month each project started. Order breaks ties within a month.
+  .sort((a, b) => (b.started || '').localeCompare(a.started || '') || a.order - b.order || a.title.localeCompare(b.title));
 
 const history = projects
   .flatMap((p) => p.log.map((e) => ({ ...e, slug: p.slug, project: p.title })))

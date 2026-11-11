@@ -8,6 +8,8 @@ tags:
   - Tech
 draft: false
 ---
+*Update, November 2026: the homepage now opens with the [live Wikipedia edits](/projects/wikipedia-live-edits/) demo, and the store has moved to the [shopping cart's page](/projects/autonomous-shopping-cart/#store).*
+
 If you clicked around the top of this site, you'll have seen a small cart wandering between shelves, planning a route to wherever you clicked. That's a cut-down version of what I built at UNIHACK 2025.
 
 Our team of five had 48 hours to make a shopping cart that could drive itself to the items on your list. My job was the brain: model the store as a grid, then use **A-star search** to find the shortest path between each item.

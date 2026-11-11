@@ -2,7 +2,7 @@
 
 My personal website: a homepage with interactive project demos, and a blog I can update from a web editor.
 
-- **Homepage:** a small store where a cart plans routes with A* (or Dijkstra, or greedy search), then a list of projects that open into working demos: a Valorant win-probability model, a live feed of Wikipedia edits scored by a model in the browser, a homelab diagram and an email-approval mock.
+- **Homepage:** a live feed of English Wikipedia edits scored by a model running in the browser, then a list of projects, newest first, that open into working demos: a Valorant win-probability model, a homelab diagram, an email-approval mock and a small store where a cart plans routes with A* (or Dijkstra, or greedy search).
 - **Blog:** posts are Markdown files in `content/posts/`, written and edited with [Pages CMS](https://pagescms.org).
 - **Hosting:** GitHub Pages. Every change on `main` rebuilds the site automatically.
 
@@ -51,7 +51,7 @@ The site updates by itself about a minute later. Tag personal updates **Life**: 
 
 All of these are in the Pages CMS sidebar:
 
-- **Projects:** each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page. Every project is listed on the homepage; the first sentence of the summary is the short description, unless you fill in **Short description**.
+- **Projects:** listed newest first everywhere, by **Started** (use **Order** to break ties within a month). Each project has a summary, highlights, an optional diagram (a list of steps) and a **History** list of dated milestones. Add a milestone whenever something ships; it appears on the project page and in the combined history on the projects page. Every project is listed on the homepage; the first sentence of the summary is the short description, unless you fill in **Short description**.
 - **Now page:** what you're up to. Change **Last updated** when you edit it.
 - **Off the clock** (in Profile): the casual section on the homepage, one row per thing (Games, Music, Reading and so on). Links work: `[text](https://example.com)`. A row opens to show more when it has any of: **More to say**, **Related projects**, **Links** or a **Setup** (the numbered parts on the sax drawing). Name the opener with **Label for the part that opens**.
 - **Reading notes** (in Profile, under Reading): fill in **My notes on it** and **How far in**; people see them when they tap a cover.
@@ -86,19 +86,19 @@ To turn either off, clear the Last.fm fields or turn off **Show Steam games**. T
 
 ## Things people can find
 
-- **The store:** it keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps by the checkout until someone wakes it. Visitors can give it something from the list below it (tap, or drag onto the floor); it fetches it, takes it to the checkout and prints a receipt. The switch under it changes the search between A*, Dijkstra and greedy, and the line next to it reports how many squares each one checked. It decorates itself for Lunar New Year, Easter, Mid-Autumn, Halloween and Christmas. Add `#open`, `#closed`, `#lunar`, `#easter`, `#midautumn`, `#halloween` or `#christmas` to the address to preview each.
-- **A hundred stores:** the first visit gets the original store; every visit or refresh after that gets one you haven't seen. They're all in `public/assets/js/stores.js`. `/stores/` shows the ones you've found (the browser remembers), and `#store-37` on the homepage opens a particular one.
-- **Projects that open:** each project on the homepage opens in place; the featured ones open into their demo. Each has its own address, like `/#valorant-win-probability`.
+- **The store:** it's on the shopping cart's project page (`/projects/autonomous-shopping-cart/`). It keeps Melbourne hours. From 10 pm to 7 am the lights dim, a Closed sign goes up and the cart sleeps by the checkout until someone wakes it. Visitors can give it something from the list below it (tap, or drag onto the floor); it fetches it, takes it to the checkout and prints a receipt. The switch under it changes the search between A*, Dijkstra and greedy, and the line next to it reports how many squares each one checked. It decorates itself for Lunar New Year, Easter, Mid-Autumn, Halloween and Christmas. Add `#open`, `#closed`, `#lunar`, `#easter`, `#midautumn`, `#halloween` or `#christmas` to that page's address to preview each.
+- **A hundred stores:** the first visit gets the original store; every visit or refresh after that gets one you haven't seen. They're all in `public/assets/js/stores.js`. `/stores/` shows the ones you've found (the browser remembers), and `#store-37` on the cart's page opens a particular one.
+- **Projects that open:** each project on the homepage opens in place; the featured ones open into their demo (the Wikipedia one points up to the live feed at the top). Each has its own address, like `/#valorant-win-probability`.
 - **Experience rows that open:** each job opens to its bullet points and related projects.
 - **Contact:** a short text thread that asks for a name and a message, then lets the visitor send it with Gmail, Outlook, their email app, or copy it. Nothing is sent or stored by the site.
 - **Email links:** every email link opens a small menu (Gmail, Outlook, email app, copy the address), so people without an email app set up don't hit a system error.
 - **Command palette:** press ⌘K (Ctrl K on Windows) or `/`. On phones it's the **Menu** button. It searches projects and posts, and has a few commands: copy email, local time, say hello in four languages, a random post, switch the cart's search, turn the store's lights off, decorate it for a festival.
-- **Live Wikipedia edits:** opening the project's row (or pressing Start on its page) downloads an 11 MB model and starts scoring live English Wikipedia edits in the browser. It pauses when the row closes, when the tab is in the background, and after 15 minutes. The model comes from [`rockminelaw/wikilogreader`](https://github.com/rockminelaw/wikilogreader) (`training/web_bundle.py`); to update it, replace the three files in `public/assets/models/wiki-edits/`.
+- **Live Wikipedia edits:** the first thing on the homepage. Pressing Start (there or on the project page) downloads an 11 MB model and starts scoring live English Wikipedia edits in the browser. It pauses when the tab is in the background and after 15 minutes. The model comes from [`rockminelaw/wikilogreader`](https://github.com/rockminelaw/wikilogreader) (`training/web_bundle.py`); to update it, replace the three files in `public/assets/models/wiki-edits/`.
 - **Project pages:** diagrams you can step through, the Valorant HUD reader, the store on the shopping cart's page, and each project's history.
 - **Blog filters:** `/blog/#life` links straight to the Life posts.
 - **Colophon:** `/colophon/` explains how the site works, with real build numbers.
 - **Section links:** hover over a heading in a post or write-up for a link to it.
-- **Developer tools:** open the console for a hello. The cart is `window.floorDemo`.
+- **Developer tools:** open the console for a hello. On the cart's page, the cart is `window.floorDemo`.
 
 ## For developers
 
