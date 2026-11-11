@@ -37,6 +37,20 @@ function when(ms) {
 }
 const grid = () => Array.from({ length: 7 }, () => new Array(24).fill(0));
 const bump = (obj, key, n = 1) => (obj[key] = (obj[key] || 0) + n);
+// What share of the span from start to end falls on each date, in my time zone, a minute at
+// a time.
+function splitByDay(start, end) {
+  const out = {};
+  const span = end - start;
+  if (span <= 0) return { [when(end).date]: 1 };
+  const step = 60000;
+  for (let t = start; t < end; t += step) {
+    const piece = Math.min(step, end - t);
+    const date = when(t + piece / 2).date;
+    out[date] = (out[date] || 0) + piece / span;
+  }
+  return out;
+}
 
 // ---------- The history so far ----------
 let H = {};
@@ -49,8 +63,6 @@ H.tz = TZ;
 H.steam = { totals: {}, names: {}, days: {}, grid: grid(), owned: [], playing: null, ...(H.steam || {}) };
 H.music = { lastUts: 0, days: {}, grid: grid(), artistDays: {}, whilePlaying: {}, ...(H.music || {}) };
 const lastRun = H.lastRun ? Date.parse(H.lastRun) : 0;
-// Minutes since the last run, so a late run still counts the right amount of play.
-const gap = lastRun ? Math.min(30, Math.max(1, (now - lastRun) / 60000)) : 10;
 const today = when(now);
 
 // ---------- Steam ----------
@@ -78,24 +90,39 @@ if (STEAM_KEY && STEAM_ID) {
     games,
   };
 
-  // Playtime per day: Steam only gives running totals, so each run adds what went up since the last.
+  // Playtime per day: Steam only gives running totals, so each run adds what went up since the
+  // last. GitHub runs this far less often than it's scheduled (often hours apart), so the new
+  // minutes can't all go on the day of the run: play from last night would land on this
+  // morning. Instead they're placed where the session most likely was, ending now for a game
+  // that's open and otherwise at the game's "last played" time, and split across the days
+  // that span covers.
   const S = H.steam;
   const firstTime = !Object.keys(S.totals).length;
   const all = ownedGames.length ? ownedGames : list(recent?.response?.games);
+  const from = lastRun || now - 10 * 60000;
   for (const g of all) {
     const total = g.playtime_forever || 0;
     const before = S.totals[g.appid];
     if (!firstTime && before != null && total > before) {
-      S.days[today.date] = S.days[today.date] || {};
-      bump(S.days[today.date], g.appid, total - before);
+      const minutes = total - before;
+      const lastPlayed = (last.get(g.appid) || 0) * 1000;
+      let end = appid === g.appid ? now : lastPlayed || now;
+      end = Math.min(now, Math.max(from, end));
+      let start = end - minutes * 60000;
+      if (start < from) {
+        start = from;
+        end = Math.min(now, start + minutes * 60000);
+      }
+      for (const [date, share] of Object.entries(splitByDay(start, end))) {
+        S.days[date] = S.days[date] || {};
+        S.days[date][g.appid] = Math.round(((S.days[date][g.appid] || 0) + minutes * share) * 10) / 10;
+      }
       if (g.name) S.names[g.appid] = g.name;
     }
     S.totals[g.appid] = total;
   }
   for (const g of games) S.names[g.appid] = g.name;
   if (steamNow.playing && steamNow.playing.appid) S.names[steamNow.playing.appid] = steamNow.playing.name;
-  // When I play: minutes in each weekday and hour, from being seen in a game.
-  if (steamNow.playing) S.grid[today.dow][today.hour] = Math.round((S.grid[today.dow][today.hour] + gap) * 10) / 10;
   // All-time hours, most played first.
   if (ownedGames.length)
     S.owned = ownedGames

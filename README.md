@@ -70,7 +70,7 @@ Off the clock can show what I'm playing on Steam and listening to on Spotify (th
 2. Create an API account at [last.fm/api/account/create](https://www.last.fm/api/account/create). Any name and description work; leave the callback empty. Copy the **API key** (not the shared secret).
 3. In Pages CMS, open **Profile** and fill in **Last.fm username** and **Last.fm API key**.
 
-**Steam.** The Steam key has to stay secret, so a GitHub Action (`.github/workflows/steam.yml`, called **Steam and Last.fm**) asks Steam and Last.fm every ten minutes and publishes the answer to the `live` branch, which the page reads. It's free because the repository is public. It also keeps a running record (`history.json`) that the charts on `/stats/` are drawn from: hours per game per day, when I play, songs per day, top artists, when I listen, and what I listen to while a game is open.
+**Steam.** The Steam key has to stay secret, so a GitHub Action (`.github/workflows/steam.yml`, called **Steam and Last.fm**) is scheduled to ask Steam and Last.fm every ten minutes (in practice GitHub runs it every few hours) and publishes the answer to the `live` branch, which the page reads. It's free because the repository is public. It also keeps a running record (`history.json`) that the charts on `/stats/` are drawn from: hours per game per day, which days of the week I play, songs per day, top artists, when I listen, and what I listen to while a game is open.
 
 1. Get a Web API key at [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) (use `lawrenceqi.com` as the domain). In Steam, go to **Profile → Edit Profile → Privacy Settings** and set **My profile** and **Game details** to **Public**.
 2. Find your 17-digit Steam ID: it's in your profile's address, or use any SteamID lookup.
@@ -78,7 +78,14 @@ Off the clock can show what I'm playing on Steam and listening to on Spotify (th
 4. Under **Actions → Steam and Last.fm**, press **Run workflow** once. When it's green, `https://raw.githubusercontent.com/rockminelaw/personalwebsite/live/steam.json` shows your games.
 5. In Pages CMS, open **Profile** and turn on **Show Steam games**.
 
-GitHub runs scheduled jobs a few minutes late sometimes, so "playing right now" can lag by up to about a quarter of an hour. GitHub also pauses scheduled jobs if the repository has had no commits for 60 days; saving anything in Pages CMS keeps it going.
+GitHub treats schedules as best effort, and in practice runs this one every few hours, not every ten minutes. GitHub also pauses scheduled jobs if the repository has had no commits for 60 days. So a small Cloudflare Worker (`worker/tick/`) starts the Action every ten minutes instead; runs started that way aren't delayed. To set it up:
+
+1. On GitHub, create a [fine-grained token](https://github.com/settings/personal-access-tokens/new): only the `personalwebsite` repository, with **Actions: Read and write** and nothing else.
+2. In Cloudflare, go to **Workers & Pages → Create → Start with Hello World**, name it `lawrenceqi-recorder-tick` and deploy it. Then **Edit code**, replace everything with `worker/tick/index.js`, and deploy again.
+3. Under the worker's **Settings → Variables and Secrets**, add a **Secret** called `GITHUB_TOKEN` with the token.
+4. Under **Settings → Trigger Events**, add a **Cron Trigger** with `*/10 * * * *`.
+
+Runs it starts show up under **Actions → Steam and Last.fm** as *workflow_dispatch*. The token expires after the time you chose when making it; make a new one and replace the secret when it does. (Or deploy it with `npx wrangler deploy` from `worker/tick`, which reads the schedule from `wrangler.toml`.)
 
 To turn either off, clear the Last.fm fields or turn off **Show Steam games**. The text you've written for each row still shows either way. (`worker/now.js` is a Cloudflare Worker that can do both instead, if you'd rather use one: put its address in **Live data address**.)
 
