@@ -62,7 +62,13 @@ H.since = H.since || new Date(now).toISOString();
 H.tz = TZ;
 H.steam = { totals: {}, names: {}, days: {}, grid: grid(), owned: [], playing: null, ...(H.steam || {}) };
 H.music = { lastUts: 0, days: {}, grid: grid(), artistDays: {}, whilePlaying: {}, ...(H.music || {}) };
+// A damaged grid (wrong shape) would stop every run, so it starts again instead.
+const okGrid = (g) => Array.isArray(g) && g.length === 7 && g.every((r) => Array.isArray(r) && r.length === 24);
+if (!okGrid(H.steam.grid)) H.steam.grid = grid();
+if (!okGrid(H.music.grid)) H.music.grid = grid();
 const lastRun = H.lastRun ? Date.parse(H.lastRun) : 0;
+// Minutes since the last run, so a late run still counts the right amount of play.
+const gap = lastRun ? Math.min(30, Math.max(1, (now - lastRun) / 60000)) : 10;
 const today = when(now);
 
 // ---------- Steam ----------
@@ -123,6 +129,10 @@ if (STEAM_KEY && STEAM_ID) {
   }
   for (const g of games) S.names[g.appid] = g.name;
   if (steamNow.playing && steamNow.playing.appid) S.names[steamNow.playing.appid] = steamNow.playing.name;
+  // When I play: minutes in each weekday and hour, from being seen in a game. With a run
+  // every ten minutes (worker/tick starts them), each sighting stands for the time since the
+  // last run, up to half an hour.
+  if (steamNow.playing) S.grid[today.dow][today.hour] = Math.round((S.grid[today.dow][today.hour] + gap) * 10) / 10;
   // All-time hours, most played first.
   if (ownedGames.length)
     S.owned = ownedGames
