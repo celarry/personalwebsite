@@ -4357,3 +4357,286 @@ button.skill[aria-expanded='true'] .skill__n {
     animation: none !important;
   }
 }
+
+/* ---------- The palette, through the site ----------
+   Three neighbours on the colour wheel (teal, blue, indigo) and their opposite (orange).
+   Each homepage section takes one of the neighbours as --hue, for its marker, its rows'
+   hover colour and its small accents. Orange stays rare: the main buttons, the countdown,
+   the Demo tags, the live demo and the cart. */
+
+/* A soft wash of the three neighbours behind the top of every page. */
+@media screen {
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    height: min(900px, 110vh);
+    pointer-events: none;
+    background:
+      radial-gradient(38% 55% at 8% 0%, color-mix(in srgb, var(--def) 17%, transparent), transparent 72%),
+      radial-gradient(42% 60% at 52% -6%, color-mix(in srgb, var(--route) 14%, transparent), transparent 72%),
+      radial-gradient(40% 58% at 94% 4%, color-mix(in srgb, var(--indigo) 16%, transparent), transparent 72%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent);
+    mask-image: linear-gradient(to bottom, #000 35%, transparent);
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--pop) 28%, transparent);
+  color: var(--ink);
+}
+
+/* The name in the header ends in an orange dot, like the end of the route in the icon. */
+.top__dot {
+  display: inline-block;
+  width: 0.2em;
+  height: 0.2em;
+  margin-left: 0.09em;
+  border-radius: 50%;
+  background: var(--pop);
+  vertical-align: 0.02em;
+  transition: transform 0.2s ease;
+}
+.top__name:hover .top__dot {
+  transform: scale(1.35);
+}
+
+/* The headline's *starred* words, in a blue-to-indigo gradient. */
+.intro__statement em {
+  font-style: italic;
+  color: var(--route);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .intro__statement em {
+    background: linear-gradient(100deg, var(--def) -10%, var(--route) 40%, var(--indigo) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Italic overhangs its box; a little padding keeps the gradient on the last letter. */
+    padding-right: 0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+}
+
+/* Section colours. */
+.block {
+  --hue: var(--route);
+}
+#now,
+#offclock {
+  --hue: var(--def);
+}
+#about,
+#blog {
+  --hue: var(--indigo);
+}
+#contact {
+  --hue: var(--pop-text);
+}
+.block:not(.block--year) > .block__label::before {
+  content: '';
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  margin-right: 0.45em;
+  border-radius: 2px;
+  background: var(--hue);
+  vertical-align: 0.12em;
+}
+.block .row > summary:hover .row__title,
+.block a.row__title:hover {
+  color: var(--hue);
+}
+.block .row > summary:hover .row__toggle::before,
+.block .row > summary:hover .row__toggle::after,
+.block .row[open] .row__toggle::before,
+.block .row[open] .row__toggle::after {
+  background: var(--hue);
+}
+/* An open row gets a short bar of its section's colour in the margin. */
+.rows--open > li {
+  position: relative;
+}
+.rows--open > li:has(> .row[open])::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 1.05rem;
+  width: 3px;
+  height: 1.4em;
+  border-radius: 2px;
+  background: var(--hue, var(--route));
+}
+
+/* Tags on project rows and pages. */
+.row__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.55rem;
+  min-width: 0;
+}
+.row__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.tag {
+  --tag: var(--route);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.18em 0.6em 0.2em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tag) 11%, transparent);
+  /* A touch of ink keeps this small text readable on its tint in both themes. */
+  color: color-mix(in srgb, var(--tag) 85%, var(--ink));
+  font: 700 0.6875rem/1.2 var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  position: relative;
+  top: -0.08em;
+}
+.tag--teal {
+  --tag: var(--def);
+}
+.tag--blue {
+  --tag: var(--route);
+}
+.tag--indigo {
+  --tag: var(--indigo);
+}
+.tag--teal::before {
+  content: '';
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+}
+.tag--demo {
+  --tag: var(--pop-text);
+  background: var(--pop-soft);
+}
+.pairs--facts .tag {
+  top: 0;
+}
+
+/* Now: teal ticks, a progress bar that runs through all three neighbours to an orange end,
+   and the countdown in orange. */
+.checklist li.is-done .checklist__box {
+  background: var(--hue, var(--route));
+  border-color: var(--hue, var(--route));
+}
+.checklist li.is-done .checklist__box::after {
+  border-color: var(--paper);
+}
+.checklist__bar {
+  height: 4px;
+  overflow: visible;
+}
+.checklist__bar i {
+  position: relative;
+  background: linear-gradient(90deg, var(--def), var(--route) 55%, var(--indigo)) 0 0 / var(--full, 100%) 100% no-repeat;
+}
+.checklist__bar i::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pop);
+  box-shadow: 0 0 0 3px var(--paper);
+  transform: translateY(-50%);
+}
+.countdown {
+  position: relative;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--pop) 35%, var(--rule));
+}
+.countdown::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--pop);
+}
+.countdown__n {
+  color: var(--pop-text);
+}
+
+/* Skills: the counts, the hover and the open panel take the section's colour. */
+.block .skill__n {
+  color: var(--hue);
+  font-weight: 700;
+}
+.block .skill {
+  text-decoration-color: color-mix(in srgb, var(--hue) 55%, transparent);
+}
+.block button.skill:hover,
+.block button.skill[aria-expanded='true'] {
+  color: var(--hue);
+}
+.block .proof {
+  border-left: 3px solid var(--hue);
+}
+
+/* Contact: the send button is a main button, so it's orange. */
+.chat__send {
+  background: var(--pop);
+  color: var(--pop-ink);
+  font-weight: 700;
+}
+.chat__send:hover {
+  filter: none;
+  background: var(--ink);
+  color: var(--paper);
+}
+.msg--them {
+  background: color-mix(in srgb, var(--route) 10%, var(--sunk));
+}
+.msg--me {
+  background: linear-gradient(135deg, var(--route), var(--indigo));
+}
+
+/* Blog filters: the chosen one is filled in blue. */
+.filters button[aria-pressed='true'] {
+  background: var(--route);
+  border-color: var(--route);
+  color: var(--route-ink);
+}
+
+/* Years on the index pages, in blue. */
+.block--year .block__label {
+  color: var(--route);
+}
+
+/* The footer starts with a stripe of the palette: the three neighbours, then a short
+   orange end. */
+.foot {
+  position: relative;
+  border-top: 0;
+}
+.foot::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--def), var(--route) 45%, var(--indigo) 86%, var(--pop) 86%, var(--pop));
+}
+@media print {
+  body::before,
+  .foot::before,
+  .top__dot {
+    display: none;
+  }
+}
