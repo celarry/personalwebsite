@@ -2837,11 +2837,14 @@ button.skill[aria-expanded='true'] .skill__n {
   margin-top: 4px;
 }
 
-/* The homepage's opening figure: the live Wikipedia edits demo. */
-.live {
+/* The homepage's opening figure: the live Wikipedia edits demo. (Not .live, which is the
+   Off the clock games and music boxes.) */
+.live-demo {
   margin: clamp(36px, 5.5vw, 64px) 0 0;
 }
 .live__head {
+  /* The title's size, shared so the gap above it can grow with it (see .live__kicker). */
+  --live-title: clamp(1.65rem, 1.2rem + 1.5vw, 2.25rem);
   display: grid;
   gap: 20px 48px;
   margin-bottom: 18px;
@@ -2856,7 +2859,11 @@ button.skill[aria-expanded='true'] .skill__n {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 0.6rem;
+  /* Below the title, its line height and the text's leave about 0.42 of the title's size,
+     plus 3.5px, of empty space between the letters. The kicker already sits 6.5px of empty
+     space above the title's letters, so this margin makes the two gaps match at every
+     width (about 18px on a laptop, 14px on a phone). */
+  margin: 0 0 calc(var(--live-title) * 0.4167 - 3px);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -2877,8 +2884,8 @@ button.skill[aria-expanded='true'] .skill__n {
   }
 }
 .live__title {
-  margin: 0 0 0.6rem;
-  font: 400 clamp(1.65rem, 1.2rem + 1.5vw, 2.25rem)/1.12 var(--display);
+  margin: 0;
+  font: 400 var(--live-title)/1.12 var(--display);
   letter-spacing: -0.012em;
   color: var(--ink);
   text-wrap: balance;
