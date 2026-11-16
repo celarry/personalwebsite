@@ -1475,6 +1475,9 @@ a.row__title:hover {
   text-decoration: none;
   cursor: auto;
 }
+.skills__item {
+  white-space: nowrap;
+}
 button.skill:hover,
 button.skill[aria-expanded='true'] {
   color: var(--route);

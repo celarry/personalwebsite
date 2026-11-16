@@ -98,11 +98,15 @@ reading:
     cover: /uploads/covers/one-piece.jpg
 skills:
   - group: Machine learning
-    items: Python, PyTorch, NumPy, Pandas, XGBoost, R, LoRA and QLoRA fine-tuning
+    items: Python, PyTorch, Hugging Face Transformers, NumPy, Pandas, scikit-learn,
+      XGBoost, LightGBM, R, LoRA and QLoRA fine-tuning, Knowledge distillation,
+      Quantisation, Model evaluation and calibration, ONNX and ONNX Runtime Web
+  - group: Data
+    items: Data collection and labelling, Streaming data, Parquet
   - group: Infrastructure
-    items: Docker, Kubernetes, Proxmox, Linux, Nginx, Cloudflare, AWS, Azure
+    items: Docker, Kubernetes, Proxmox, LXC, systemd, Linux, Nginx, Cloudflare, AWS, Azure
   - group: Software
-    items: JavaScript, TypeScript, HTML and CSS, Java, SQL, Git
+    items: JavaScript, TypeScript, HTML and CSS, Java, SQL, Git, WebAssembly
 experience:
   - role: AI/ML Intern (incoming)
     type: work
