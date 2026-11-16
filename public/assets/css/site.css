@@ -42,30 +42,42 @@
 }
 
 /* ---------- Tokens ---------- */
-/* The palette comes from a shop floor: pale vinyl, navy ink, and one blue for routes. */
+/* The palette is three neighbours on the colour wheel and one colour from the far side.
+   Teal, blue and indigo (hues around 185, 225 and 248) do the everyday work: the paper and
+   ink are tinted blue, links and markers are blue, "live" is teal. Orange (hue 23, straight
+   across from them) is kept for the things worth noticing: the main buttons, the live demo,
+   the cart and its route, attackers, flagged edits. */
 :root {
-  --paper: #edf0ec;
-  --panel: #f6f8f5;
-  --sunk: #e2e7e1;
-  --ink: #18202e;
-  --ink-2: #445063;
-  --ink-3: #5c6779;
-  --rule: #c8cfc8;
-  --rule-2: #d9dfd8;
-  --shelf: #d6ddd5;
-  --route: #2b45e0;
+  --paper: #eef1f7;
+  --panel: #f8fafd;
+  --sunk: #e1e7f1;
+  --ink: #121a30;
+  --ink-2: #3f4b66;
+  --ink-3: #58647e;
+  --rule: #c3ccdc;
+  --rule-2: #d7deea;
+  --shelf: #d2dae8;
+  --route: #2450d6;
   --route-ink: #ffffff;
-  --route-soft: rgba(43, 69, 224, 0.1);
-  --atk: #c13d29;
-  --def: #0f7b77;
+  --route-soft: rgba(36, 80, 214, 0.1);
+  --def: #0a727a;
+  --indigo: #5646d4;
+  /* The accent. --pop fills and draws; --pop-text is the same orange dark enough to read as
+     small text on the paper; --pop-ink is text on a --pop fill. */
+  --pop: #e0580b;
+  --pop-ink: #121a30;
+  --pop-text: #b84a06;
+  --pop-soft: rgba(224, 88, 11, 0.12);
+  --atk: #b84a06;
+  --red: #c13d29; /* seasonal decorations in the store */
   --festive: #c08a1e;
-  --viz-1: #2a78d6;
-  --viz-2: #eb6834;
-  --viz-3: #1baf7a;
-  --viz-4: #eda100;
-  --viz-other: #a9b0ba;
-  --viz-games: #2a78d6;
-  --viz-music: #eb6834;
+  --viz-1: #2f66dd;
+  --viz-2: #e0580b;
+  --viz-3: #0e8f98;
+  --viz-4: #6a55e0;
+  --viz-other: #a8b1c2;
+  --viz-games: #2f66dd;
+  --viz-music: #e0580b;
   --brass-1: #b5862b;
   --brass-2: #f0d27e;
   --brass-3: #7d5a16;
@@ -73,8 +85,8 @@
   --mp: #23272e;
   --reed: #e6d7ad;
   --pumpkin: #dd7a22;
-  --receipt: #fbfbf7;
-  --lift: 0 1px 0 rgba(24, 32, 46, 0.04), 0 18px 40px -24px rgba(24, 32, 46, 0.45);
+  --receipt: #fbfcfe;
+  --lift: 0 1px 0 rgba(18, 26, 48, 0.04), 0 18px 40px -24px rgba(18, 26, 48, 0.45);
 
   --display: 'Newsreader Display', 'Newsreader Text', Georgia, serif;
   --serif: 'Newsreader Text', Georgia, 'Times New Roman', serif;
@@ -93,41 +105,34 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --paper: #0f151e;
-    --panel: #161e2a;
-    --sunk: #1d2633;
-    --ink: #e6eaf0;
-    --ink-2: #b0b9c7;
-    --ink-3: #95a0b0;
-    --rule: #2c3647;
-    --rule-2: #222c3a;
-    --shelf: #1f2936;
-    --route: #8d9dff;
-    --route-ink: #0f151e;
-    --route-soft: rgba(141, 157, 255, 0.13);
-    --atk: #f27a63;
-    --def: #49c4bd;
+    --paper: #0c1222;
+    --panel: #131a2d;
+    --sunk: #1a2338;
+    --ink: #e7ebf5;
+    --ink-2: #b1bad0;
+    --ink-3: #93a0bb;
+    --rule: #2a3550;
+    --rule-2: #202a41;
+    --shelf: #1d2740;
+    --route: #8ea6ff;
+    --route-ink: #0c1222;
+    --route-soft: rgba(142, 166, 255, 0.14);
+    --def: #4cc5ce;
+    --indigo: #aa9cff;
+    --pop: #ff9d52;
+    --pop-ink: #0c1222;
+    --pop-text: #ff9d52;
+    --pop-soft: rgba(255, 157, 82, 0.16);
+    --atk: #ff9d52;
+    --red: #f27a63;
     --festive: #e2b34a;
-  --viz-1: #3987e5;
-  --viz-2: #d95926;
-  --viz-3: #199e70;
-  --viz-4: #c98500;
-  --viz-other: #556073;
-  --viz-games: #3987e5;
-  --viz-music: #d95926;
-  --brass-1: #a87c28;
-  --brass-2: #e3c06a;
-  --brass-3: #5e4412;
-  --pearl: #d9d2bf;
-  --mp: #5b6271;
-  --reed: #c9bb92;
-    --viz-1: #3987e5;
-    --viz-2: #d95926;
-    --viz-3: #199e70;
-    --viz-4: #c98500;
-    --viz-other: #556073;
-    --viz-games: #3987e5;
-    --viz-music: #d95926;
+    --viz-1: #5d8cf5;
+    --viz-2: #f08a3c;
+    --viz-3: #2fb3bd;
+    --viz-4: #9684f5;
+    --viz-other: #515d78;
+    --viz-games: #5d8cf5;
+    --viz-music: #f08a3c;
     --brass-1: #a87c28;
     --brass-2: #e3c06a;
     --brass-3: #5e4412;
@@ -135,29 +140,48 @@
     --mp: #5b6271;
     --reed: #c9bb92;
     --pumpkin: #ec8f3a;
-    --receipt: #1e2633;
+    --receipt: #1b2338;
     --lift: 0 20px 44px -22px rgba(0, 0, 0, 0.8);
     color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
-  --paper: #0f151e;
-  --panel: #161e2a;
-  --sunk: #1d2633;
-  --ink: #e6eaf0;
-  --ink-2: #b0b9c7;
-  --ink-3: #95a0b0;
-  --rule: #2c3647;
-  --rule-2: #222c3a;
-  --shelf: #1f2936;
-  --route: #8d9dff;
-  --route-ink: #0f151e;
-  --route-soft: rgba(141, 157, 255, 0.13);
-  --atk: #f27a63;
-  --def: #49c4bd;
+  --paper: #0c1222;
+  --panel: #131a2d;
+  --sunk: #1a2338;
+  --ink: #e7ebf5;
+  --ink-2: #b1bad0;
+  --ink-3: #93a0bb;
+  --rule: #2a3550;
+  --rule-2: #202a41;
+  --shelf: #1d2740;
+  --route: #8ea6ff;
+  --route-ink: #0c1222;
+  --route-soft: rgba(142, 166, 255, 0.14);
+  --def: #4cc5ce;
+  --indigo: #aa9cff;
+  --pop: #ff9d52;
+  --pop-ink: #0c1222;
+  --pop-text: #ff9d52;
+  --pop-soft: rgba(255, 157, 82, 0.16);
+  --atk: #ff9d52;
+  --red: #f27a63;
   --festive: #e2b34a;
+  --viz-1: #5d8cf5;
+  --viz-2: #f08a3c;
+  --viz-3: #2fb3bd;
+  --viz-4: #9684f5;
+  --viz-other: #515d78;
+  --viz-games: #5d8cf5;
+  --viz-music: #f08a3c;
+  --brass-1: #a87c28;
+  --brass-2: #e3c06a;
+  --brass-3: #5e4412;
+  --pearl: #d9d2bf;
+  --mp: #5b6271;
+  --reed: #c9bb92;
   --pumpkin: #ec8f3a;
-  --receipt: #1e2633;
+  --receipt: #1b2338;
   --lift: 0 20px 44px -22px rgba(0, 0, 0, 0.8);
   color-scheme: dark;
 }
@@ -332,14 +356,15 @@ kbd {
   border-color: var(--ink-3);
 }
 .btn--primary {
+  background: var(--pop);
+  border-color: var(--pop);
+  color: var(--pop-ink);
+  font-weight: 700;
+}
+.btn--primary:hover {
   background: var(--ink);
   border-color: var(--ink);
   color: var(--paper);
-}
-.btn--primary:hover {
-  background: var(--route);
-  border-color: var(--route);
-  color: var(--route-ink);
 }
 .copy {
   min-height: 28px;
@@ -589,7 +614,12 @@ kbd {
 }
 
 /* ---------- The store ---------- */
+/* The store is one of the things the accent is for: the cart, its route and the squares it
+   searched are orange here, where the rest of the site would use blue. */
 .store {
+  --route: var(--pop-text);
+  --route-ink: var(--paper);
+  --route-soft: var(--pop-soft);
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -2831,15 +2861,15 @@ button.skill[aria-expanded='true'] .skill__n {
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--def);
+  color: var(--pop-text);
 }
 .live__pip {
   flex: none;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--def);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--def) 20%, transparent);
+  background: var(--pop);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--pop) 22%, transparent);
 }
 @media (prefers-reduced-motion: no-preference) {
   .live__pip {

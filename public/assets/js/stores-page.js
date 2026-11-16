@@ -14,7 +14,7 @@
   function colours() {
     const s = getComputedStyle(document.documentElement);
     const v = (n) => s.getPropertyValue(n).trim();
-    const c = { paper: v('--paper'), panel: v('--panel'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), route: v('--route'), red: v('--atk'), gold: v('--festive'), pumpkin: v('--pumpkin') };
+    const c = { paper: v('--paper'), panel: v('--panel'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), route: v('--pop'), red: v('--red'), gold: v('--festive'), pumpkin: v('--pumpkin') };
     const h = c.panel.replace('#', '');
     const n = parseInt(h.length === 3 ? h.replace(/./g, '$&$&') : h, 16);
     c.dark = 0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255) < 128;

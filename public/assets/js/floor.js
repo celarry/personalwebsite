@@ -192,7 +192,7 @@
   function readColors() {
     const s = getComputedStyle(document.documentElement);
     const v = (n) => s.getPropertyValue(n).trim();
-    colors = { paper: v('--paper'), panel: v('--panel'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), sunk: v('--sunk'), route: v('--route'), red: v('--atk'), gold: v('--festive'), pumpkin: v('--pumpkin') };
+    colors = { paper: v('--paper'), panel: v('--panel'), ink: v('--ink'), ink2: v('--ink-2'), ink3: v('--ink-3'), rule: v('--rule'), shelf: v('--shelf'), sunk: v('--sunk'), route: v('--pop'), red: v('--red'), gold: v('--festive'), pumpkin: v('--pumpkin') };
     const [r, g, b] = hexToRgb(colors.panel);
     colors.dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 128;
   }

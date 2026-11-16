@@ -82,7 +82,7 @@ Off the clock shows what I'm playing and listening to, but the site is static fi
 ## Type, colour and care
 
 - **Fonts.** Newsreader for headings and Atkinson Hyperlegible Next for everything else, self-hosted and cut down to Latin characters, so the six font files come to about 180 KB together.
-- **Colour.** The palette comes from a shop floor: pale vinyl, navy ink and one blue for routes. There's a dark theme that follows your device, and a switch to override it.
+- **Colour.** The palette is three neighbours on the colour wheel (teal, blue and indigo) for the everyday work, and one colour from the opposite side, orange, kept for the things worth noticing: the main buttons, the live demo and the cart's route. There's a dark theme that follows your device, and a switch to override it.
 - **Motion.** Sections fade in as they scroll into view, and if your device asks for reduced motion, nothing animates.
 - **Privacy.** No analytics, no cookies and no trackers. The only things kept in your browser are your theme, if you change it, and which stores you've found.
 
