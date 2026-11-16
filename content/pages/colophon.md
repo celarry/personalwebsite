@@ -34,7 +34,7 @@ If your device asks for reduced motion, nothing animates: each search and route 
 
 Headings and long-form writing are set in [Newsreader](https://fonts.google.com/specimen/Newsreader), a serif made for reading on screens. Everything else is [Atkinson Hyperlegible Next](https://www.brailleinstitute.org/freefont/), designed by the Braille Institute for legibility, with one change: I redrew its slashed zero as a plain one, so dates don't read like code. The receipt uses its mono companion. All of them are self-hosted.
 
-The colours are three neighbours on the colour wheel and one from the far side. Teal, blue and indigo do the everyday work: blue-tinted paper and ink, blue links, teal for anything live. Orange, straight across the wheel from them, is kept for the things worth noticing: the main buttons, the live demo, and the cart and its route.
+The colours are three neighbours on the colour wheel and one from the far side. Teal, blue and indigo do the everyday work: blue-tinted paper and ink, blue links, teal for anything live. Orange, straight across the wheel from them, is kept for the things worth noticing: the main buttons, the live demo, and the cart and its route. On the homepage each section takes one of the three as its own (teal for Now and Off the clock, blue for Projects and Experience, indigo for About and the blog) for its marker and its accents, and Contact gets the orange. Project tags follow the same rule: teal for running, blue for in progress, indigo for finished, and orange for anything with a demo to play with.
 
 ## Privacy
 

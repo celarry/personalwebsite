@@ -209,7 +209,7 @@ content:
         required: true
       - name: headline
         label: Headline
-        description: The big sentence at the top of the homepage.
+        description: The big sentence at the top of the homepage. Put *stars* around a few words to colour them.
         type: string
       - name: intro
         label: Intro

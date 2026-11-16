@@ -396,7 +396,7 @@ write(
 <title>${x(site.name)}'s blog</title>
 <link>${siteUrl}/blog/</link>
 <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml"/>
-<description>${x(site.headline || '')}</description>
+<description>${x(String(site.headline || '').replace(/\*/g, ''))}</description>
 <language>en-au</language>
 ${posts
   .slice(0, 20)
