@@ -1,0 +1,77 @@
+{
+ "updated": "2026-11-28T12:30:17.030Z",
+ "steam": {
+  "online": true,
+  "playing": {
+   "appid": 1422450,
+   "name": "Deadlock",
+   "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422450/header.jpg"
+  },
+  "games": [
+   {
+    "appid": 1422450,
+    "name": "Deadlock",
+    "minutes2w": 865,
+    "minutesTotal": 5505,
+    "lastPlayed": 1795868683,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422450/header.jpg"
+   },
+   {
+    "appid": 2561580,
+    "name": "Horizon Zero Dawn™ Remastered",
+    "minutes2w": 110,
+    "minutesTotal": 110,
+    "lastPlayed": 1795859123,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2561580/header.jpg"
+   },
+   {
+    "appid": 1332010,
+    "name": "Stray",
+    "minutes2w": 71,
+    "minutesTotal": 71,
+    "lastPlayed": 1795836892,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1332010/header.jpg"
+   },
+   {
+    "appid": 3240220,
+    "name": "Grand Theft Auto V Enhanced",
+    "minutes2w": 132,
+    "minutesTotal": 2136,
+    "lastPlayed": 1795785302,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3240220/header.jpg"
+   },
+   {
+    "appid": 1290000,
+    "name": "PowerWash Simulator",
+    "minutes2w": 135,
+    "minutesTotal": 310,
+    "lastPlayed": 1795781855,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1290000/header.jpg"
+   },
+   {
+    "appid": 2483190,
+    "name": "Forza Horizon 6",
+    "minutes2w": 231,
+    "minutesTotal": 6731,
+    "lastPlayed": 1795781197,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2483190/header.jpg"
+   },
+   {
+    "appid": 1364780,
+    "name": "Street Fighter™ 6",
+    "minutes2w": 275,
+    "minutesTotal": 44007,
+    "lastPlayed": 1795348303,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1364780/header.jpg"
+   },
+   {
+    "appid": 431960,
+    "name": "Wallpaper Engine",
+    "minutes2w": 274,
+    "minutesTotal": 2759,
+    "lastPlayed": 1795098323,
+    "art": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/431960/header.jpg"
+   }
+  ]
+ }
+}
